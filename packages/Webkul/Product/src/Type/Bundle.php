@@ -9,12 +9,12 @@ use Webkul\Product\DataTypes\CartItemValidationResult;
 use Webkul\Product\Helpers\BundleOption;
 use Webkul\Product\Helpers\Indexers\Price\Bundle as BundleIndexer;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
-use Webkul\Product\Repositories\ProductBundleOptionProductRepository;
+use Webkul\Product\Models\ProductBundleOptionProduct;
 use Webkul\Product\Repositories\ProductBundleOptionRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 use Webkul\Tax\Facades\Tax;
 
@@ -75,20 +75,18 @@ class Bundle extends AbstractType
     public function __construct(
         CustomerRepository $customerRepository,
         AttributeRepository $attributeRepository,
-        ProductRepository $productRepository,
         ProductAttributeValueRepository $attributeValueRepository,
         ProductInventoryRepository $productInventoryRepository,
         ProductImageRepository $productImageRepository,
         ProductVideoRepository $productVideoRepository,
         ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
         protected ProductBundleOptionRepository $productBundleOptionRepository,
-        protected ProductBundleOptionProductRepository $productBundleOptionProductRepository,
+
         protected BundleOption $bundleOptionHelper
     ) {
         parent::__construct(
             $customerRepository,
             $attributeRepository,
-            $productRepository,
             $attributeValueRepository,
             $productInventoryRepository,
             $productImageRepository,
@@ -243,7 +241,7 @@ class Bundle extends AbstractType
         $products = parent::prepareForCart($data);
 
         foreach ($this->getCartChildProducts($data) as $productId => $data) {
-            $product = $this->productRepository->find($productId);
+            $product = Product::find($productId);
 
             if ($product->type !== 'simple') {
                 return trans('product::app.checkout.cart.selected-products-simple');
@@ -302,7 +300,7 @@ class Bundle extends AbstractType
                     continue;
                 }
 
-                $optionProduct = $this->productBundleOptionProductRepository->findOneWhere([
+                $optionProduct = ProductBundleOptionProduct::findOneWhere([
                     'id'                       => $optionProductId,
                     'product_bundle_option_id' => $optionId,
                 ]);
@@ -395,7 +393,7 @@ class Bundle extends AbstractType
                     continue;
                 }
 
-                $optionProduct = $this->productBundleOptionProductRepository->find($optionProductId);
+                $optionProduct = ProductBundleOptionProduct::find($optionProductId);
 
                 $qty = $data['bundle_option_qty'][$option->id] ?? $optionProduct->qty;
 
@@ -450,7 +448,7 @@ class Bundle extends AbstractType
                     continue;
                 }
 
-                $optionProduct = $this->productBundleOptionProductRepository->find($optionProductId);
+                $optionProduct = ProductBundleOptionProduct::find($optionProductId);
 
                 $optionQuantities[$optionId] = $optionProduct->qty;
             }
@@ -568,7 +566,7 @@ class Bundle extends AbstractType
                     ->pluck('product_id')
                     ->toArray();
 
-                $products = $this->productRepository->findWhereIn('id', $associatedProductIds)
+                $products = Product::whereIn('id', $associatedProductIds)
                     ->pluck('type')
                     ->filter(fn ($type) => $type !== 'simple')
                     ->count();

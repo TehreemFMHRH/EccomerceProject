@@ -13,9 +13,28 @@ class Payment
      */
     public function getSupportedPaymentMethods()
     {
-        return [
-            'payment_methods'  => $this->getPaymentMethods(),
-        ];
+        $methods = [];
+
+        // Example: hardcoded shipping methods for demo purposes
+        $availableMethods = ['paypal_standard', 'paypal_smart_button', 'cashondelivery', 'moneytransfer'];
+
+        foreach ($availableMethods as $method) {
+            if ($this->isPaymentAvailable($method)) {
+                $methods[] = [
+                    'method'       => $method,
+                    'method_title' => $this->getTitle($method),
+                    'description'  => $this->getDescription($method),
+                    'sort'         => $this->getSortOrder($method),
+                    'image'        => $this->getImage($method),
+                ];
+            }
+        }
+
+        usort($methods, function ($a, $b) {
+            return $a['sort'] <=> $b['sort'];
+        });
+
+        return ['payment_methods' => $methods];
     }
 
     /**
@@ -52,6 +71,65 @@ class Payment
         return $paymentMethods;
     }
 
+    protected function isPaymentAvailable($method)
+    {
+        switch ($method) {
+            case 'paypal_standard':
+            case 'paypal_smart_button':
+            case 'cashondelivery':
+            case 'moneytransfer':
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    protected function getTitle($method)
+    {
+        return match ($method) {
+            'paypal_standard' => 'PayPal Standard',
+            'paypal_smart_button' => 'PayPal Smart Button',
+            'cashondelivery'    => 'Cash on Delivery',
+            'moneytransfer'    => 'Money Transfer',
+            default  => 'Unknown',
+        };
+    }
+
+    protected function getDescription($method)
+    {
+        return match ($method) {
+            'paypal_standard' => 'Pay securely via PayPal',
+            'paypal_smart_button' => 'Pay securely via PayPal Options',
+            'cashondelivery'    => 'Pay with cash upon delivery',
+            'moneytransfer'    => 'Pay with cash upon delivery',
+            default  => '',
+        };
+    }
+
+    protected function getImage($method)
+    {
+        return match ($method) {
+            'paypal_standard'      => bagisto_asset('images/paypal.png', 'shop'),
+            'paypal_smart_button'  => bagisto_asset('images/paypal.png', 'shop'),
+            'cashondelivery'                  => bagisto_asset('images/cash-on-delivery.png', 'shop'),
+            'moneytransfer'        => bagisto_asset('images/money-transfer.png', 'shop'),
+            default                => '',
+        };
+    }
+
+    protected function getSortOrder($method)
+    {
+        return match ($method) {
+            'paypal_standard' => 3,
+            'paypal_smart_button' => 4,
+            'cashondelivery'    => 1,
+            'moneytransfer'    => 2,
+            default  => 99,
+        };
+    }
+
+
     /**
      * Returns payment redirect url if have any
      *
@@ -60,9 +138,34 @@ class Payment
      */
     public function getRedirectUrl($cart)
     {
-        $payment = app(Config::get('payment_methods.'.$cart->payment->method.'.class'));
+        $method = $cart->payment->method;
 
-        return $payment->getRedirectUrl();
+        switch ($method) {
+            case 'paypal_standard':
+                return $this->getPayPalStandardRedirectUrl($cart);
+
+            case 'paypal_smart_button':
+                return $this->getPaypalSmartButtonRedirectUrl($cart);
+
+            case 'cashondelivery':
+                return null;
+
+            case 'moneytransfer':
+                return null;
+
+            default:
+                throw new \Exception("Unsupported payment method: {$method}");
+        }
+    }
+
+    protected function getPayPalStandardRedirectUrl($cart)
+    {
+        return route('paypal.standard.redirect');
+    }
+
+    protected function getPaypalSmartButtonRedirectUrl($cart)
+    {
+        return null;
     }
 
     /**
@@ -73,8 +176,17 @@ class Payment
      */
     public static function getAdditionalDetails($code)
     {
-        $paymentMethodClass = app(Config::get('payment_methods.'.$code.'.class'));
+        switch ($code) {
+            case 'paypal_standard':
+                return ['instructions' => 'Pay via PayPal'];
+            case 'paypal_smart_button':
+                return ['instructions' => 'Pay via PayPal smart buttons'];
+            case 'cashondelivery':
+                return ['instructions' => 'Pay via Cash on delivery'];
+            case 'moneytransfer':
+                return ['instructions' => 'Pay via online money transfer'];
 
-        return $paymentMethodClass->getAdditionalDetails();
+
+        }
     }
 }

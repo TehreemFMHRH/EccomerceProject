@@ -5,7 +5,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Webkul\MagicAI\Facades\MagicAI;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductReviewAttachmentRepository;
 use Webkul\Product\Repositories\ProductReviewRepository;
 use Webkul\Shop\Http\Resources\ProductReviewResource;
@@ -18,7 +18,7 @@ class ReviewController extends APIController
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
+
         protected ProductReviewRepository $productReviewRepository,
         protected ProductReviewAttachmentRepository $productReviewAttachmentRepository
     ) {}
@@ -35,7 +35,7 @@ class ReviewController extends APIController
      */
     public function index(int $id): JsonResource
     {
-        $product = $this->productRepository
+        $product = Product
             ->findOrFail($id)
             ->reviews()
             ->where('status', self::STATUS_APPROVED)

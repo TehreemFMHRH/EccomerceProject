@@ -1,5 +1,7 @@
 @php
-    $bookingProduct = app('\Webkul\BookingProduct\Repositories\BookingProductRepository')->findOneByField('product_id', $product->id)
+    use Webkul\Product\Models\BookingProduct;
+
+    $bookingProduct = BookingProduct::findOneByField('product_id', $product->id);
 @endphp
 
 {!! view_render_event('bagisto.admin.catalog.product.edit.form.types.booking.before', ['product' => $product]) !!}
@@ -178,12 +180,14 @@
     </script>
 
     <script type="module">
-        defineRule('required_if', (value, { condition = true } = {}) => {
+        defineRule('required_if', (value, {
+            condition = true
+        } = {}) => {
             if (condition) {
                 if (
-                    value === null
-                    || value === undefined
-                    || value === ''
+                    value === null ||
+                    value === undefined ||
+                    value === ''
                 ) {
                     return false;
                 }
@@ -193,7 +197,7 @@
         });
 
         defineRule('after', (value, [target]) => {
-            if (! value || ! target) {
+            if (!value || !target) {
                 return false;
             }
 
@@ -227,9 +231,11 @@
             },
 
             created() {
-                this.booking.available_from = "{{ $bookingProduct && $bookingProduct->available_from ? $bookingProduct->available_from->format('Y-m-d H:i:s') : '' }}";
+                this.booking.available_from =
+                    "{{ $bookingProduct && $bookingProduct->available_from ? $bookingProduct->available_from->format('Y-m-d H:i:s') : '' }}";
 
-                this.booking.available_to = "{{ $bookingProduct && $bookingProduct->available_to ? $bookingProduct->available_to->format('Y-m-d H:i:s') : '' }}";
+                this.booking.available_to =
+                    "{{ $bookingProduct && $bookingProduct->available_to ? $bookingProduct->available_to->format('Y-m-d H:i:s') : '' }}";
             }
         });
     </script>

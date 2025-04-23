@@ -2,7 +2,6 @@
 
 namespace Webkul\Paypal\Helpers;
 
-use Webkul\Paypal\Payment\Standard;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 
@@ -28,13 +27,12 @@ class Ipn
      * @return void
      */
     public function __construct(
-        protected Standard $paypalStandard,
         protected OrderRepository $orderRepository,
         protected InvoiceRepository $invoiceRepository
     ) {}
 
     /**
-     * This function process the IPN sent from paypal end.
+     * This function processes the IPN sent from PayPal.
      *
      * @param  array  $post
      * @return null|void|\Exception
@@ -50,21 +48,22 @@ class Ipn
         try {
             if (
                 isset($this->post['txn_type'])
-                && $this->post['txn_type'] == 'recurring_payment'
+                && $this->post['txn_type'] === 'recurring_payment'
             ) {
-
-            } else {
-                $this->getOrder();
-
-                $this->processOrder();
+                // Handle recurring payment (optional implementation)
+                return;
             }
+
+            $this->getOrder();
+
+            $this->processOrder();
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Load order via IPN invoice id.
+     * Load order via IPN invoice ID.
      *
      * @return void
      */
@@ -76,27 +75,27 @@ class Ipn
     }
 
     /**
-     * Process order and create invoice.
+     * Process the order and create invoice.
      *
      * @return void
      */
     protected function processOrder()
     {
-        if ($this->post['payment_status'] == 'Completed') {
+        if ($this->post['payment_status'] === 'Completed') {
             if ($this->post['mc_gross'] != $this->order->grand_total) {
                 return;
-            } else {
-                $this->orderRepository->update(['status' => 'processing'], $this->order->id);
+            }
 
-                if ($this->order->canInvoice()) {
-                    $invoice = $this->invoiceRepository->create($this->prepareInvoiceData());
-                }
+            $this->orderRepository->update(['status' => 'processing'], $this->order->id);
+
+            if ($this->order->canInvoice()) {
+                $this->invoiceRepository->create($this->prepareInvoiceData());
             }
         }
     }
 
     /**
-     * Prepares order's invoice data for creation.
+     * Prepare invoice data from order.
      *
      * @return array
      */
@@ -112,13 +111,25 @@ class Ipn
     }
 
     /**
-     * Post back to PayPal to check whether this request is a valid one.
+     * Post back to PayPal (or another provider) to verify IPN.
      *
      * @return bool
      */
     protected function postBack()
     {
-        $url = $this->paypalStandard->getIPNUrl();
+        $method = $this->post['payment_method'] ?? null;
+
+        $url = match ($method) {
+            'paypal_standard' => 'https://ipnpb.paypal.com/cgi-bin/webscr',
+            // Future payment methods:
+            // 'stripe' => 'https://...',
+            // 'razorpay' => 'https://...',
+            default => null,
+        };
+
+        if (!$url) {
+            return false;
+        }
 
         $request = curl_init();
 
@@ -131,14 +142,10 @@ class Ipn
         ]);
 
         $response = curl_exec($request);
-        $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
+        $status   = curl_getinfo($request, CURLINFO_HTTP_CODE);
 
         curl_close($request);
 
-        if ($status == 200 && $response == 'VERIFIED') {
-            return true;
-        }
-
-        return false;
+        return $status == 200 && $response === 'VERIFIED';
     }
 }

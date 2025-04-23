@@ -4,11 +4,11 @@ namespace Webkul\CatalogRule\Helpers;
 
 use Carbon\Carbon;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\CatalogRule\Repositories\CatalogRuleProductRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\CatalogRule\Models\CatalogRuleProduct;
+use Webkul\Product\Models\Product;
 use Webkul\Rule\Helpers\Validator;
 
-class CatalogRuleProduct
+class CatalogRuleProductHelper
 {
     /**
      * Create a new helper instance.
@@ -17,8 +17,6 @@ class CatalogRuleProduct
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
-        protected ProductRepository $productRepository,
-        protected CatalogRuleProductRepository $catalogRuleProductRepository,
         protected Validator $validator
     ) {}
 
@@ -64,7 +62,7 @@ class CatalogRuleProduct
                     ];
 
                     if (count($rows) == $batchCount) {
-                        $this->catalogRuleProductRepository->insert($rows);
+                        CatalogRuleProduct::insert($rows);
 
                         $rows = [];
                     }
@@ -73,7 +71,7 @@ class CatalogRuleProduct
         }
 
         if (! empty($rows)) {
-            $this->catalogRuleProductRepository->insert($rows);
+            CatalogRuleProduct::insert($rows);
         }
     }
 
@@ -85,7 +83,7 @@ class CatalogRuleProduct
      */
     public function cleanRuleIndices($rule)
     {
-        $this->catalogRuleProductRepository->where('catalog_rule_id', $rule->id)->delete();
+        CatalogRuleProduct::where('catalog_rule_id', $rule->id)->delete();
     }
 
     /**
@@ -97,9 +95,9 @@ class CatalogRuleProduct
     public function cleanProductIndices($productIds = [])
     {
         if (count($productIds)) {
-            $this->catalogRuleProductRepository->whereIn('product_id', $productIds)->delete();
+            CatalogRuleProduct::whereIn('product_id', $productIds)->delete();
         } else {
-            $this->catalogRuleProductRepository->deleteWhere([
+            CatalogRuleProduct::deleteWhere([
                 ['product_id', 'like', '%%'],
             ]);
         }
@@ -114,7 +112,7 @@ class CatalogRuleProduct
      */
     public function getMatchingProductIds($rule, $product = null)
     {
-        $products = $this->productRepository->scopeQuery(function ($query) use ($rule, $product) {
+        $products = Product::scopeQuery(function ($query) use ($rule, $product) {
             $query = $query->addSelect('products.*');
 
             if ($product) {
@@ -173,7 +171,7 @@ class CatalogRuleProduct
      */
     public function getCatalogRuleProducts($product = null)
     {
-        $ruleProducts = $this->catalogRuleProductRepository->scopeQuery(function ($query) use ($product) {
+        $ruleProducts = CatalogRuleProduct::scopeQuery(function ($query) use ($product) {
             $query = $query->distinct()
                 ->select('catalog_rule_products.*')
                 ->leftJoin('products', 'catalog_rule_products.product_id', '=', 'products.id')

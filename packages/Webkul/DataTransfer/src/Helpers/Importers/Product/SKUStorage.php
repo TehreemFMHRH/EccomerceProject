@@ -3,7 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
 use Illuminate\Support\Arr;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class SKUStorage
 {
@@ -32,7 +32,7 @@ class SKUStorage
      *
      * @return void
      */
-    public function __construct(protected ProductRepository $productRepository) {}
+    public function __construct( ) {}
 
     /**
      * Initialize storage
@@ -50,9 +50,9 @@ class SKUStorage
     public function load(array $skus = []): void
     {
         if (empty($skus)) {
-            $products = $this->productRepository->all($this->selectColumns);
+            $products = Product::all($this->selectColumns);
         } else {
-            $products = $this->productRepository->findWhereIn('sku', $skus, $this->selectColumns);
+            $products = Product::whereIn('sku', $skus, $this->selectColumns)->get();
         }
 
         foreach ($products as $product) {

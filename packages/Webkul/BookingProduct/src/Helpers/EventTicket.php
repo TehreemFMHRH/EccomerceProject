@@ -70,7 +70,7 @@ class EventTicket extends Booking
      */
     public function isItemHaveQuantity($cartItem): bool
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $cartItem['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
 
         $ticket = $bookingProduct->event_tickets()->find($cartItem['additional']['booking']['ticket_id']);
 
@@ -104,7 +104,7 @@ class EventTicket extends Booking
     public function addAdditionalPrices(array $products): array
     {
         foreach ($products as $key => $product) {
-            $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $product['product_id']);
+            $bookingProduct = BookingProduct::findOneByField('product_id', $product['product_id']);
 
             $ticket = $bookingProduct->event_tickets()->find($product['additional']['booking']['ticket_id']);
 
@@ -138,7 +138,7 @@ class EventTicket extends Booking
 
         $price = $item->product->getTypeInstance()->getFinalPrice($item->quantity);
 
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $item->product_id);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $item->product_id);
 
         $ticket = $bookingProduct->event_tickets()->find($item->additional['booking']['ticket_id']);
 

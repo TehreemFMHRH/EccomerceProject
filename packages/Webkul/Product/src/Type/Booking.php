@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\BookingProduct\Helpers\Booking as BookingHelper;
-use Webkul\BookingProduct\Repositories\BookingProductRepository;
+use Webkul\BookingProduct\Models\BookingProduct;
 use Webkul\Checkout\Models\CartItem;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\DataTypes\CartItemValidationResult;
@@ -15,7 +15,7 @@ use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 
 class Booking extends AbstractType
@@ -57,13 +57,12 @@ class Booking extends AbstractType
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected AttributeRepository $attributeRepository,
-        protected ProductRepository $productRepository,
+
         protected ProductAttributeValueRepository $attributeValueRepository,
         protected ProductInventoryRepository $productInventoryRepository,
         protected ProductImageRepository $productImageRepository,
         protected ProductVideoRepository $productVideoRepository,
         protected ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
-        protected BookingProductRepository $bookingProductRepository,
         protected BookingHelper $bookingHelper
     ) {}
 
@@ -77,11 +76,11 @@ class Booking extends AbstractType
         $product = parent::update($data, $id, $attribute);
 
         if (request()->route()->getName() != 'admin.catalog.products.mass_update') {
-            $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $id);
+            $bookingProduct = BookingProduct::findOneByField('product_id', $id);
 
             $bookingProduct
-                ? $this->bookingProductRepository->update($data['booking'], $bookingProduct->id)
-                : $this->bookingProductRepository->create(array_merge($data['booking'], [
+                ? BookingProduct::update($data['booking'], $bookingProduct->id)
+                : BookingProduct::create(array_merge($data['booking'], [
                     'product_id' => $id,
                 ]));
         }
@@ -102,7 +101,7 @@ class Booking extends AbstractType
             return $bookingProducts[$productId];
         }
 
-        return $bookingProducts[$productId] = $this->bookingProductRepository->findOneByField('product_id', $productId);
+        return $bookingProducts[$productId] = BookingProduct::findOneByField('product_id', $productId);
     }
 
     /**

@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 use Webkul\CartRule\Repositories\CartRuleCouponRepository;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Checkout\Models\CartAddress;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Shipping\Facades\Shipping;
 use Webkul\Shop\Http\Resources\CartResource;
 use Webkul\Shop\Http\Resources\ProductResource;
@@ -20,7 +20,7 @@ class CartController extends APIController
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
+
         protected CartRuleCouponRepository $cartRuleCouponRepository
     ) {}
 
@@ -51,7 +51,7 @@ class CartController extends APIController
             'product_id' => 'required|integer|exists:products,id',
         ]);
 
-        $product = $this->productRepository->with('parent')->findOrFail(request()->input('product_id'));
+        $product = Product::with('parent')->findOrFail(request()->input('product_id'));
 
         try {
             if (! $product->status) {
@@ -274,7 +274,7 @@ class CartController extends APIController
 
         $productIds = $cart->items->pluck('product_id')->toArray();
 
-        $products = $this->productRepository
+        $products = Product
             ->select('products.*', 'product_cross_sells.child_id')
             ->join('product_cross_sells', 'products.id', '=', 'product_cross_sells.child_id')
             ->whereIn('product_cross_sells.parent_id', $productIds)

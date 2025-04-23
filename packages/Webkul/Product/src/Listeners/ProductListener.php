@@ -8,11 +8,11 @@ use Webkul\Product\Jobs\ElasticSearch\DeleteIndex as DeleteElasticSearchIndexJob
 use Webkul\Product\Jobs\ElasticSearch\UpdateCreateIndex as UpdateCreateElasticSearchIndexJob;
 use Webkul\Product\Jobs\UpdateCreateInventoryIndex as UpdateCreateInventoryIndexJob;
 use Webkul\Product\Jobs\UpdateCreatePriceIndex as UpdateCreatePriceIndexJob;
-use Webkul\Product\Repositories\ProductBundleOptionProductRepository;
-use Webkul\Product\Repositories\ProductGroupedProductRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\ProductBundleOptionProduct;
+use Webkul\Product\Models\ProductGroupedProduct;
+use Webkul\Product\Models\Product;
 
-class Product
+class ProductListener
 {
     /**
      * Create a new listener instance.
@@ -20,9 +20,9 @@ class Product
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
-        protected ProductBundleOptionProductRepository $productBundleOptionProductRepository,
-        protected ProductGroupedProductRepository $productGroupedProductRepository,
+
+
+
         protected FlatIndexer $flatIndexer
     ) {}
 
@@ -72,7 +72,7 @@ class Product
             return;
         }
 
-        $product = $this->productRepository->find($productId);
+        $product = Product::find($productId);
 
         if (! $product) {
             return;
@@ -121,9 +121,9 @@ class Product
      */
     public function getParentBundleProductIds($product)
     {
-        $bundleOptionProducts = $this->productBundleOptionProductRepository->findWhere([
+        $bundleOptionProducts = ProductBundleOptionProduct::where([
             'product_id' => $product->id,
-        ]);
+        ])->get();
 
         $productIds = [];
 
@@ -142,9 +142,9 @@ class Product
      */
     public function getParentGroupProductIds($product)
     {
-        $groupedOptionProducts = $this->productGroupedProductRepository->findWhere([
+        $groupedOptionProducts = ProductGroupedProduct::where([
             'associated_product_id' => $product->id,
-        ]);
+        ])->get();
 
         return $groupedOptionProducts->pluck('product_id')->toArray();
     }

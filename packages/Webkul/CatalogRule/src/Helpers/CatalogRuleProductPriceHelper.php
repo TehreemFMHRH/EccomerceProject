@@ -3,9 +3,9 @@
 namespace Webkul\CatalogRule\Helpers;
 
 use Carbon\Carbon;
-use Webkul\CatalogRule\Repositories\CatalogRuleProductPriceRepository;
+use Webkul\CatalogRule\Models\CatalogRuleProductPrice;
 
-class CatalogRuleProductPrice
+class CatalogRuleProductPriceHelper
 {
     /**
      * Create a new helper instance.
@@ -13,8 +13,7 @@ class CatalogRuleProductPrice
      * @return void
      */
     public function __construct(
-        protected CatalogRuleProductPriceRepository $catalogRuleProductPriceRepository,
-        protected CatalogRuleProduct $catalogRuleProductHelper
+        protected CatalogRuleProductHelper $catalogRuleProductHelper
     ) {}
 
     /**
@@ -48,7 +47,7 @@ class CatalogRuleProductPrice
                 $endRuleFlags = [];
 
                 if (count($prices) > $batchCount) {
-                    $this->catalogRuleProductPriceRepository->insert($prices);
+                    CatalogRuleProductPrice::insert($prices);
 
                     $prices = [];
                 }
@@ -99,7 +98,7 @@ class CatalogRuleProductPrice
             $previousKey = $productKey;
         }
 
-        $this->catalogRuleProductPriceRepository->insert($prices);
+        CatalogRuleProductPrice::insert($prices);
     }
 
     /**
@@ -147,9 +146,9 @@ class CatalogRuleProductPrice
     public function cleanProductPriceIndices($productIds = [])
     {
         if (count($productIds)) {
-            $this->catalogRuleProductPriceRepository->whereIn('product_id', $productIds)->delete();
+            CatalogRuleProductPrice::whereIn('product_id', $productIds)->delete();
         } else {
-            $this->catalogRuleProductPriceRepository->deleteWhere([
+            CatalogRuleProductPrice::deleteWhere([
                 ['product_id', 'like', '%%'],
             ]);
         }

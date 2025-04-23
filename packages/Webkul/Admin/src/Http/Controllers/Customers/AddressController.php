@@ -7,21 +7,11 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AddressRequest;
 use Webkul\Admin\Http\Resources\AddressResource;
-use Webkul\Customer\Repositories\CustomerAddressRepository;
-use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Customer\Models\CustomerAddress;
+use Webkul\Customer\Models\Customer;
 
 class AddressController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct(
-        protected CustomerRepository $customerRepository,
-        protected CustomerAddressRepository $customerAddressRepository
-    ) {}
-
     /**
      * Fetch address by customer id.
      *
@@ -29,7 +19,7 @@ class AddressController extends Controller
      */
     public function index(int $id)
     {
-        $customer = $this->customerRepository->find($id);
+        $customer = Customer::find($id);
 
         return view('admin::customers.addresses.index', compact('customer'));
     }
@@ -41,7 +31,7 @@ class AddressController extends Controller
      */
     public function create(int $id)
     {
-        $customer = $this->customerRepository->find($id);
+        $customer = Customer::find($id);
 
         return view('admin::customers.addresses.create', compact('customer'));
     }
@@ -71,7 +61,7 @@ class AddressController extends Controller
 
         Event::dispatch('customer.addresses.create.before');
 
-        $address = $this->customerAddressRepository->create(array_merge($data, [
+        $address = CustomerAddress::create(array_merge($data, [
             'customer_id' => $id,
         ]));
 
@@ -90,7 +80,7 @@ class AddressController extends Controller
      */
     public function edit(int $id)
     {
-        $address = $this->customerAddressRepository->find($id);
+        $address = CustomerAddress::find($id);
 
         return view('admin::customers.addresses.edit', compact('address'));
     }
@@ -120,7 +110,7 @@ class AddressController extends Controller
 
         Event::dispatch('customer.addresses.update.before', $id);
 
-        $address = $this->customerAddressRepository->update($data, $id);
+        $address = CustomerAddress::update($data, [$id]);
 
         Event::dispatch('customer.addresses.update.after', $address);
 
@@ -138,11 +128,11 @@ class AddressController extends Controller
      */
     public function makeDefault($id)
     {
-        if ($default = $this->customerAddressRepository->findOneWhere(['customer_id' => $id, 'default_address' => 1])) {
+        if ($default = CustomerAddress::findOneWhere(['customer_id' => $id, 'default_address' => 1])) {
             $default->update(['default_address' => 0]);
         }
 
-        $address = $this->customerAddressRepository->findOneWhere([
+        $address = CustomerAddress::findOneWhere([
             'id'              => request('set_as_default'),
             'customer_id'     => $id,
         ]);
@@ -164,7 +154,7 @@ class AddressController extends Controller
     {
         Event::dispatch('customer.addresses.delete.before', $id);
 
-        $this->customerAddressRepository->delete($id);
+        CustomerAddress::delete($id);
 
         Event::dispatch('customer.addresses.delete.after', $id);
 

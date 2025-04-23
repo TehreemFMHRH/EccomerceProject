@@ -14,7 +14,7 @@ use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 
 abstract class AbstractType
@@ -118,7 +118,6 @@ abstract class AbstractType
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected AttributeRepository $attributeRepository,
-        protected ProductRepository $productRepository,
         protected ProductAttributeValueRepository $attributeValueRepository,
         protected ProductInventoryRepository $productInventoryRepository,
         protected ProductImageRepository $productImageRepository,
@@ -133,7 +132,7 @@ abstract class AbstractType
      */
     public function create(array $data)
     {
-        $product = $this->productRepository->getModel()->create($data);
+        $product = Product::getModel()->create($data);
 
         $product->channels()->sync(core()->getDefaultChannel()->id);
 
@@ -149,7 +148,7 @@ abstract class AbstractType
      */
     public function update(array $data, $id, $attributes = [])
     {
-        $product = $this->productRepository->find($id);
+        $product = Product::find($id);
 
         $product->update($data);
 

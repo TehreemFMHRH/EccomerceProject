@@ -8,7 +8,7 @@ use Webkul\Admin\Validations\ProductCategoryUniqueSlug;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\Slug;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class ProductForm extends FormRequest
 {
@@ -32,7 +32,7 @@ class ProductForm extends FormRequest
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
+
         protected ProductAttributeValueRepository $productAttributeValueRepository
     ) {
         $this->maxVideoFileSize = core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?: '2048';
@@ -55,7 +55,7 @@ class ProductForm extends FormRequest
      */
     public function rules()
     {
-        $product = $this->productRepository->find($this->id);
+        $product = Product::find($this->id);
 
         $this->rules = array_merge($product->getTypeInstance()->getTypeValidationRules(), [
             'sku'                  => ['required', 'unique:products,sku,'.$this->id, new Slug],

@@ -5,7 +5,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Shop\Http\Resources\AttributeResource;
 use Webkul\Shop\Http\Resources\CategoryResource;
 use Webkul\Shop\Http\Resources\CategoryTreeResource;
@@ -20,7 +20,7 @@ class CategoryController extends APIController
     public function __construct(
         protected AttributeRepository $attributeRepository,
         protected CategoryRepository $categoryRepository,
-        protected ProductRepository $productRepository
+
     ) {}
 
     /**
@@ -81,7 +81,7 @@ class CategoryController extends APIController
             $searchEngine = core()->getConfigData('catalog.products.search.storefront_mode');
         }
 
-        $maxPrice = $this->productRepository
+        $maxPrice = Product
             ->setSearchEngine($searchEngine ?? 'database')
             ->getMaxPrice(['category_id' => $categoryId]);
 

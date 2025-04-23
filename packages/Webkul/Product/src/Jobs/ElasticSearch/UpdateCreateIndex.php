@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\Product\Helpers\Indexers\ElasticSearch;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class UpdateCreateIndex implements ShouldQueue
 {
@@ -38,7 +38,7 @@ class UpdateCreateIndex implements ShouldQueue
 
         $ids = implode(',', $this->productIds);
 
-        $products = app(ProductRepository::class)
+        $products = app(Product::class)
             ->whereIn('id', $this->productIds)
             ->orderByRaw("FIELD(id, $ids)")
             ->get();

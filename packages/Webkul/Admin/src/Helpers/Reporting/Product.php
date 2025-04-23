@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Customer\Repositories\WishlistRepository;
 use Webkul\Marketing\Repositories\SearchTermRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Repositories\ProductReviewRepository;
 use Webkul\Sales\Repositories\OrderItemRepository;
 
@@ -20,7 +19,6 @@ class Product extends AbstractReporting
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
         protected ProductInventoryRepository $productInventoryRepository,
         protected WishlistRepository $wishlistRepository,
         protected ProductReviewRepository $reviewRepository,

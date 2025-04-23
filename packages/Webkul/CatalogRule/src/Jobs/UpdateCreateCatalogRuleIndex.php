@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Webkul\CatalogRule\Contracts\CatalogRule;
 use Webkul\CatalogRule\Helpers\CatalogRuleIndex;
 use Webkul\Product\Helpers\Indexers\Price as PriceIndexer;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class UpdateCreateCatalogRuleIndex implements ShouldQueue
 {
@@ -49,7 +49,7 @@ class UpdateCreateCatalogRuleIndex implements ShouldQueue
         }
 
         while (true) {
-            $paginator = app(ProductRepository::class)
+            $paginator = app(Product::class)
                 ->whereIn('id', $productIds)
                 ->cursorPaginate(self::BATCH_SIZE);
 

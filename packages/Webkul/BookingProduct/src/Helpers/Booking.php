@@ -4,12 +4,12 @@ namespace Webkul\BookingProduct\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Webkul\BookingProduct\Contracts\BookingProduct;
+use Webkul\BookingProduct\Contracts\BookingProduct as BookingProductContract;
 use Webkul\BookingProduct\Repositories\BookingProductAppointmentSlotRepository;
 use Webkul\BookingProduct\Repositories\BookingProductDefaultSlotRepository;
 use Webkul\BookingProduct\Repositories\BookingProductEventTicketRepository;
 use Webkul\BookingProduct\Repositories\BookingProductRentalSlotRepository;
-use Webkul\BookingProduct\Repositories\BookingProductRepository;
+use Webkul\BookingProduct\Models\BookingProduct;
 use Webkul\BookingProduct\Repositories\BookingProductTableSlotRepository;
 use Webkul\BookingProduct\Repositories\BookingRepository;
 use Webkul\Checkout\Models\CartItem;
@@ -58,7 +58,6 @@ class Booking
      * @return void
      */
     public function __construct(
-        protected BookingProductRepository $bookingProductRepository,
         protected BookingRepository $bookingRepository,
         protected BookingProductDefaultSlotRepository $bookingProductDefaultSlotRepository,
         protected BookingProductAppointmentSlotRepository $bookingProductAppointmentSlotRepository,
@@ -88,7 +87,7 @@ class Booking
     /**
      * Returns the booking information.
      */
-    public function getWeekSlotDurations(BookingProduct $bookingProduct): array
+    public function getWeekSlotDurations(BookingProductContract $bookingProduct): array
     {
         $slotsByDays = [];
 
@@ -115,7 +114,7 @@ class Booking
     /**
      * Returns html of slots for a current day.
      */
-    public function getTodaySlotsHtml(BookingProduct $bookingProduct)
+    public function getTodaySlotsHtml(BookingProductContract $bookingProduct)
     {
         $slots = [];
 
@@ -169,7 +168,7 @@ class Booking
      */
     public function isItemHaveQuantity($cartItem)
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $cartItem['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
 
         if (
             $bookingProduct->qty - $this->getBookedQuantity($cartItem) < $cartItem['quantity']
@@ -202,7 +201,7 @@ class Booking
      */
     public function isSlotExpired($cartItem): bool
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $cartItem['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
 
         $typeHelper = app($this->getTypeHelper($bookingProduct->type));
 
@@ -240,7 +239,7 @@ class Booking
      */
     public function getCartItemOptions(array $data): array
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $data['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $data['product_id']);
 
         if ($bookingProduct) {
             $data['attributes'] = $this->getBookingAttributes($bookingProduct, $data);
@@ -272,7 +271,7 @@ class Booking
     /**
      * Returns the available week days.
      */
-    private function getAvailableWeekDays(BookingProduct $bookingProduct)
+    private function getAvailableWeekDays(BookingProductContract $bookingProduct)
     {
         if ($bookingProduct->available_every_week ?? true) {
             return $this->daysOfWeek;

@@ -9,6 +9,7 @@ use Webkul\Product\DataTypes\CartItemValidationResult;
 use Webkul\Product\Facades\ProductImage;
 use Webkul\Product\Helpers\Indexers\Price\Configurable as ConfigurableIndexer;
 use Webkul\Tax\Facades\Tax;
+use Webkul\Product\Models\Product;
 
 class Configurable extends AbstractType
 {
@@ -172,7 +173,7 @@ class Configurable extends AbstractType
         }
 
         foreach ($previousVariantIds as $variantId) {
-            $this->productRepository->delete($variantId);
+            Product::delete($variantId);
         }
 
         return $product;
@@ -231,7 +232,7 @@ class Configurable extends AbstractType
      */
     public function updateVariant(array $data, $id)
     {
-        $variant = $this->productRepository->find($id);
+        $variant = Product::find($id);
 
         $variant->update(['sku' => $data['sku']]);
 
@@ -374,7 +375,7 @@ class Configurable extends AbstractType
 
         $data = $this->getQtyRequest($data);
 
-        $childProduct = $this->productRepository->find($data['selected_configurable_option']);
+        $childProduct = Product::find($data['selected_configurable_option']);
 
         if (! $childProduct->haveSufficientQuantity($data['quantity'])) {
             return trans('product::app.checkout.cart.inventory-warning');
@@ -452,7 +453,7 @@ class Configurable extends AbstractType
      */
     public function getAdditionalOptions($data)
     {
-        $childProduct = app('Webkul\Product\Repositories\ProductRepository')->find($data['selected_configurable_option']);
+        $childProduct = app('Webkul\Product\Models\Product')->find($data['selected_configurable_option']);
 
         foreach ($this->product->super_attributes as $attribute) {
             $option = $attribute->options()->where('id', $childProduct->{$attribute->code})->first();
@@ -490,7 +491,7 @@ class Configurable extends AbstractType
 
         if ($item instanceof \Webkul\Customer\Contracts\Wishlist) {
             if (isset($item->additional['selected_configurable_option'])) {
-                $product = $this->productRepository->find($item->additional['selected_configurable_option']);
+                $product = Product::find($item->additional['selected_configurable_option']);
             }
         } else {
             if (count($item->child->product->images)) {

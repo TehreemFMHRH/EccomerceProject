@@ -9,7 +9,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Rules\Code;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class AttributeController extends Controller
 {
@@ -20,7 +20,6 @@ class AttributeController extends Controller
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
-        protected ProductRepository $productRepository
     ) {}
 
     /**
@@ -209,9 +208,14 @@ class AttributeController extends Controller
      */
     public function productSuperAttributes(int $id)
     {
-        $product = $this->productRepository->findOrFail($id);
+        $product = Product::find($id);
 
-        $superAttributes = $this->productRepository->getSuperAttributes($product);
+if (! $product) {
+    // Custom logic
+    abort(404, 'Product not found');
+}
+
+        $superAttributes = Product::getSuperAttributes($product);
 
         return response()->json([
             'data'  => $superAttributes,

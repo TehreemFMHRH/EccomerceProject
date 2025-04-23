@@ -3,23 +3,12 @@
 namespace Webkul\FPC\Listeners;
 
 use Spatie\ResponseCache\Facades\ResponseCache;
-use Webkul\Product\Repositories\ProductBundleOptionProductRepository;
-use Webkul\Product\Repositories\ProductGroupedProductRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\ProductBundleOptionProduct;
+use Webkul\Product\Models\ProductGroupedProduct;
+use Webkul\Product\Models\Product;
 
-class Product
+class FPCProductListener
 {
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
-    public function __construct(
-        protected ProductRepository $productRepository,
-        protected ProductBundleOptionProductRepository $productBundleOptionProductRepository,
-        protected ProductGroupedProductRepository $productGroupedProductRepository
-    ) {}
-
     /**
      * Update or create product page cache
      *
@@ -41,7 +30,7 @@ class Product
      */
     public function beforeDelete($productId)
     {
-        $product = $this->productRepository->find($productId);
+        $product = Product::find($productId);
 
         $urls = $this->getForgettableUrls($product);
 
@@ -111,9 +100,9 @@ class Product
      */
     public function getParentBundleProducts($product)
     {
-        $bundleOptionProducts = $this->productBundleOptionProductRepository->findWhere([
+        $bundleOptionProducts = ProductBundleOptionProduct::where([
             'product_id' => $product->id,
-        ]);
+        ])->get();
 
         $products = [];
 
@@ -132,9 +121,9 @@ class Product
      */
     public function getParentGroupProducts($product)
     {
-        $groupedOptionProducts = $this->productGroupedProductRepository->findWhere([
+        $groupedOptionProducts = ProductGroupedProduct::where([
             'associated_product_id' => $product->id,
-        ]);
+        ])->get();
 
         $products = [];
 

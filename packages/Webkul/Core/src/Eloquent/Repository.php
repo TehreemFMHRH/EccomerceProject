@@ -145,7 +145,7 @@ abstract class Repository extends BaseRepository implements CacheableInterface
      * @param  array  $columns
      * @return mixed
      */
-    public function findOrFail($id, $columns = ['*'])
+    public function Fail($id, $columns = ['*'])
     {
         $this->applyCriteria();
         $this->applyScope();

@@ -10,21 +10,12 @@ use Illuminate\Support\Str;
 use Webkul\Admin\DataGrids\Settings\UserDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\UserForm;
-use Webkul\User\Repositories\AdminRepository;
-use Webkul\User\Repositories\RoleRepository;
+use Webkul\Core\Facades\Acl;
+use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct(
-        protected AdminRepository $adminRepository,
-        protected RoleRepository $roleRepository
-    ) {}
-
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +27,7 @@ class UserController extends Controller
             return datagrid(UserDataGrid::class)->process();
         }
 
-        $roles = $this->roleRepository->all();
+        $roles = Role::all();
 
         return view('admin::settings.users.index', compact('roles'));
     }
@@ -63,7 +54,7 @@ class UserController extends Controller
 
         Event::dispatch('user.admin.create.before');
 
-        $admin = $this->adminRepository->create($data);
+        $admin = Admin::create($data);
 
         if (request()->hasFile('image')) {
             $admin->image = current(request()->file('image'))->store('admins/'.$admin->id);
@@ -85,9 +76,9 @@ class UserController extends Controller
      */
     public function edit($id): JsonResponse
     {
-        $user = $this->adminRepository->findOrFail($id);
+        $user = Admin::findOrFail($id);
 
-        $roles = $this->roleRepository->all();
+        $roles = Role::all();
 
         return new JsonResponse([
             'roles' => $roles,
@@ -112,7 +103,8 @@ class UserController extends Controller
 
         Event::dispatch('user.admin.update.before', $id);
 
-        $admin = $this->adminRepository->update($data, $id);
+        Admin::update($data, $id);
+        $admin = Admin::find($id);
 
         if (request()->hasFile('image')) {
             $admin->image = current(request()->file('image'))->store('admins/'.$admin->id);
@@ -146,7 +138,7 @@ class UserController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        if ($this->adminRepository->count() == 1) {
+        if (Admin::count() == 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.last-delete-error'),
             ], 400);
@@ -155,7 +147,7 @@ class UserController extends Controller
         try {
             Event::dispatch('user.admin.delete.before', $id);
 
-            $this->adminRepository->delete($id);
+            Admin::delete($id);
 
             Event::dispatch('user.admin.delete.after', $id);
 
@@ -178,7 +170,7 @@ class UserController extends Controller
      */
     public function confirm($id)
     {
-        $user = $this->adminRepository->findOrFail($id);
+        $user = Admin::findOrFail($id);
 
         return view('admin::customers.customers.confirm-password', compact('user'));
     }
@@ -193,14 +185,14 @@ class UserController extends Controller
         $password = request()->input('password');
 
         if (Hash::check($password, auth()->guard('admin')->user()->password)) {
-            if ($this->adminRepository->count() == 1) {
+            if (Admin::count() == 1) {
                 session()->flash('error', trans('admin::app.settings.users.delete-last'));
             } else {
                 $id = auth()->guard('admin')->user()->id;
 
                 Event::dispatch('user.admin.delete.before', $id);
 
-                $this->adminRepository->delete($id);
+                Admin::delete($id);
 
                 Event::dispatch('user.admin.delete.after', $id);
 
@@ -226,7 +218,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
-        $user = $this->adminRepository->find($id);
+        $user = Admin::find($id);
 
         /**
          * Password check.
@@ -247,7 +239,7 @@ class UserController extends Controller
         if (
             $isStatusChangedToInactive
             && (auth()->guard('admin')->user()->id === (int) $id
-                && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
+                && Admin::countAdminsWithAllAccessAndActiveStatus() === 1
             )
         ) {
             return $this->cannotChangeRedirectResponse('status');
@@ -262,7 +254,7 @@ class UserController extends Controller
 
         if (
             $isRoleChanged
-            && $this->adminRepository->countAdminsWithAllAccess() === 1
+            && Admin::countAdminsWithAllAccess() === 1
         ) {
             return $this->cannotChangeRedirectResponse('role');
         }

@@ -1,9 +1,9 @@
 <?php
 
 namespace Webkul\Core\Helpers\Exchange;
-
-use Webkul\Core\Repositories\CurrencyRepository;
-use Webkul\Core\Repositories\ExchangeRateRepository;
+use Webkul\Core\Models\Currency;
+use Webkul\Core\Helpers\Exchange\ExchangeRate;
+use Illuminate\Support\Facades\DB;
 
 class ExchangeRates extends ExchangeRate
 {
@@ -27,8 +27,7 @@ class ExchangeRates extends ExchangeRate
      * @return void
      */
     public function __construct(
-        protected CurrencyRepository $currencyRepository,
-        protected ExchangeRateRepository $exchangeRateRepository
+
     ) {
         $this->apiEndPoint = config('services.exchange_api.exchange_rates.url');
 
@@ -44,7 +43,7 @@ class ExchangeRates extends ExchangeRate
     {
         $client = new \GuzzleHttp\Client;
 
-        foreach ($this->currencyRepository->all() as $currency) {
+        foreach (Currency::all() as $currency) {
             if ($currency->code == config('app.currency')) {
                 continue;
             }
@@ -74,15 +73,21 @@ class ExchangeRates extends ExchangeRate
             }
 
             if ($exchangeRate = $currency->exchange_rate) {
-                $this->exchangeRateRepository->update([
+                ExchangeRate::update([
                     'rate' => $result['result'],
                 ], $exchangeRate->id);
             } else {
-                $this->exchangeRateRepository->create([
+                ExchangeRate::create([
                     'rate'            => $result['result'],
                     'target_currency' => $currency->id,
                 ]);
             }
         }
+    }
+
+    public static function findOneWhere(array $conditions)
+    {
+        // Sample logic: manually query your storage source (DB, config, array, etc.)
+        return DB::table('currency_exchange_rates')->where($conditions)->first();
     }
 }

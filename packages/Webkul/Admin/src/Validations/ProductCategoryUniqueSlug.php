@@ -5,7 +5,7 @@ namespace Webkul\Admin\Validations;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Webkul\Category\Models\CategoryTranslationProxy;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class ProductCategoryUniqueSlug implements Rule
 {
@@ -115,7 +115,7 @@ class ProductCategoryUniqueSlug implements Rule
             $searchEngine = core()->getConfigData('catalog.products.search.storefront_mode');
         }
 
-        $product = app(ProductRepository::class)
+        $product = app(Product::class)
             ->setSearchEngine($searchEngine ?? 'database')
             ->findBySlug($slug);
 

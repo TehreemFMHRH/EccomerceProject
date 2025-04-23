@@ -15,7 +15,7 @@ class ProductBundleOptionRepository extends Repository
      * @return void
      */
     public function __construct(
-        protected ProductBundleOptionProductRepository $productBundleOptionProductRepository,
+
         Container $container
     ) {
         parent::__construct($container);
@@ -56,7 +56,7 @@ class ProductBundleOptionRepository extends Repository
                     $this->update($bundleOptionInputs, $bundleOptionId);
                 }
 
-                $this->productBundleOptionProductRepository->saveBundleOptionProducts($bundleOptionInputs, $productBundleOption);
+                ProductBundleOptionProduct::saveBundleOptionProducts($bundleOptionInputs, $productBundleOption);
             }
         }
 

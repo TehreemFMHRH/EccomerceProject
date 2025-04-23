@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\InventoryRequest;
@@ -21,7 +22,7 @@ use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class ProductController extends Controller
 {
@@ -29,6 +30,11 @@ class ProductController extends Controller
     * Using const variable for status
     */
     const ACTIVE_STATUS = 1;
+
+     /**
+     * Search engine.
+     */
+    protected $searchEngine = 'database';
 
     /**
      * Create a new controller instance.
@@ -41,7 +47,6 @@ class ProductController extends Controller
         protected ProductDownloadableLinkRepository $productDownloadableLinkRepository,
         protected ProductDownloadableSampleRepository $productDownloadableSampleRepository,
         protected ProductInventoryRepository $productInventoryRepository,
-        protected ProductRepository $productRepository,
         protected CustomerRepository $customerRepository,
     ) {}
 
@@ -110,13 +115,17 @@ class ProductController extends Controller
 
         Event::dispatch('catalog.product.create.before');
 
-        $product = $this->productRepository->create(request()->only([
+        $data = request()->only([
             'type',
             'attribute_family_id',
             'sku',
             'super_attributes',
             'family',
-        ]));
+        ]);
+
+        $typeInstance = app(config('product_types.'.$data['type'].'.class'));
+
+        $product = $typeInstance->create($data);
 
         Event::dispatch('catalog.product.create.after', $product);
 
@@ -136,7 +145,11 @@ class ProductController extends Controller
      */
     public function edit(int $id)
     {
-        $product = $this->productRepository->findOrFail($id);
+        $product = Product::find($id);
+
+        if (! $product) {
+            abort(404, 'Product not found');
+        }
 
         return view('admin::catalog.products.edit', compact('product'));
     }
@@ -150,7 +163,19 @@ class ProductController extends Controller
     {
         Event::dispatch('catalog.product.update.before', $id);
 
-        $product = $this->productRepository->update(request()->all(), $id);
+        $product = Product::find($id);
+
+        if (! $product) {
+            // If product not found, return 404 or redirect with error
+            abort(404, 'Product not found');
+            // OR
+            // return redirect()->back()->with('error', 'Product not found.');
+        }
+
+        // Update the product via its type instance
+        $product->getTypeInstance()->update($request->all(), $id);
+
+        $product->refresh();
 
         Event::dispatch('catalog.product.update.after', $product);
 
@@ -159,6 +184,7 @@ class ProductController extends Controller
         return redirect()->route('admin.catalog.products.index');
     }
 
+
     /**
      * Update inventories.
      *
@@ -166,7 +192,12 @@ class ProductController extends Controller
      */
     public function updateInventories(InventoryRequest $inventoryRequest, int $id)
     {
-        $product = $this->productRepository->findOrFail($id);
+        $product = Product::find($id);
+
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         Event::dispatch('catalog.product.update.before', $id);
 
@@ -202,7 +233,27 @@ class ProductController extends Controller
         try {
             Event::dispatch('catalog.product.create.before');
 
-            $product = $this->productRepository->copy($id);
+            $product = $this->with([
+                'attribute_family',
+                'categories',
+                'customer_group_prices',
+                'inventories',
+                'inventory_sources',
+            ])->find($id);
+
+            if (! $product) {
+                abort(404, 'Product not found.');
+            }
+
+            if ($product->parent_id) {
+                throw new \Exception(trans('product::app.datagrid.variant-already-exist-message'));
+            }
+
+            $product = DB::transaction(function () use ($product) {
+                $copiedProduct = $product->getTypeInstance()->copy();
+
+                return $copiedProduct;
+            });
 
             Event::dispatch('catalog.product.create.after', $product);
         } catch (\Exception $e) {
@@ -236,7 +287,7 @@ class ProductController extends Controller
         try {
             Event::dispatch('catalog.product.delete.before', $id);
 
-            $this->productRepository->delete($id);
+            Product::delete($id);
 
             Event::dispatch('catalog.product.delete.after', $id);
 
@@ -261,12 +312,12 @@ class ProductController extends Controller
 
         try {
             foreach ($productIds as $productId) {
-                $product = $this->productRepository->find($productId);
+                $product = Product::find($productId);
 
                 if (isset($product)) {
                     Event::dispatch('catalog.product.delete.before', $productId);
 
-                    $this->productRepository->delete($productId);
+                    Product::delete($productId);
 
                     Event::dispatch('catalog.product.delete.after', $productId);
                 }
@@ -292,9 +343,17 @@ class ProductController extends Controller
         foreach ($productIds as $productId) {
             Event::dispatch('catalog.product.update.before', $productId);
 
-            $product = $this->productRepository->update([
+            $product = Product::find($productId);
+            if (! $product) {
+                // Custom logic
+                abort(404, 'Product not found');
+            }
+
+            $product = $product->getTypeInstance()->update([
                 'status'  => $massUpdateRequest->input('value'),
             ], $productId, ['status']);
+
+            $product->refresh();
 
             Event::dispatch('catalog.product.update.after', $product);
         }
@@ -302,6 +361,16 @@ class ProductController extends Controller
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
         ], 200);
+    }
+
+    /**
+     * Copy product.
+     */
+    public function setSearchEngine(string $searchEngine): self
+    {
+        $this->searchEngine = $searchEngine;
+
+        return $this;
     }
 
     /**
@@ -354,8 +423,7 @@ class ProductController extends Controller
             $params['exclude_customizable_products'] = request('exclude_customizable_products');
         }
 
-        $products = $this->productRepository
-            ->setSearchEngine($searchEngine)
+        $products = Product::setSearchEngine($searchEngine)
             ->getAll($params);
 
         return ProductResource::collection($products);
@@ -377,4 +445,6 @@ class ProductController extends Controller
 
         return Storage::download($productAttribute['text_value']);
     }
+
+
 }

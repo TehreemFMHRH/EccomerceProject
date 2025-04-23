@@ -2,25 +2,91 @@
 
 namespace Webkul\Shop\Http\Controllers;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
+use Webkul\Core\Eloquent\Repository;
+use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Marketing\Repositories\SearchSynonymRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Product\Repositories\ElasticSearchRepository;
 
 class ProductController extends Controller
 {
+    /**
+     * Search engine.
+     */
+    protected $searchEngine = 'database';
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
+        protected CustomerRepository $customerRepository,
+        protected AttributeRepository $attributeRepository,
+        protected ElasticSearchRepository $elasticSearchRepository,
+        protected SearchSynonymRepository $searchSynonymRepository,
+        Container $container,
         protected ProductAttributeValueRepository $productAttributeValueRepository,
         protected ProductDownloadableSampleRepository $productDownloadableSampleRepository,
         protected ProductDownloadableLinkRepository $productDownloadableLinkRepository
-    ) {}
+    ) {
+        parent::__construct($container);
+    }
+
+    /**
+     * Return product by filtering through attribute values.
+     *
+     * @param  string  $code
+     * @param  mixed  $value
+     * @return \Webkul\Product\Contracts\Product
+     */
+    public function findByAttributeCode($code, $value)
+    {
+        $attribute = $this->attributeRepository->findOneByField('code', $code);
+
+        $attributeValues = $this->productAttributeValueRepository->findWhere([
+            'attribute_id'          => $attribute->id,
+            $attribute->column_name => $value,
+        ]);
+
+        if ($attribute->value_per_channel) {
+            if ($attribute->value_per_locale) {
+                $filteredAttributeValues = $attributeValues
+                    ->where('channel', core()->getRequestedChannelCode())
+                    ->where('locale', core()->getRequestedLocaleCode());
+
+                if ($attributeValues->isEmpty()) {
+                    $filteredAttributeValues = $attributeValues
+                        ->where('channel', core()->getRequestedChannelCode())
+                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel());
+                }
+            } else {
+                $filteredAttributeValues = $attributeValues
+                    ->where('channel', core()->getRequestedChannelCode());
+            }
+        } else {
+            if ($attribute->value_per_locale) {
+                $filteredAttributeValues = $attributeValues
+                    ->where('locale', core()->getRequestedLocaleCode());
+
+                if ($filteredAttributeValues->isEmpty()) {
+                    $filteredAttributeValues = $attributeValues
+                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel());
+                }
+            } else {
+                $filteredAttributeValues = $attributeValues;
+            }
+        }
+
+        return $filteredAttributeValues->first()?->product;
+    }
 
     /**
      * Download image or file.
@@ -69,11 +135,14 @@ class ProductController extends Controller
                 }
             } else {
                 $productDownloadableSample = $this->productDownloadableSampleRepository->findOrFail(request('id'));
+                $product = Product::find($productDownloadableSample->product_id);
 
-                if ($product = $this->productRepository->findOrFail($productDownloadableSample->product_id)) {
-                    if (! $product->visible_individually) {
-                        return redirect()->back();
-                    }
+                if (! $product) {
+                    return redirect()->back()->with('error', 'Product not found.');
+                }
+
+                if (! $product->visible_individually) {
+                    return redirect()->back();
                 }
 
                 if ($productDownloadableSample->type == 'file') {

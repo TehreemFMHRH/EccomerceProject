@@ -5,7 +5,7 @@ namespace Webkul\Product;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Webkul\Customer\Contracts\Wishlist;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class ProductImage
 {
@@ -14,7 +14,7 @@ class ProductImage
      *
      * @return void
      */
-    public function __construct(protected ProductRepository $productRepository) {}
+    public function __construct( ) {}
 
     /**
      * Retrieve collection of gallery images.
@@ -68,7 +68,7 @@ class ProductImage
     {
         if ($item instanceof Wishlist) {
             if (isset($item->additional['selected_configurable_option'])) {
-                $product = $this->productRepository->find($item->additional['selected_configurable_option']);
+                $product = Product::find($item->additional['selected_configurable_option']);
             } else {
                 $product = $item->product;
             }

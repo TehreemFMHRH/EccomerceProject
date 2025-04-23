@@ -5,7 +5,7 @@ namespace Webkul\Product\Helpers\Indexers;
 use Illuminate\Support\Carbon;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
 use Webkul\Product\Repositories\ProductPriceIndexRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class Price extends AbstractIndexer
 {
@@ -35,7 +35,7 @@ class Price extends AbstractIndexer
      */
     public function __construct(
         protected CustomerGroupRepository $customerGroupRepository,
-        protected ProductRepository $productRepository,
+
         protected ProductPriceIndexRepository $productPriceIndexRepository
     ) {
         $this->batchSize = self::BATCH_SIZE;
@@ -49,7 +49,7 @@ class Price extends AbstractIndexer
     public function reindexFull()
     {
         while (true) {
-            $paginator = $this->productRepository
+            $paginator = Product
                 ->with([
                     'variants',
                     'attribute_family',
@@ -87,7 +87,7 @@ class Price extends AbstractIndexer
     public function reindexSelective()
     {
         while (true) {
-            $paginator = $this->productRepository
+            $paginator = Product
                 ->distinct()
                 ->select('products.*')
                 ->with([

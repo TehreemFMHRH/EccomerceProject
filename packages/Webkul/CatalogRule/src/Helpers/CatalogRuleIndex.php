@@ -4,6 +4,8 @@ namespace Webkul\CatalogRule\Helpers;
 
 use Carbon\Carbon;
 use Webkul\CatalogRule\Repositories\CatalogRuleRepository;
+use Webkul\CatalogRule\Models\CatalogRuleProduct;
+use Webkul\CatalogRule\Models\CatalogRuleProductPrice;
 
 class CatalogRuleIndex
 {

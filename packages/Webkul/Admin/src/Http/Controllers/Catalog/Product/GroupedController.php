@@ -4,21 +4,21 @@ namespace Webkul\Admin\Http\Controllers\Catalog\Product;
 
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class GroupedController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
-    public function __construct(protected ProductRepository $productRepository) {}
-
     /**
      * Returns the compare items of the customer.
      */
     public function options(int $id): JsonResponse
     {
-        $product = $this->productRepository->findOrFail($id);
+        $product = Product::find($id);
+
+if (! $product) {
+    // Custom logic
+    abort(404, 'Product not found');
+}
 
         $options = $product->grouped_products()->orderBy('sort_order')->get();
 

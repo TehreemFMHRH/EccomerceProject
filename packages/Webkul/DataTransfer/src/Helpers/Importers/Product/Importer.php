@@ -32,14 +32,14 @@ use Webkul\Product\Jobs\UpdateCreateInventoryIndex as UpdateCreateInventoryIndex
 use Webkul\Product\Jobs\UpdateCreatePriceIndex as UpdateCreatePriceIndexJob;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
-use Webkul\Product\Repositories\ProductBundleOptionProductRepository;
+use Webkul\Product\Models\ProductBundleOptionProduct;
 use Webkul\Product\Repositories\ProductBundleOptionRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductFlatRepository;
-use Webkul\Product\Repositories\ProductGroupedProductRepository;
+use Webkul\Product\Models\ProductGroupedProduct;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class Importer extends AbstractImporter
 {
@@ -209,15 +209,15 @@ class Importer extends AbstractImporter
         protected CustomerGroupRepository $customerGroupRepository,
         protected ChannelRepository $channelRepository,
         protected InventorySourceRepository $inventorySourceRepository,
-        protected ProductRepository $productRepository,
+
         protected ProductFlatRepository $productFlatRepository,
         protected ProductAttributeValueRepository $productAttributeValueRepository,
         protected ProductImageRepository $productImageRepository,
         protected ProductInventoryRepository $productInventoryRepository,
         protected ProductBundleOptionRepository $productBundleOptionRepository,
-        protected ProductBundleOptionProductRepository $productBundleOptionProductRepository,
+
         protected ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
-        protected ProductGroupedProductRepository $productGroupedProductRepository,
+
         protected SKUStorage $skuStorage
     ) {
         parent::__construct($importBatchRepository);
@@ -576,8 +576,7 @@ class Importer extends AbstractImporter
             return;
         }
 
-        $products = $this->productRepository
-            ->resetScope()
+        $products = Product::resetScope()
             ->select('products.id', 'product_attribute_values.text_value as url_key', 'products.sku')
             ->leftJoin('product_attribute_values', 'products.id', 'product_attribute_values.product_id')
             ->leftJoin('attributes', 'product_attribute_values.attribute_id', 'attributes.id')
@@ -742,8 +741,7 @@ class Importer extends AbstractImporter
                     /**
                      * Get all the parent grouped product ids
                      */
-                    $parentGroupedProductIds = $this->productGroupedProductRepository
-                        ->select('product_id')
+                    $parentGroupedProductIds = ProductGroupedProduct::select('product_id')
                         ->whereIn('associated_product_id', $productIds)
                         ->pluck('product_id')
                         ->toArray();
@@ -756,7 +754,7 @@ class Importer extends AbstractImporter
                     /**
                      * Get all the parent configurable product ids
                      */
-                    $parentConfigurableProductIds = $this->productRepository->select('parent_id')
+                    $parentConfigurableProductIds = Product::select('parent_id')
                         ->whereIn('id', $productIds)
                         ->whereNotNull('parent_id')
                         ->pluck('parent_id')
@@ -778,7 +776,7 @@ class Importer extends AbstractImporter
                     /**
                      * Get all configurable product children ids
                      */
-                    $associatedProductIds = $this->productRepository->select('id')
+                    $associatedProductIds = Product::select('id')
                         ->whereIn('parent_id', $productIds)
                         ->pluck('id')
                         ->toArray();
@@ -799,8 +797,8 @@ class Importer extends AbstractImporter
                     /**
                      * Get all bundle product associated product ids
                      */
-                    $associatedProductIds = $this->productBundleOptionProductRepository
-                        ->select('product_bundle_option_products.product_id')
+                    $associatedProductIds = ProductBundleOptionProduct::
+                        select('product_bundle_option_products.product_id')
                         ->leftJoin('product_bundle_options', 'product_bundle_option_products.product_bundle_option_id', 'product_bundle_options.id')
                         ->whereIn('product_bundle_options.product_id', $productIds)
                         ->pluck('product_id')
@@ -822,8 +820,7 @@ class Importer extends AbstractImporter
                     /**
                      * Get all grouped product associated product ids
                      */
-                    $associatedProductIds = $this->productGroupedProductRepository
-                        ->select('associated_product_id')
+                    $associatedProductIds = ProductGroupedProduct::select('associated_product_id')
                         ->whereIn('product_id', $productIds)
                         ->pluck('associated_product_id')
                         ->toArray();
@@ -883,7 +880,7 @@ class Importer extends AbstractImporter
 
         $this->deletedItemsCount = count($idsToDelete);
 
-        $this->productRepository->deleteWhere([['id', 'IN', $idsToDelete]]);
+        Product::deleteWhere([['id', 'IN', $idsToDelete]]);
 
         /**
          * Remove product images from the storage
@@ -1024,7 +1021,7 @@ class Importer extends AbstractImporter
         if (! empty($products['update'])) {
             $this->updatedItemsCount += count($products['update']);
 
-            $this->productRepository->upsert(
+            Product::upsert(
                 $products['update'],
                 $this->masterAttributeCode
             );
@@ -1033,12 +1030,12 @@ class Importer extends AbstractImporter
         if (! empty($products['insert'])) {
             $this->createdItemsCount += count($products['insert']);
 
-            $this->productRepository->insert($products['insert']);
+            Product::insert($products['insert']);
 
             /**
              * Update the sku storage with newly created products
              */
-            $newProducts = $this->productRepository->findWhereIn(
+            $newProducts = Product::whereIn(
                 'sku',
                 array_keys($products['insert']),
                 [
@@ -1047,7 +1044,7 @@ class Importer extends AbstractImporter
                     'sku',
                     'attribute_family_id',
                 ]
-            );
+            )->get();
 
             foreach ($newProducts as $product) {
                 $this->skuStorage->set($product->sku, [
@@ -1571,7 +1568,7 @@ class Importer extends AbstractImporter
         /**
          * Save the variants parent associations
          */
-        $this->productRepository->upsert($parentAssociations, 'sku');
+        Product::upsert($parentAssociations, 'sku');
 
         /**
          * Save super attributes associations for configurable products
@@ -1650,7 +1647,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        $this->productGroupedProductRepository->upsert(
+        ProductGroupedProduct::upsert(
             $associatedProducts,
             [
                 'product_id',
@@ -1802,7 +1799,7 @@ class Importer extends AbstractImporter
         }
 
         if (! empty($upsertData['products'])) {
-            $this->productBundleOptionProductRepository->upsert(
+            ProductBundleOptionProduct::upsert(
                 $upsertData['products'],
                 [
                     'product_id',

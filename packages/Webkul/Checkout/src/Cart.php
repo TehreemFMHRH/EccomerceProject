@@ -15,7 +15,7 @@ use Webkul\Customer\Contracts\Wishlist as WishlistContract;
 use Webkul\Customer\Repositories\CustomerAddressRepository;
 use Webkul\Customer\Repositories\WishlistRepository;
 use Webkul\Product\Contracts\Product as ProductContract;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Shipping\Facades\Shipping;
 use Webkul\Tax\Facades\Tax;
 use Webkul\Tax\Repositories\TaxCategoryRepository;
@@ -53,7 +53,7 @@ class Cart
         protected CartRepository $cartRepository,
         protected CartItemRepository $cartItemRepository,
         protected CartAddressRepository $cartAddressRepository,
-        protected ProductRepository $productRepository,
+
         protected TaxCategoryRepository $taxCategoryRepository,
         protected WishlistRepository $wishlistRepository,
         protected CustomerAddressRepository $customerAddressRepository

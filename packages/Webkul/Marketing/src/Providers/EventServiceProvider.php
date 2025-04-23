@@ -16,11 +16,11 @@ class EventServiceProvider extends ServiceProvider
          * Product Events
          */
         'catalog.product.update.before'  => [
-            'Webkul\Marketing\Listeners\Product@beforeUpdate',
+            'Webkul\Marketing\Listeners\ProductListener@beforeUpdate',
         ],
 
         'catalog.product.delete.before' => [
-            'Webkul\Marketing\Listeners\Product@beforeDelete',
+            'Webkul\Marketing\Listeners\ProductListener@beforeDelete',
         ],
 
         /**

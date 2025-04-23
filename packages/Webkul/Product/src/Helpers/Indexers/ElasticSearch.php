@@ -7,7 +7,7 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchClient;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class ElasticSearch extends AbstractIndexer
 {
@@ -67,7 +67,7 @@ class ElasticSearch extends AbstractIndexer
         protected ChannelRepository $channelRepository,
         protected CustomerGroupRepository $customerGroupRepository,
         protected AttributeRepository $attributeRepository,
-        protected ProductRepository $productRepository,
+
     ) {
         $this->batchSize = self::BATCH_SIZE;
     }
@@ -119,7 +119,7 @@ class ElasticSearch extends AbstractIndexer
     public function reindexFull()
     {
         while (true) {
-            $paginator = $this->productRepository
+            $paginator = Product
                 ->select('products.*')
                 ->with([
                     'channels',

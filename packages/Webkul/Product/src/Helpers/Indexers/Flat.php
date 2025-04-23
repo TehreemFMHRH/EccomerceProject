@@ -5,7 +5,7 @@ namespace Webkul\Product\Helpers\Indexers;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Repositories\ProductFlatRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class Flat extends AbstractIndexer
 {
@@ -52,7 +52,7 @@ class Flat extends AbstractIndexer
      * @return void
      */
     public function __construct(
-        protected ProductRepository $productRepository,
+
         protected ProductFlatRepository $productFlatRepository
     ) {
         $this->batchSize = self::BATCH_SIZE;
@@ -68,7 +68,7 @@ class Flat extends AbstractIndexer
     public function reindexFull()
     {
         while (true) {
-            $paginator = $this->productRepository
+            $paginator = Product
                 ->with([
                     'variants',
                     'attribute_family',

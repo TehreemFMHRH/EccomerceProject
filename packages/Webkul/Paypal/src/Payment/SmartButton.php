@@ -1,169 +1,169 @@
 <?php
 
-namespace Webkul\Paypal\Payment;
+// namespace Webkul\Paypal\Payment;
 
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
-use PayPalCheckoutSdk\Core\ProductionEnvironment;
-use PayPalCheckoutSdk\Core\SandboxEnvironment;
-use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
-use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
-use PayPalCheckoutSdk\Orders\OrdersGetRequest;
-use PayPalCheckoutSdk\Payments\CapturesRefundRequest;
+// use PayPalCheckoutSdk\Core\PayPalHttpClient;
+// use PayPalCheckoutSdk\Core\ProductionEnvironment;
+// use PayPalCheckoutSdk\Core\SandboxEnvironment;
+// use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
+// use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
+// use PayPalCheckoutSdk\Orders\OrdersGetRequest;
+// use PayPalCheckoutSdk\Payments\CapturesRefundRequest;
 
-class SmartButton extends Paypal
-{
-    /**
-     * Client ID.
-     *
-     * @var string
-     */
-    protected $clientId;
+// class SmartButton extends Paypal
+// {
+//     /**
+//      * Client ID.
+//      *
+//      * @var string
+//      */
+//     protected $clientId;
 
-    /**
-     * Client secret.
-     *
-     * @var string
-     */
-    protected $clientSecret;
+//     /**
+//      * Client secret.
+//      *
+//      * @var string
+//      */
+//     protected $clientSecret;
 
-    /**
-     * Payment method code.
-     *
-     * @var string
-     */
-    protected $code = 'paypal_smart_button';
+//     /**
+//      * Payment method code.
+//      *
+//      * @var string
+//      */
+//     protected $code = 'paypal_smart_button';
 
-    /**
-     * Paypal partner attribution id.
-     *
-     * @var string
-     */
-    protected $paypalPartnerAttributionId = 'Bagisto_Cart';
+//     /**
+//      * Paypal partner attribution id.
+//      *
+//      * @var string
+//      */
+//     protected $paypalPartnerAttributionId = 'Bagisto_Cart';
 
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->initialize();
-    }
+//     /**
+//      * Constructor.
+//      */
+//     public function __construct()
+//     {
+//         $this->initialize();
+//     }
 
-    /**
-     * Returns PayPal HTTP client instance with environment that has access
-     * credentials context. Use this instance to invoke PayPal APIs, provided the
-     * credentials have access.
-     *
-     * @return PayPalCheckoutSdk\Core\PayPalHttpClient
-     */
-    public function client()
-    {
-        return new PayPalHttpClient($this->environment());
-    }
+//     /**
+//      * Returns PayPal HTTP client instance with environment that has access
+//      * credentials context. Use this instance to invoke PayPal APIs, provided the
+//      * credentials have access.
+//      *
+//      * @return PayPalCheckoutSdk\Core\PayPalHttpClient
+//      */
+//     public function client()
+//     {
+//         return new PayPalHttpClient($this->environment());
+//     }
 
-    /**
-     * Create order for approval of client.
-     *
-     * @param  array  $body
-     * @return HttpResponse
-     */
-    public function createOrder($body)
-    {
-        $request = new OrdersCreateRequest;
-        $request->headers['PayPal-Partner-Attribution-Id'] = $this->paypalPartnerAttributionId;
-        $request->prefer('return=representation');
-        $request->body = $body;
+//     /**
+//      * Create order for approval of client.
+//      *
+//      * @param  array  $body
+//      * @return HttpResponse
+//      */
+//     public function createOrder($body)
+//     {
+//         $request = new OrdersCreateRequest;
+//         $request->headers['PayPal-Partner-Attribution-Id'] = $this->paypalPartnerAttributionId;
+//         $request->prefer('return=representation');
+//         $request->body = $body;
 
-        return $this->client()->execute($request);
-    }
+//         return $this->client()->execute($request);
+//     }
 
-    /**
-     * Capture order after approval.
-     *
-     * @param  string  $orderId
-     * @return HttpResponse
-     */
-    public function captureOrder($orderId)
-    {
-        $request = new OrdersCaptureRequest($orderId);
+//     /**
+//      * Capture order after approval.
+//      *
+//      * @param  string  $orderId
+//      * @return HttpResponse
+//      */
+//     public function captureOrder($orderId)
+//     {
+//         $request = new OrdersCaptureRequest($orderId);
 
-        $request->headers['PayPal-Partner-Attribution-Id'] = $this->paypalPartnerAttributionId;
-        $request->prefer('return=representation');
+//         $request->headers['PayPal-Partner-Attribution-Id'] = $this->paypalPartnerAttributionId;
+//         $request->prefer('return=representation');
 
-        $this->client()->execute($request);
-    }
+//         $this->client()->execute($request);
+//     }
 
-    /**
-     * Get order details.
-     *
-     * @param  string  $orderId
-     * @return HttpResponse
-     */
-    public function getOrder($orderId)
-    {
-        return $this->client()->execute(new OrdersGetRequest($orderId));
-    }
+//     /**
+//      * Get order details.
+//      *
+//      * @param  string  $orderId
+//      * @return HttpResponse
+//      */
+//     public function getOrder($orderId)
+//     {
+//         return $this->client()->execute(new OrdersGetRequest($orderId));
+//     }
 
-    /**
-     * Get capture id.
-     *
-     * @param  string  $orderId
-     * @return string
-     */
-    public function getCaptureId($orderId)
-    {
-        $paypalOrderDetails = $this->getOrder($orderId);
+//     /**
+//      * Get capture id.
+//      *
+//      * @param  string  $orderId
+//      * @return string
+//      */
+//     public function getCaptureId($orderId)
+//     {
+//         $paypalOrderDetails = $this->getOrder($orderId);
 
-        return $paypalOrderDetails->result->purchase_units[0]->payments->captures[0]->id;
-    }
+//         return $paypalOrderDetails->result->purchase_units[0]->payments->captures[0]->id;
+//     }
 
-    /**
-     * Refund order.
-     *
-     * @return HttpResponse
-     */
-    public function refundOrder($captureId, $body = [])
-    {
-        $request = new CapturesRefundRequest($captureId);
+//     /**
+//      * Refund order.
+//      *
+//      * @return HttpResponse
+//      */
+//     public function refundOrder($captureId, $body = [])
+//     {
+//         $request = new CapturesRefundRequest($captureId);
 
-        $request->headers['PayPal-Partner-Attribution-Id'] = $this->paypalPartnerAttributionId;
-        $request->body = $body;
+//         $request->headers['PayPal-Partner-Attribution-Id'] = $this->paypalPartnerAttributionId;
+//         $request->body = $body;
 
-        return $this->client()->execute($request);
-    }
+//         return $this->client()->execute($request);
+//     }
 
-    /**
-     * Return paypal redirect url.
-     *
-     * @return string
-     */
-    public function getRedirectUrl() {}
+//     /**
+//      * Return paypal redirect url.
+//      *
+//      * @return string
+//      */
+//     public function getRedirectUrl() {}
 
-    /**
-     * Set up and return PayPal PHP SDK environment with PayPal access credentials.
-     * This sample uses SandboxEnvironment. In production, use LiveEnvironment.
-     *
-     * @return PayPalCheckoutSdk\Core\SandboxEnvironment|PayPalCheckoutSdk\Core\ProductionEnvironment
-     */
-    protected function environment()
-    {
-        $isSandbox = $this->getConfigData('sandbox') ?: false;
+//     /**
+//      * Set up and return PayPal PHP SDK environment with PayPal access credentials.
+//      * This sample uses SandboxEnvironment. In production, use LiveEnvironment.
+//      *
+//      * @return PayPalCheckoutSdk\Core\SandboxEnvironment|PayPalCheckoutSdk\Core\ProductionEnvironment
+//      */
+//     protected function environment()
+//     {
+//         $isSandbox = $this->getConfigData('sandbox') ?: false;
 
-        if ($isSandbox) {
-            return new SandboxEnvironment($this->clientId, $this->clientSecret);
-        }
+//         if ($isSandbox) {
+//             return new SandboxEnvironment($this->clientId, $this->clientSecret);
+//         }
 
-        return new ProductionEnvironment($this->clientId, $this->clientSecret);
-    }
+//         return new ProductionEnvironment($this->clientId, $this->clientSecret);
+//     }
 
-    /**
-     * Initialize properties.
-     *
-     * @return void
-     */
-    protected function initialize()
-    {
-        $this->clientId = $this->getConfigData('client_id') ?: '';
+//     /**
+//      * Initialize properties.
+//      *
+//      * @return void
+//      */
+//     protected function initialize()
+//     {
+//         $this->clientId = $this->getConfigData('client_id') ?: '';
 
-        $this->clientSecret = $this->getConfigData('client_secret') ?: '';
-    }
-}
+//         $this->clientSecret = $this->getConfigData('client_secret') ?: '';
+//     }
+// }

@@ -5,7 +5,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Repositories\WishlistRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Shop\Http\Resources\CartResource;
 use Webkul\Shop\Http\Resources\WishlistResource;
 
@@ -18,7 +18,7 @@ class WishlistController extends APIController
      */
     public function __construct(
         protected WishlistRepository $wishlistRepository,
-        protected ProductRepository $productRepository
+
     ) {}
 
     /**
@@ -47,7 +47,7 @@ class WishlistController extends APIController
             'product_id' => 'required|integer|exists:products,id',
         ]);
 
-        $product = $this->productRepository->find(request()->input('product_id'));
+        $product = Product::find(request()->input('product_id'));
 
         if (! $product) {
             return new JsonResource([

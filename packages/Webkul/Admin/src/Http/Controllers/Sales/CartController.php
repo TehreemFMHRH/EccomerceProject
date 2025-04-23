@@ -13,7 +13,7 @@ use Webkul\Checkout\Facades\Cart;
 use Webkul\Checkout\Repositories\CartRepository;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Payment\Facades\Payment;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Shipping\Facades\Shipping;
 
 class CartController extends Controller
@@ -26,7 +26,7 @@ class CartController extends Controller
     public function __construct(
         protected CartRepository $cartRepository,
         protected CustomerRepository $customerRepository,
-        protected ProductRepository $productRepository,
+
         protected CartRuleCouponRepository $cartRuleCouponRepository
     ) {}
 
@@ -88,7 +88,12 @@ class CartController extends Controller
         try {
             $params = request()->all();
 
-            $product = $this->productRepository->findOrFail($params['product_id']);
+            $product = Product::find($params['product_id']);
+
+            if (! $product) {
+                // Custom logic
+                abort(404, 'Product not found');
+            }
 
             Cart::addProduct($product, $params);
 

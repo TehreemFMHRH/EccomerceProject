@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\Product\Helpers\Indexers\Price as PriceIndexer;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class DeleteCatalogRuleIndex implements ShouldQueue
 {
@@ -41,7 +41,7 @@ class DeleteCatalogRuleIndex implements ShouldQueue
          * Reindex price index for the products associated with the catalog rule.
          */
         while (true) {
-            $paginator = app(ProductRepository::class)
+            $paginator = app(Product::class)
                 ->whereIn('id', $this->productIds)
                 ->cursorPaginate(self::BATCH_SIZE);
 

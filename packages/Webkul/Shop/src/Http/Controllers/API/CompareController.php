@@ -5,7 +5,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Webkul\Customer\Repositories\CompareItemRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Shop\Http\Resources\CompareItemResource;
 
 class CompareController extends APIController
@@ -17,7 +17,7 @@ class CompareController extends APIController
      */
     public function __construct(
         protected CompareItemRepository $compareItemRepository,
-        protected ProductRepository $productRepository
+
     ) {}
 
     /**
@@ -37,7 +37,7 @@ class CompareController extends APIController
                 ->toArray();
         }
 
-        $products = $this->productRepository
+        $products = Product
             ->whereIn('id', $productIds)
             ->get();
 
@@ -99,7 +99,7 @@ class CompareController extends APIController
                 ->toArray();
         }
 
-        $products = $this->productRepository
+        $products = Product
             ->whereIn('id', $productIds ?? [])
             ->get();
 

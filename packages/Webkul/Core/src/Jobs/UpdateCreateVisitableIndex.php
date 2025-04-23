@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class UpdateCreateVisitableIndex implements ShouldQueue
 {
@@ -48,7 +48,7 @@ class UpdateCreateVisitableIndex implements ShouldQueue
             return;
         }
 
-        $product = app(ProductRepository::class)->findBySlug($slugOrURLKey);
+        $product = app(Product::class)->findBySlug($slugOrURLKey);
 
         if (
             ! $product

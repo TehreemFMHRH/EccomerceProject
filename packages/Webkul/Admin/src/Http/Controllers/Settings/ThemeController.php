@@ -9,17 +9,10 @@ use Webkul\Admin\DataGrids\Theme\ThemeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
-use Webkul\Theme\Repositories\ThemeCustomizationRepository;
+use Webkul\Theme\Models\ThemeCustomization;
 
 class ThemeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct(public ThemeCustomizationRepository $themeCustomizationRepository) {}
-
     /**
      * Display a listing resource for the available tax rates.
      *
@@ -46,9 +39,9 @@ class ThemeController extends Controller
                 core()->getRequestedLocaleCode().'.options.*.image' => 'image|extensions:jpeg,jpg,png,svg,webp',
             ]);
 
-            $theme = $this->themeCustomizationRepository->find(request()->input('id'));
+            $theme = ThemeCustomization::find(request()->input('id'));
 
-            return $this->themeCustomizationRepository->uploadImage(request()->all(), $theme);
+            return ThemeCustomization::uploadImage(request()->all(), $theme);
         }
 
         $validated = $this->validate(request(), [
@@ -61,7 +54,7 @@ class ThemeController extends Controller
 
         Event::dispatch('theme_customization.create.before');
 
-        $theme = $this->themeCustomizationRepository->create($validated);
+        $theme = ThemeCustomization::create($validated);
 
         Event::dispatch('theme_customization.create.after', $theme);
 
@@ -77,7 +70,7 @@ class ThemeController extends Controller
      */
     public function edit(int $id)
     {
-        $theme = $this->themeCustomizationRepository->find($id);
+        $theme = ThemeCustomization::find($id);
 
         return view('admin::settings.themes.edit', compact('theme'));
     }
@@ -114,7 +107,7 @@ class ThemeController extends Controller
 
         $data['status'] = request()->input('status') == 'on';
 
-        $theme = $this->themeCustomizationRepository->update($data, $id);
+        $theme = ThemeCustomization::update($data, [$id]);
 
         Event::dispatch('theme_customization.update.after', $theme);
 
@@ -132,7 +125,7 @@ class ThemeController extends Controller
     {
         Event::dispatch('theme_customization.delete.before', $id);
 
-        $this->themeCustomizationRepository->delete($id);
+        ThemeCustomization::delete($id);
 
         Storage::deleteDirectory('theme/'.$id);
 
@@ -147,7 +140,7 @@ class ThemeController extends Controller
     {
         $selectedThemeIds = $massUpdateRequest->input('indices');
 
-        $this->themeCustomizationRepository->massUpdateStatus([
+        ThemeCustomization::massUpdateStatus([
             'status' => $massUpdateRequest->input('value'),
         ], $selectedThemeIds);
 
@@ -161,7 +154,7 @@ class ThemeController extends Controller
         $selectedThemeIds = $massDestroyRequest->input('indices');
 
         foreach ($selectedThemeIds as $themeId) {
-            $this->themeCustomizationRepository->delete($themeId);
+            ThemeCustomization::delete($themeId);
         }
 
         return new JsonResponse([

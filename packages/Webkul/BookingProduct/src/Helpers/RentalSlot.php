@@ -33,7 +33,7 @@ class RentalSlot extends Booking
      */
     public function getBookedQuantity($data): int
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $data['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $data['product_id']);
 
         $rentingType = $data['additional']['booking']['renting_type'] ?? $bookingProduct->rental_slot->renting_type;
 
@@ -67,7 +67,7 @@ class RentalSlot extends Booking
      */
     public function isSlotExpired($cartItem): bool
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $cartItem['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
 
         if (isset($cartItem['additional']['booking']['date'])) {
             $timeIntervals = $this->getSlotsByDate($bookingProduct, $cartItem['additional']['booking']['date']);
@@ -110,7 +110,7 @@ class RentalSlot extends Booking
      */
     public function addAdditionalPrices(array $products): array
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $products[0]['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $products[0]['product_id']);
 
         $rentingType = $products[0]['additional']['booking']['renting_type'] ?? $bookingProduct->rental_slot->renting_type;
 
@@ -155,7 +155,7 @@ class RentalSlot extends Booking
 
         $price = $item->product->getTypeInstance()->getFinalPrice($item->quantity);
 
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $item->product_id);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $item->product_id);
 
         $bookingInfo = $item->additional['booking'] ?? null;
 

@@ -5,7 +5,7 @@ namespace Webkul\Shop\Http\Controllers;
 use Illuminate\Http\Request;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Marketing\Repositories\URLRewriteRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Theme\Repositories\ThemeCustomizationRepository;
 
 class ProductsCategoriesProxyController extends Controller
@@ -24,7 +24,7 @@ class ProductsCategoriesProxyController extends Controller
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,
-        protected ProductRepository $productRepository,
+
         protected ThemeCustomizationRepository $themeCustomizationRepository,
         protected URLRewriteRepository $urlRewriteRepository
     ) {}
@@ -71,7 +71,7 @@ class ProductsCategoriesProxyController extends Controller
             $searchEngine = core()->getConfigData('catalog.products.search.storefront_mode');
         }
 
-        $product = $this->productRepository
+        $product = Product
             ->setSearchEngine($searchEngine ?? 'database')
             ->findBySlug($slugOrURLKey);
 

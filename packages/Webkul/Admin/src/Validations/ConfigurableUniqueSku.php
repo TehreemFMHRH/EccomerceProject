@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Validations;
 
 use Illuminate\Contracts\Validation\Rule;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class ConfigurableUniqueSku implements Rule
 {
@@ -47,14 +47,14 @@ class ConfigurableUniqueSku implements Rule
     {
         $requestedSkus = collect(request()->get('variants'))->pluck('sku')->toArray();
 
-        $productRepository = app(ProductRepository::class);
+        $product = app(Product::class);
 
         /**
          * First we will check sku in all the products except the
          * current variant ids.
          */
         if (
-            $productRepository->whereIn('sku', $requestedSkus)
+            $product->whereIn('sku', $requestedSkus)
                 ->whereNotIn('id', $this->currentIds)
                 ->exists()
         ) {

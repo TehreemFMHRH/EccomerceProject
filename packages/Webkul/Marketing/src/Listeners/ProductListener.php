@@ -3,10 +3,10 @@
 namespace Webkul\Marketing\Listeners;
 
 use Illuminate\Support\Facades\Event;
-use Webkul\Marketing\Repositories\URLRewriteRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Marketing\Models\URLRewrite;
+use Webkul\Product\Models\Product;
 
-class Product
+class ProductListener
 {
     /**
      * Permanent redirect code
@@ -14,16 +14,6 @@ class Product
      * @var int
      */
     const PERMANENT_REDIRECT_CODE = 301;
-
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
-    public function __construct(
-        protected ProductRepository $productRepository,
-        protected URLRewriteRepository $urlRewriteRepository
-    ) {}
 
     /**
      * After product is updated
@@ -39,7 +29,7 @@ class Product
             return;
         }
 
-        $product = $this->productRepository->find($id);
+        $product = Product::find($id);
 
         if ($currentURLKey === $product->url_key) {
             return;
@@ -50,15 +40,14 @@ class Product
              * Delete category and product url rewrites
              * if already exists for the request path
              */
-            $urlRewrites = $this->urlRewriteRepository->findWhere([
-                ['entity_type', 'IN', ['category', 'product']],
-                'request_path' => $currentURLKey,
-            ]);
+            $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
+            ->where('request_path', $currentURLKey)
+            ->get();
 
             foreach ($urlRewrites as $urlRewrite) {
                 Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $urlRewrite->id);
 
-                $this->urlRewriteRepository->delete($urlRewrite->id);
+                $urlRewrite->delete();
 
                 Event::dispatch('marketing.search_seo.url_rewrites.delete.after', $urlRewrite->id);
             }
@@ -70,30 +59,30 @@ class Product
          * Delete category and product url rewrites
          * if already exists for the request path
          */
-        $urlRewrites = $this->urlRewriteRepository->findWhere([
-            ['entity_type', 'IN', ['category', 'product']],
-            'target_path' => $product->url_key,
-        ]);
+        $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
+        ->where('request_path', $currentURLKey)
+        ->get();
+
 
         foreach ($urlRewrites as $urlRewrite) {
             Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $urlRewrite->id);
 
-            $this->urlRewriteRepository->delete($urlRewrite->id);
+            $urlRewrite->delete();
 
             Event::dispatch('marketing.search_seo.url_rewrites.delete.after', $urlRewrite->id);
         }
 
         Event::dispatch('marketing.search_seo.url_rewrites.create.before');
 
-        $urlRewrite = $this->urlRewriteRepository->create([
+        $urlRewrites = URLRewrite::create([
             'entity_type'   => 'product',
             'request_path'  => $product->url_key,
             'target_path'   => $currentURLKey ?? '',
             'locale'        => app()->getLocale(),
-            'redirect_type' => self::PERMANENT_REDIRECT_CODE,
+            'redirect_type' => $this::PERMANENT_REDIRECT_CODE,
         ]);
 
-        Event::dispatch('marketing.search_seo.url_rewrites.create.after', $urlRewrite);
+        Event::dispatch('marketing.search_seo.url_rewrites.create.after', $urlRewrites);
     }
 
     /**
@@ -104,21 +93,20 @@ class Product
      */
     public function beforeDelete($id)
     {
-        $product = $this->productRepository->find($id);
+        $product = Product::find($id);
 
         /**
          * Delete product url rewrites
          * if already exists for the request path
          */
-        $urlRewrites = $this->urlRewriteRepository->findWhere([
-            'entity_type'  => 'product',
-            'request_path' => $product->url_key,
-        ]);
+        $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
+        ->where('target_path', $product->url_key)
+        ->get();
 
         foreach ($urlRewrites as $urlRewrite) {
             Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $urlRewrite->id);
 
-            $this->urlRewriteRepository->delete($urlRewrite->id);
+            $urlRewrite->delete();
 
             Event::dispatch('marketing.search_seo.url_rewrites.delete.after', $urlRewrite->id);
         }

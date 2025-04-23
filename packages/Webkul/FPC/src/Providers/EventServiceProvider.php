@@ -13,11 +13,11 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'catalog.product.update.after'  => [
-            'Webkul\FPC\Listeners\Product@afterUpdate',
+            'Webkul\FPC\Listeners\FPCProductListener@afterUpdate',
         ],
 
         'catalog.product.delete.before' => [
-            'Webkul\FPC\Listeners\Product@beforeDelete',
+            'Webkul\FPC\Listeners\FPCProductListener@beforeDelete',
         ],
 
         'catalog.category.update.after' => [

@@ -13,7 +13,7 @@ class TableSlot extends Booking
      */
     public function isItemHaveQuantity($cartItem): bool
     {
-        $bookingProduct = $this->bookingProductRepository->findOneByField('product_id', $cartItem['product_id']);
+        $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
 
         if (! $bookingProduct) {
             return false;

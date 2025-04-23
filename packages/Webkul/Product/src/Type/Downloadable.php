@@ -13,7 +13,7 @@ use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 use Webkul\Tax\Facades\Tax;
 
@@ -56,7 +56,6 @@ class Downloadable extends AbstractType
     public function __construct(
         CustomerRepository $customerRepository,
         AttributeRepository $attributeRepository,
-        ProductRepository $productRepository,
         ProductAttributeValueRepository $attributeValueRepository,
         ProductInventoryRepository $productInventoryRepository,
         productImageRepository $productImageRepository,
@@ -68,7 +67,6 @@ class Downloadable extends AbstractType
         parent::__construct(
             $customerRepository,
             $attributeRepository,
-            $productRepository,
             $attributeValueRepository,
             $productInventoryRepository,
             $productImageRepository,

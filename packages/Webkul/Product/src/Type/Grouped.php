@@ -7,10 +7,10 @@ use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\Helpers\Indexers\Price\Grouped as GroupedIndexer;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
-use Webkul\Product\Repositories\ProductGroupedProductRepository;
+use Webkul\Product\Models\ProductGroupedProduct;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 
 class Grouped extends AbstractType
@@ -53,28 +53,25 @@ class Grouped extends AbstractType
      *
      * @return void
      */
-    public function __construct(
-        CustomerRepository $customerRepository,
-        AttributeRepository $attributeRepository,
-        ProductRepository $productRepository,
-        ProductAttributeValueRepository $attributeValueRepository,
-        ProductInventoryRepository $productInventoryRepository,
-        ProductImageRepository $productImageRepository,
-        ProductVideoRepository $productVideoRepository,
-        ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
-        protected ProductGroupedProductRepository $productGroupedProductRepository
-    ) {
-        parent::__construct(
-            $customerRepository,
-            $attributeRepository,
-            $productRepository,
-            $attributeValueRepository,
-            $productInventoryRepository,
-            $productImageRepository,
-            $productVideoRepository,
-            $productCustomerGroupPriceRepository
-        );
-    }
+    // public function __construct(
+    //     CustomerRepository $customerRepository,
+    //     AttributeRepository $attributeRepository,
+    //     ProductAttributeValueRepository $attributeValueRepository,
+    //     ProductInventoryRepository $productInventoryRepository,
+    //     ProductImageRepository $productImageRepository,
+    //     ProductVideoRepository $productVideoRepository,
+    //     ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
+    // ) {
+    //     parent::__construct(
+    //         $customerRepository,
+    //         $attributeRepository,
+    //         $attributeValueRepository,
+    //         $productInventoryRepository,
+    //         $productImageRepository,
+    //         $productVideoRepository,
+    //         $productCustomerGroupPriceRepository
+    //     );
+    // }
 
     /**
      * Update.
@@ -91,7 +88,7 @@ class Grouped extends AbstractType
             return $product;
         }
 
-        $this->productGroupedProductRepository->saveGroupedProducts($data, $product);
+        ProductGroupedProduct::saveGroupedProducts($data, $product);
 
         return $product;
     }
@@ -206,7 +203,7 @@ class Grouped extends AbstractType
                 continue;
             }
 
-            $product = $this->productRepository->find($productId);
+            $product = Product::find($productId);
 
             if ($product->type !== 'simple') {
                 return trans('product::app.checkout.cart.selected-products-simple');
@@ -255,7 +252,7 @@ class Grouped extends AbstractType
             'links' => function ($attribute, $value, $fail) {
                 $associatedProductIds = collect($value)->pluck('associated_product_id')->toArray();
 
-                $products = $this->productRepository->findWhereIn('id', $associatedProductIds)
+                $products = Product::whereIn('id', $associatedProductIds)
                     ->pluck('type')
                     ->filter(fn ($type) => $type !== 'simple')
                     ->count();

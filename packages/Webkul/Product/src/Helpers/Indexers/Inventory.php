@@ -4,7 +4,7 @@ namespace Webkul\Product\Helpers\Indexers;
 
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Repositories\ProductInventoryIndexRepository;
-use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Models\Product;
 
 class Inventory extends AbstractIndexer
 {
@@ -41,7 +41,7 @@ class Inventory extends AbstractIndexer
      */
     public function __construct(
         protected ChannelRepository $channelRepository,
-        protected ProductRepository $productRepository,
+
         protected ProductInventoryIndexRepository $productInventoryIndexRepository
     ) {
         $this->batchSize = self::BATCH_SIZE;
@@ -81,7 +81,7 @@ class Inventory extends AbstractIndexer
     public function reindexFull()
     {
         while (true) {
-            $paginator = $this->productRepository
+            $paginator = Product
                 ->with([
                     'inventories',
                     'ordered_inventories',
