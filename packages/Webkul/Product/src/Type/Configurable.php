@@ -8,8 +8,8 @@ use Webkul\Checkout\Models\CartItem as CartItemModel;
 use Webkul\Product\DataTypes\CartItemValidationResult;
 use Webkul\Product\Facades\ProductImage;
 use Webkul\Product\Helpers\Indexers\Price\Configurable as ConfigurableIndexer;
-use Webkul\Tax\Facades\Tax;
 use Webkul\Product\Models\Product;
+use Webkul\Tax\Facades\Tax;
 
 class Configurable extends AbstractType
 {

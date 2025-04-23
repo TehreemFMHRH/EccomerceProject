@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AddressRequest;
 use Webkul\Admin\Http\Resources\AddressResource;
-use Webkul\Customer\Models\CustomerAddress;
 use Webkul\Customer\Models\Customer;
+use Webkul\Customer\Models\CustomerAddress;
 
 class AddressController extends Controller
 {

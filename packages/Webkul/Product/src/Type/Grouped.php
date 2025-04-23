@@ -5,12 +5,12 @@ namespace Webkul\Product\Type;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\Helpers\Indexers\Price\Grouped as GroupedIndexer;
+use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductGroupedProduct;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
-use Webkul\Product\Models\ProductGroupedProduct;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 
 class Grouped extends AbstractType

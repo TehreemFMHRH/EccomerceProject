@@ -8,13 +8,13 @@ use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\DataTypes\CartItemValidationResult;
 use Webkul\Product\Helpers\BundleOption;
 use Webkul\Product\Helpers\Indexers\Price\Bundle as BundleIndexer;
-use Webkul\Product\Repositories\ProductAttributeValueRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductBundleOptionProduct;
+use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductBundleOptionRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 use Webkul\Tax\Facades\Tax;
 

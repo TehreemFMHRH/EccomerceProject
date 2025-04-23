@@ -10,21 +10,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Customer\Repositories\CustomerRepository;
-use Webkul\Product\Repositories\ElasticSearchRepository;
 use Webkul\BookingProduct\Models\BookingProductProxy;
 use Webkul\CatalogRule\Models\CatalogRuleProductPriceProxy;
 use Webkul\Category\Models\CategoryProxy;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Inventory\Models\InventorySourceProxy;
 use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Database\Factories\ProductFactory;
+use Webkul\Product\Repositories\ElasticSearchRepository;
 use Webkul\Product\Type\AbstractType;
-use Illuminate\Support\Facades\DB;
+
 class Product extends Model implements ProductContract
 {
     use HasFactory, Visitable;
@@ -552,11 +553,14 @@ class Product extends Model implements ProductContract
 
             return $this->find(current($indices['ids']));
         }
+
         return $this->findByAttributeCode('url_key', $slug);
     }
 
     protected ?AttributeRepository $attributeRepository = null;
+
     protected ?CustomerRepository $customerRepository = null;
+
     protected ?ElasticSearchRepository $elasticSearchRepository = null;
 
     protected function getAttributeRepository(): AttributeRepository
@@ -586,7 +590,6 @@ class Product extends Model implements ProductContract
         return $this->customerRepository;
     }
 
-
     /**
      * Return product by filtering through attribute values.
      *
@@ -613,7 +616,7 @@ class Product extends Model implements ProductContract
         $attributeValue = $query->first();
 
         // Fallback for locale
-        if (!$attributeValue && $attribute->value_per_locale) {
+        if (! $attributeValue && $attribute->value_per_locale) {
             $query = \Webkul\Product\Models\ProductAttributeValue::query()
                 ->where('attribute_id', $attribute->id)
                 ->where($attribute->column_name, $value)
@@ -649,7 +652,7 @@ class Product extends Model implements ProductContract
     {
         $params['url_key'] ??= null;
 
-        if (!empty($params['query'])) {
+        if (! empty($params['query'])) {
             $params['name'] = $params['query'];
         }
 
@@ -663,7 +666,6 @@ class Product extends Model implements ProductContract
     /**
      * Build query based on filters and conditions.
      *
-     * @param array $params
      * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function buildQuery(array $params)
@@ -709,13 +711,13 @@ class Product extends Model implements ProductContract
     /**
      * Apply category filter to the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
      * @return void
      */
     protected function applyCategoryFilter($qb, $params)
     {
-        if (!empty($params['category_id'])) {
+        if (! empty($params['category_id'])) {
             $qb->leftJoin('product_categories', 'product_categories.product_id', '=', 'products.id')
                 ->whereIn('product_categories.category_id', explode(',', $params['category_id']));
         }
@@ -724,13 +726,13 @@ class Product extends Model implements ProductContract
     /**
      * Apply channel filter to the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
      * @return void
      */
     protected function applyChannelFilter($qb, $params)
     {
-        if (!empty($params['channel_id'])) {
+        if (! empty($params['channel_id'])) {
             $qb->leftJoin('product_channels', 'products.id', '=', 'product_channels.product_id')
                 ->where('product_channels.channel_id', explode(',', $params['channel_id']));
         }
@@ -739,16 +741,16 @@ class Product extends Model implements ProductContract
     /**
      * Apply product type filter to the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
      * @return void
      */
     protected function applyProductTypeFilter($qb, $params)
     {
-        if (!empty($params['type'])) {
+        if (! empty($params['type'])) {
             $qb->where('products.type', $params['type']);
 
-            if ($params['type'] === 'simple' && !empty($params['exclude_customizable_products'])) {
+            if ($params['type'] === 'simple' && ! empty($params['exclude_customizable_products'])) {
                 $qb->leftJoin('product_customizable_options', 'products.id', '=', 'product_customizable_options.product_id')
                     ->whereNull('product_customizable_options.id');
             }
@@ -758,13 +760,13 @@ class Product extends Model implements ProductContract
     /**
      * Apply price filter to the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
      * @return void
      */
     protected function applyPriceFilter($qb, $params)
     {
-        if (!empty($params['price'])) {
+        if (! empty($params['price'])) {
             $priceRange = explode(',', $params['price']);
             $qb->whereBetween('product_price_indices.min_price', [
                 core()->convertToBasePrice(current($priceRange)),
@@ -776,8 +778,8 @@ class Product extends Model implements ProductContract
     /**
      * Apply attribute filters to the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
      * @return void
      */
     protected function applyAttributeFilters($qb, $params)
@@ -793,15 +795,15 @@ class Product extends Model implements ProductContract
         ]);
 
         foreach ($attributes as $attribute) {
-            $alias = $attribute->code . '_product_attribute_values';
-            $qb->leftJoin('product_attribute_values as ' . $alias, 'products.id', '=', $alias . '.product_id')
-                ->where($alias . '.attribute_id', $attribute->id);
+            $alias = $attribute->code.'_product_attribute_values';
+            $qb->leftJoin('product_attribute_values as '.$alias, 'products.id', '=', $alias.'.product_id')
+                ->where($alias.'.attribute_id', $attribute->id);
 
             if ($attribute->code == 'name') {
                 $synonyms = $this->searchSynonymRepository->getSynonymsByQuery(urldecode($params['name']));
                 $qb->where(function ($subQuery) use ($alias, $synonyms) {
                     foreach ($synonyms as $synonym) {
-                        $subQuery->orWhere($alias . '.text_value', 'like', '%' . $synonym . '%');
+                        $subQuery->orWhere($alias.'.text_value', 'like', '%'.$synonym.'%');
                     }
                 });
             } elseif ($attribute->code == 'url_key') {
@@ -811,7 +813,7 @@ class Product extends Model implements ProductContract
                     continue;
                 }
 
-                $qb->where($alias . '.' . $attribute->column_name, 1);
+                $qb->where($alias.'.'.$attribute->column_name, 1);
             }
         }
 
@@ -822,26 +824,26 @@ class Product extends Model implements ProductContract
     /**
      * Apply URL key filter.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param string $alias
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  string  $alias
+     * @param  array  $params
      * @return void
      */
     protected function applyUrlKeyFilter($qb, $alias, $params)
     {
         if (empty($params['url_key'])) {
-            $qb->whereNotNull($alias . '.text_value');
+            $qb->whereNotNull($alias.'.text_value');
         } else {
-            $qb->where($alias . '.text_value', 'like', '%' . urldecode($params['url_key']) . '%');
+            $qb->where($alias.'.text_value', 'like', '%'.urldecode($params['url_key']).'%');
         }
     }
 
     /**
      * Apply filters for other attributes.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @param \Illuminate\Support\Collection $filterableAttributes
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
+     * @param  \Illuminate\Support\Collection  $filterableAttributes
      * @return void
      */
     protected function applyOtherAttributeFilters($qb, $params, $filterableAttributes)
@@ -864,14 +866,14 @@ class Product extends Model implements ProductContract
                 foreach ($aliases as $table => $tableAlias) {
                     $filterQuery->orWhere(function ($subFilterQuery) use ($qb, $params, $attributes, $table, $tableAlias) {
                         foreach ($attributes as $attribute) {
-                            $alias = $attribute->code . '_' . $tableAlias;
+                            $alias = $attribute->code.'_'.$tableAlias;
 
-                            $qb->leftJoin('product_attribute_values as ' . $alias, function ($join) use ($table, $alias, $attribute) {
-                                $join->on($table . '.id', '=', $alias . '.product_id')
-                                    ->where($alias . '.attribute_id', $attribute->id);
+                            $qb->leftJoin('product_attribute_values as '.$alias, function ($join) use ($table, $alias, $attribute) {
+                                $join->on($table.'.id', '=', $alias.'.product_id')
+                                    ->where($alias.'.attribute_id', $attribute->id);
                             });
 
-                            $subFilterQuery->whereIn($alias . '.' . $attribute->column_name, explode(',', $params[$attribute->code]));
+                            $subFilterQuery->whereIn($alias.'.'.$attribute->column_name, explode(',', $params[$attribute->code]));
                         }
                     });
                 }
@@ -884,8 +886,8 @@ class Product extends Model implements ProductContract
     /**
      * Apply sorting to the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
+     * @param  \Illuminate\Database\Eloquent\Builder  $qb
+     * @param  array  $params
      * @return void
      */
     protected function applySorting($qb, $params)
@@ -900,11 +902,11 @@ class Product extends Model implements ProductContract
                     $qb->orderBy('product_price_indices.min_price', $sortOptions['order']);
                 } else {
                     $alias = 'sort_product_attribute_values';
-                    $qb->leftJoin('product_attribute_values as ' . $alias, function ($join) use ($alias, $attribute) {
-                        $join->on('products.id', '=', $alias . '.product_id')
-                            ->where($alias . '.attribute_id', $attribute->id);
+                    $qb->leftJoin('product_attribute_values as '.$alias, function ($join) use ($alias, $attribute) {
+                        $join->on('products.id', '=', $alias.'.product_id')
+                            ->where($alias.'.attribute_id', $attribute->id);
                     })
-                    ->orderBy($alias . '.' . $attribute->column_name, $sortOptions['order']);
+                        ->orderBy($alias.'.'.$attribute->column_name, $sortOptions['order']);
                 }
             } else {
                 $qb->orderBy('products.created_at', $sortOptions['order']);
@@ -921,5 +923,4 @@ class Product extends Model implements ProductContract
     {
         return product_toolbar()->getOrder($params);
     }
-
 }

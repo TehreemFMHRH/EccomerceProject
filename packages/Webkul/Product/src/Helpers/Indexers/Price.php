@@ -4,8 +4,8 @@ namespace Webkul\Product\Helpers\Indexers;
 
 use Illuminate\Support\Carbon;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
-use Webkul\Product\Repositories\ProductPriceIndexRepository;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductPriceIndexRepository;
 
 class Price extends AbstractIndexer
 {

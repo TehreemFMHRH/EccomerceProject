@@ -23,10 +23,10 @@ class ConfigurableController extends Controller
     {
         $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
-    abort(404, 'Product not found');
-}
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         return new JsonResponse([
             'data' => $this->configurableOptionHelper->getConfigurationConfig($product),

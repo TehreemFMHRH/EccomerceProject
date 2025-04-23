@@ -127,7 +127,7 @@ class Ipn
             default => null,
         };
 
-        if (!$url) {
+        if (! $url) {
             return false;
         }
 
@@ -142,7 +142,7 @@ class Ipn
         ]);
 
         $response = curl_exec($request);
-        $status   = curl_getinfo($request, CURLINFO_HTTP_CODE);
+        $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
 
         curl_close($request);
 

@@ -88,47 +88,46 @@ class Payment
     protected function getTitle($method)
     {
         return match ($method) {
-            'paypal_standard' => 'PayPal Standard',
+            'paypal_standard'     => 'PayPal Standard',
             'paypal_smart_button' => 'PayPal Smart Button',
-            'cashondelivery'    => 'Cash on Delivery',
-            'moneytransfer'    => 'Money Transfer',
-            default  => 'Unknown',
+            'cashondelivery'      => 'Cash on Delivery',
+            'moneytransfer'       => 'Money Transfer',
+            default               => 'Unknown',
         };
     }
 
     protected function getDescription($method)
     {
         return match ($method) {
-            'paypal_standard' => 'Pay securely via PayPal',
+            'paypal_standard'     => 'Pay securely via PayPal',
             'paypal_smart_button' => 'Pay securely via PayPal Options',
-            'cashondelivery'    => 'Pay with cash upon delivery',
-            'moneytransfer'    => 'Pay with cash upon delivery',
-            default  => '',
+            'cashondelivery'      => 'Pay with cash upon delivery',
+            'moneytransfer'       => 'Pay with cash upon delivery',
+            default               => '',
         };
     }
 
     protected function getImage($method)
     {
         return match ($method) {
-            'paypal_standard'      => bagisto_asset('images/paypal.png', 'shop'),
-            'paypal_smart_button'  => bagisto_asset('images/paypal.png', 'shop'),
+            'paypal_standard'                 => bagisto_asset('images/paypal.png', 'shop'),
+            'paypal_smart_button'             => bagisto_asset('images/paypal.png', 'shop'),
             'cashondelivery'                  => bagisto_asset('images/cash-on-delivery.png', 'shop'),
-            'moneytransfer'        => bagisto_asset('images/money-transfer.png', 'shop'),
-            default                => '',
+            'moneytransfer'                   => bagisto_asset('images/money-transfer.png', 'shop'),
+            default                           => '',
         };
     }
 
     protected function getSortOrder($method)
     {
         return match ($method) {
-            'paypal_standard' => 3,
+            'paypal_standard'     => 3,
             'paypal_smart_button' => 4,
-            'cashondelivery'    => 1,
-            'moneytransfer'    => 2,
-            default  => 99,
+            'cashondelivery'      => 1,
+            'moneytransfer'       => 2,
+            default               => 99,
         };
     }
-
 
     /**
      * Returns payment redirect url if have any
@@ -185,7 +184,6 @@ class Payment
                 return ['instructions' => 'Pay via Cash on delivery'];
             case 'moneytransfer':
                 return ['instructions' => 'Pay via online money transfer'];
-
 
         }
     }

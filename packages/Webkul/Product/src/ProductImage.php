@@ -14,7 +14,7 @@ class ProductImage
      *
      * @return void
      */
-    public function __construct( ) {}
+    public function __construct() {}
 
     /**
      * Retrieve collection of gallery images.

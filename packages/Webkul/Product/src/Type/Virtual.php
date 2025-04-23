@@ -9,15 +9,15 @@ use Webkul\Checkout\Contracts\CartItem;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\DataTypes\CartItemValidationResult;
 use Webkul\Product\Helpers\Indexers\Price\Virtual as VirtualIndexer;
-use Webkul\Product\Repositories\ProductAttributeValueRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductBundleOptionProduct;
+use Webkul\Product\Models\ProductGroupedProduct;
+use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductCustomizableOptionPriceRepository;
 use Webkul\Product\Repositories\ProductCustomizableOptionRepository;
-use Webkul\Product\Models\ProductGroupedProduct;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductVideoRepository;
 
 class Virtual extends AbstractType
@@ -62,7 +62,6 @@ class Virtual extends AbstractType
         ProductImageRepository $productImageRepository,
         ProductVideoRepository $productVideoRepository,
         ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
-
 
         protected ProductCustomizableOptionRepository $productCustomizableOptionRepository,
         protected ProductCustomizableOptionPriceRepository $productCustomizableOptionPriceRepository,

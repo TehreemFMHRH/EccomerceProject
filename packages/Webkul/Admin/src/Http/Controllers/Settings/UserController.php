@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 use Webkul\Admin\DataGrids\Settings\UserDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\UserForm;
-use Webkul\Core\Facades\Acl;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 

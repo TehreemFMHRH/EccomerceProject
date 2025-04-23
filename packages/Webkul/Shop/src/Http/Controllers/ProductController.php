@@ -4,16 +4,14 @@ namespace Webkul\Shop\Http\Controllers;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Marketing\Repositories\SearchSynonymRepository;
+use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ElasticSearchRepository;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
-use Webkul\Product\Models\Product;
-use Webkul\Core\Eloquent\Repository;
-use Webkul\Customer\Repositories\CustomerRepository;
-use Webkul\Marketing\Repositories\SearchSynonymRepository;
-use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Product\Repositories\ElasticSearchRepository;
 
 class ProductController extends Controller
 {

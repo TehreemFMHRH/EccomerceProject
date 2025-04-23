@@ -3,8 +3,8 @@
 namespace Webkul\Product\Helpers\Indexers;
 
 use Webkul\Core\Repositories\ChannelRepository;
-use Webkul\Product\Repositories\ProductInventoryIndexRepository;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductInventoryIndexRepository;
 
 class Inventory extends AbstractIndexer
 {

@@ -1,17 +1,18 @@
 <?php
 
 namespace Webkul\Shop\Http\Controllers;
+
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Request;
 use Webkul\BookingProduct\Helpers\AppointmentSlot as AppointmentSlotHelper;
 use Webkul\BookingProduct\Helpers\DefaultSlot as DefaultSlotHelper;
 use Webkul\BookingProduct\Helpers\EventTicket as EventTicketHelper;
 use Webkul\BookingProduct\Helpers\RentalSlot as RentalSlotHelper;
 use Webkul\BookingProduct\Helpers\TableSlot as TableSlotHelper;
 use Webkul\BookingProduct\Models\BookingProduct;
-use Illuminate\Support\Facades\Request;
-use Webkul\BookingProduct\Repositories\BookingProductDefaultSlotRepository;
 use Webkul\BookingProduct\Repositories\BookingProductAppointmentSlotRepository;
+use Webkul\BookingProduct\Repositories\BookingProductDefaultSlotRepository;
 use Webkul\BookingProduct\Repositories\BookingProductEventTicketRepository;
 use Webkul\BookingProduct\Repositories\BookingProductRentalSlotRepository;
 use Webkul\BookingProduct\Repositories\BookingProductTableSlotRepository;
@@ -19,6 +20,7 @@ use Webkul\BookingProduct\Repositories\BookingProductTableSlotRepository;
 class BookingProductController extends Controller
 {
     protected array $bookingHelpers = [];
+
     protected $typeRepositories = [];
 
     /**
@@ -120,11 +122,11 @@ class BookingProductController extends Controller
     public function validateSlots(array $data): array
     {
         // Move the logic from the repository into the controller directly
-        if (!isset($data['same_slot_all_days'])) {
+        if (! isset($data['same_slot_all_days'])) {
             return $data['slots'];
         }
 
-        if (!$data['same_slot_all_days']) {
+        if (! $data['same_slot_all_days']) {
             foreach ($data['slots'] as $day => $slots) {
                 $data['slots'][$day] = $this->skipOverlappingSlots($slots);
             }
@@ -173,7 +175,7 @@ class BookingProductController extends Controller
                 }
             }
 
-            if (!$isOverLapping) {
+            if (! $isOverLapping) {
                 $tempSlots[] = ['from' => $from, 'to' => $to];
                 $validSlots[] = $timeInterval;
             }
@@ -184,7 +186,7 @@ class BookingProductController extends Controller
 
     public function addSlots(array $data): array
     {
-        if (isset($data['same_slot_all_days']) && !$data['same_slot_all_days']) {
+        if (isset($data['same_slot_all_days']) && ! $data['same_slot_all_days']) {
             return [[], [], [], [], [], [], []];
         } else {
             return ($data['type'] == 'default' && $data['booking_type'] == 'many') ? [[], [], [], [], [], [], []] : [];
@@ -223,7 +225,4 @@ class BookingProductController extends Controller
 
         return $data['slots'];
     }
-
-
-
 }

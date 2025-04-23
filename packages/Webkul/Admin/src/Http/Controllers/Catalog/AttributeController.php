@@ -210,10 +210,10 @@ class AttributeController extends Controller
     {
         $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
-    abort(404, 'Product not found');
-}
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         $superAttributes = Product::getSuperAttributes($product);
 

@@ -30,16 +30,16 @@ use Webkul\Product\Jobs\ElasticSearch\DeleteIndex as DeleteIndexJob;
 use Webkul\Product\Jobs\ElasticSearch\UpdateCreateIndex as UpdateCreateElasticSearchIndexJob;
 use Webkul\Product\Jobs\UpdateCreateInventoryIndex as UpdateCreateInventoryIndexJob;
 use Webkul\Product\Jobs\UpdateCreatePriceIndex as UpdateCreatePriceIndexJob;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\Product as ProductModel;
-use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Models\ProductBundleOptionProduct;
+use Webkul\Product\Models\ProductGroupedProduct;
+use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductBundleOptionRepository;
 use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 use Webkul\Product\Repositories\ProductFlatRepository;
-use Webkul\Product\Models\ProductGroupedProduct;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Models\Product;
 
 class Importer extends AbstractImporter
 {
@@ -797,8 +797,7 @@ class Importer extends AbstractImporter
                     /**
                      * Get all bundle product associated product ids
                      */
-                    $associatedProductIds = ProductBundleOptionProduct::
-                        select('product_bundle_option_products.product_id')
+                    $associatedProductIds = ProductBundleOptionProduct::select('product_bundle_option_products.product_id')
                         ->leftJoin('product_bundle_options', 'product_bundle_option_products.product_bundle_option_id', 'product_bundle_options.id')
                         ->whereIn('product_bundle_options.product_id', $productIds)
                         ->pluck('product_id')

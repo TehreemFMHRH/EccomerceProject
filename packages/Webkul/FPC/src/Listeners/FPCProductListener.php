@@ -3,9 +3,9 @@
 namespace Webkul\FPC\Listeners;
 
 use Spatie\ResponseCache\Facades\ResponseCache;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductBundleOptionProduct;
 use Webkul\Product\Models\ProductGroupedProduct;
-use Webkul\Product\Models\Product;
 
 class FPCProductListener
 {

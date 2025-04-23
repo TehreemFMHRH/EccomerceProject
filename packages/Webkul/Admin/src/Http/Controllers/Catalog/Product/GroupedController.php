@@ -15,10 +15,10 @@ class GroupedController extends Controller
     {
         $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
-    abort(404, 'Product not found');
-}
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         $options = $product->grouped_products()->orderBy('sort_order')->get();
 

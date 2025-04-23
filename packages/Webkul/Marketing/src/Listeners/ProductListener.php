@@ -41,8 +41,8 @@ class ProductListener
              * if already exists for the request path
              */
             $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
-            ->where('request_path', $currentURLKey)
-            ->get();
+                ->where('request_path', $currentURLKey)
+                ->get();
 
             foreach ($urlRewrites as $urlRewrite) {
                 Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $urlRewrite->id);
@@ -60,9 +60,8 @@ class ProductListener
          * if already exists for the request path
          */
         $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
-        ->where('request_path', $currentURLKey)
-        ->get();
-
+            ->where('request_path', $currentURLKey)
+            ->get();
 
         foreach ($urlRewrites as $urlRewrite) {
             Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $urlRewrite->id);
@@ -100,8 +99,8 @@ class ProductListener
          * if already exists for the request path
          */
         $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
-        ->where('target_path', $product->url_key)
-        ->get();
+            ->where('target_path', $product->url_key)
+            ->get();
 
         foreach ($urlRewrites as $urlRewrite) {
             Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $urlRewrite->id);

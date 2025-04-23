@@ -7,8 +7,8 @@ use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ProductCategoryUniqueSlug;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\Slug;
-use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductAttributeValueRepository;
 
 class ProductForm extends FormRequest
 {

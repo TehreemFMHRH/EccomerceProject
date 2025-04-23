@@ -3,9 +3,9 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\InventoryRequest;
@@ -18,11 +18,11 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Core\Rules\Slug;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\Helpers\ProductType;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
-use Webkul\Product\Models\Product;
 
 class ProductController extends Controller
 {
@@ -31,7 +31,7 @@ class ProductController extends Controller
     */
     const ACTIVE_STATUS = 1;
 
-     /**
+    /**
      * Search engine.
      */
     protected $searchEngine = 'database';
@@ -183,7 +183,6 @@ class ProductController extends Controller
 
         return redirect()->route('admin.catalog.products.index');
     }
-
 
     /**
      * Update inventories.
@@ -445,6 +444,4 @@ class ProductController extends Controller
 
         return Storage::download($productAttribute['text_value']);
     }
-
-
 }

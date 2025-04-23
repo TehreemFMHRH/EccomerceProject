@@ -8,9 +8,9 @@ use Webkul\Product\Jobs\ElasticSearch\DeleteIndex as DeleteElasticSearchIndexJob
 use Webkul\Product\Jobs\ElasticSearch\UpdateCreateIndex as UpdateCreateElasticSearchIndexJob;
 use Webkul\Product\Jobs\UpdateCreateInventoryIndex as UpdateCreateInventoryIndexJob;
 use Webkul\Product\Jobs\UpdateCreatePriceIndex as UpdateCreatePriceIndexJob;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductBundleOptionProduct;
 use Webkul\Product\Models\ProductGroupedProduct;
-use Webkul\Product\Models\Product;
 
 class ProductListener
 {
@@ -20,8 +20,6 @@ class ProductListener
      * @return void
      */
     public function __construct(
-
-
 
         protected FlatIndexer $flatIndexer
     ) {}

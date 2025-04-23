@@ -5,7 +5,6 @@ namespace Webkul\Shop\Http\Controllers\API;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Webkul\Customer\Repositories\CompareItemRepository;
-use Webkul\Product\Models\Product;
 use Webkul\Shop\Http\Resources\CompareItemResource;
 
 class CompareController extends APIController

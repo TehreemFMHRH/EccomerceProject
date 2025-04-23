@@ -5,9 +5,10 @@ namespace Webkul\Product\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Webkul\Product\Contracts\ProductGroupedProduct as ProductGroupedProductContract;
 use Webkul\Product\Database\Factories\ProductGroupedProductFactory;
-use Illuminate\Support\Str;
+
 class ProductGroupedProduct extends Model implements ProductGroupedProductContract
 {
     use HasFactory;
@@ -93,5 +94,4 @@ class ProductGroupedProduct extends Model implements ProductGroupedProductContra
         // Delete removed items
         $this->destroy($previousGroupedProductIds);
     }
-
 }

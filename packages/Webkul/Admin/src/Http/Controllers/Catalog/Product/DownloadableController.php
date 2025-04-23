@@ -11,7 +11,7 @@ class DownloadableController extends Controller
     /**
      * Create a new controller instance.
      */
-    public function __construct( ) {}
+    public function __construct() {}
 
     /**
      * Returns the compare items of the customer.
@@ -20,10 +20,10 @@ class DownloadableController extends Controller
     {
         $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
-    abort(404, 'Product not found');
-}
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         $links = [];
 

@@ -1,9 +1,9 @@
 <?php
 
 namespace Webkul\Core\Helpers\Exchange;
-use Webkul\Core\Models\Currency;
-use Webkul\Core\Helpers\Exchange\ExchangeRate;
+
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Models\Currency;
 
 class ExchangeRates extends ExchangeRate
 {

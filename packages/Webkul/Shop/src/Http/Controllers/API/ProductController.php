@@ -29,7 +29,7 @@ class ProductController extends APIController
             $searchEngine = core()->getConfigData('catalog.products.search.storefront_mode');
         }
 
-        $productModel = new \Webkul\Product\Models\Product();
+        $productModel = new \Webkul\Product\Models\Product;
 
         $productModel->setSearchEngine($searchEngine ?? 'database');
 
@@ -66,10 +66,10 @@ class ProductController extends APIController
     {
         $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
-    abort(404, 'Product not found');
-}
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         $relatedProducts = $product->related_products()
             ->take(core()->getConfigData('catalog.products.product_view_page.no_of_related_products'))
@@ -87,10 +87,10 @@ if (! $product) {
     {
         $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
-    abort(404, 'Product not found');
-}
+        if (! $product) {
+            // Custom logic
+            abort(404, 'Product not found');
+        }
 
         $upSellProducts = $product->up_sells()
             ->take(core()->getConfigData('catalog.products.product_view_page.no_of_up_sells_products'))
