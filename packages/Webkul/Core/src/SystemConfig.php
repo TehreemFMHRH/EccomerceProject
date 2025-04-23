@@ -104,7 +104,7 @@ class SystemConfig
                     fields: $subConfigItem['fields'] ?? null,
                     icon: $subConfigItem['icon'] ?? null,
                     icon_class: $subConfigItem['icon_class'] ?? null,
-                    info: trans($subConfigItem['info']) ?? null,
+                    info: isset($subConfigItem['info']) ? trans($subConfigItem['info']) : null,
                     key: $subConfigItem['key'],
                     name: trans($subConfigItem['name']),
                     route: $subConfigItem['route'] ?? null,

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cac99f9f3644bff8b7c2e4585221dab3",
+    "content-hash": "51f86573be93960b30ca10fe9aeaf226",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
@@ -8011,6 +8011,65 @@
             "time": "2025-01-13T13:04:43+00:00"
         },
         {
+            "name": "stripe/stripe-php",
+            "version": "v17.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stripe/stripe-php.git",
+                "reference": "01ca9b5fdd899b8e4b69f83b85e09d96f6240220"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/01ca9b5fdd899b8e4b69f83b85e09d96f6240220",
+                "reference": "01ca9b5fdd899b8e4b69f83b85e09d96f6240220",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "3.72.0",
+                "phpstan/phpstan": "^1.2",
+                "phpunit/phpunit": "^5.7 || ^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Stripe\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stripe and contributors",
+                    "homepage": "https://github.com/stripe/stripe-php/contributors"
+                }
+            ],
+            "description": "Stripe PHP Library",
+            "homepage": "https://stripe.com/",
+            "keywords": [
+                "api",
+                "payment processing",
+                "stripe"
+            ],
+            "support": {
+                "issues": "https://github.com/stripe/stripe-php/issues",
+                "source": "https://github.com/stripe/stripe-php/tree/v17.1.1"
+            },
+            "time": "2025-04-05T00:09:14+00:00"
+        },
+        {
             "name": "symfony/console",
             "version": "v7.2.1",
             "source": {
@@ -10665,6 +10724,32 @@
                 }
             ],
             "time": "2024-11-21T01:49:47+00:00"
+        },
+        {
+            "name": "webkul/stripe",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/Webkul/Stripe",
+                "reference": "280bb6405fa2e3d6c45bb85612ddab54891789c9"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Webkul\\Stripe\\Providers\\StripeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webkul\\stripe\\": "src/"
+                }
+            },
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "webmozart/assert",
@@ -13880,7 +13965,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "bagisto/image-cache": 20
+        "bagisto/image-cache": 20,
+        "webkul/stripe": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

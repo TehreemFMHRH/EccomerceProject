@@ -68,6 +68,7 @@ class ProductController extends Controller
      */
     public function create()
     {
+        dd("abc");
         $families = $this->attributeFamilyRepository->all();
 
         $configurableFamily = null;

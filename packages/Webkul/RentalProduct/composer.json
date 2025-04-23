@@ -1,0 +1,15 @@
+{
+    "name": "webkul/rental-product",
+    "autoload": {
+      "psr-4": {
+        "Webkul\\RentalProduct\\": "src/"
+      }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Webkul\\RentalProduct\\Providers\\RentalProductServiceProvider"
+        ]
+      }
+    }
+  }

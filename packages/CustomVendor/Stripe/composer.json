@@ -1,0 +1,19 @@
+{
+  "name": "customvendor/stripe",
+  "description": "Stripe Payment integration for Bagisto",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "CustomVendor\\Stripe\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CustomVendor\\Stripe\\Providers\\StripeServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -4265,6 +4265,20 @@ return [
                             'title'     => 'Type',
                         ],
                     ],
+
+                    'express-shipping' => [
+                        'description' => 'Description',
+                        'page-title'  => 'Express Shipping',
+                        'custom-rate' => 'Rate',
+                        'status'      => 'Status',
+                        'title'       => 'Title',
+                        'title-info'  => 'Express shipping is a super fast shipping method for urgent delivery services.',
+                        'type'        => [
+                            'per-order' => 'Per Order',
+                            'per-unit'  => 'Per Unit',
+                            'title'     => 'Type',
+                        ],
+                    ],
                 ],
 
                 'payment-methods' => [
@@ -4302,6 +4316,12 @@ return [
                     'sort-order'                     => 'Sort Order',
                     'status'                         => 'Status',
                     'title'                          => 'Title',
+                    'stripe'                         => 'Stripe',
+                    'stripe-info'                    => 'Stripe is a quick and reliable payment option for online businesses.',
+                    'secret-key'                     => 'Client Secret',
+                    'secret-key-info'                => 'Add your secret key here',
+                    'published-key'                  => 'Client Secret',
+                    'published-key-info'             => 'Add your secret key here',
                 ],
 
                 'order-settings' => [

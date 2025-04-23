@@ -1,6 +1,6 @@
 <?php
 
-namespace Webkul\Paypal\Helpers;
+namespace Webkul\Stripe\Helpers;
 
 use Webkul\Paypal\Payment\Standard;
 use Webkul\Sales\Repositories\InvoiceRepository;

@@ -1,0 +1,16 @@
+{
+    "name": "webkul/stripe",
+    "version": "dev-main",
+    "autoload": {
+      "psr-4": {
+        "Webkul\\stripe\\": "src/"
+      }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Webkul\\Stripe\\Providers\\StripeServiceProvider"
+        ]
+      }
+    }
+  }
