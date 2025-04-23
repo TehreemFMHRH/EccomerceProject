@@ -2,11 +2,10 @@
 
 namespace Webkul\Stripe\Payment;
 
-use Webkul\Payment\Payment\Payment;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
-use Stripe\Stripe as StripeClient;
 use Stripe\Checkout\Session as StripeSession;
+use Stripe\Stripe as StripeClient;
+use Webkul\Payment\Payment\Payment;
 
 class Stripe extends Payment
 {
@@ -24,21 +23,21 @@ class Stripe extends Payment
             // Create a Stripe Checkout Session
             $session = StripeSession::create([
                 'payment_method_types' => ['card'],
-                'line_items' => [[
+                'line_items'           => [[
                     'price_data' => [
                         'currency'     => $order->order_currency_code,
                         'unit_amount'  => (int) ($order->grand_total * 100), // Stripe expects amount in cents
                         'product_data' => [
-                            'name' => 'Order #' . $order->increment_id,
+                            'name' => 'Order #'.$order->increment_id,
                         ],
                     ],
                     'quantity' => 1,
                 ]],
-                'mode' => 'payment',
+                'mode'        => 'payment',
                 'success_url' => route('shop.checkout.onepage.success'),
                 'cancel_url'  => route('shop.checkout.cart.index'),
-                'metadata' => [
-                    'order_id' => $order->id,
+                'metadata'    => [
+                    'order_id'     => $order->id,
                     'increment_id' => $order->increment_id,
                 ],
             ]);
@@ -50,7 +49,7 @@ class Stripe extends Payment
             return $session->url;
 
         } catch (\Exception $e) {
-            Log::error('Stripe Error: ' . $e->getMessage());
+            Log::error('Stripe Error: '.$e->getMessage());
 
             return route('shop.checkout.cart.index');
         }
@@ -61,4 +60,3 @@ class Stripe extends Payment
         return route('shop.checkout.onepage.success');
     }
 }
-

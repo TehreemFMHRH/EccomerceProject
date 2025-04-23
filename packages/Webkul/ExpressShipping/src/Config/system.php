@@ -1,4 +1,5 @@
 <?php
+
 return [
     [
         'key'    => 'sales.carriers.express_shipping',
@@ -13,14 +14,14 @@ return [
                 'depend'        => 'active:1',
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
-                'locale_based'  => true
+                'locale_based'  => true,
             ],
             [
                 'name'          => 'description',
                 'title'         => 'admin::app.admin.system.description',
                 'type'          => 'textarea',
                 'channel_based' => true,
-                'locale_based'  => false
+                'locale_based'  => false,
             ],
             [
                 'name'          => 'default_rate',
@@ -36,7 +37,7 @@ return [
                 'title'         => 'admin::app.admin.system.minimum-amount',
                 'type'          => 'text',
                 'channel_based' => true,
-                'locale_based'  => false
+                'locale_based'  => false,
             ],
             [
                 'name'    => 'type',
@@ -55,8 +56,8 @@ return [
                 'type'          => 'boolean',
                 'validation'    => 'required',
                 'channel_based' => true,
-                'locale_based'  => false
-            ]
-        ]
-    ]
+                'locale_based'  => false,
+            ],
+        ],
+    ],
 ];

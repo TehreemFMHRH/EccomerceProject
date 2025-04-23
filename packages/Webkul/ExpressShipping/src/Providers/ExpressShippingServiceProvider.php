@@ -14,12 +14,12 @@ class ExpressShippingServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/carriers.php',
+            dirname(__DIR__).'/Config/carriers.php',
             'carriers'
         );
 
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/system.php',
+            dirname(__DIR__).'/Config/system.php',
             'core'
         );
     }

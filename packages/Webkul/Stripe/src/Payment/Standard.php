@@ -2,7 +2,6 @@
 
 namespace Webkul\Stripe\Payment;
 
-
 class Standard extends Stripe
 {
     /**
@@ -97,7 +96,7 @@ class Standard extends Stripe
         //     ]);
         // }
 
-        //$this->addAddressFields($fields);
+        // $this->addAddressFields($fields);
 
         return $fields;
     }

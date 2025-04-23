@@ -2,10 +2,8 @@
 
 namespace Webkul\ExpressShipping\Carriers;
 
-use Config;
-use Webkul\Shipping\Carriers\AbstractShipping;
 use Webkul\Checkout\Models\CartShippingRate;
-use Webkul\Shipping\Facades\Shipping;
+use Webkul\Shipping\Carriers\AbstractShipping;
 
 class ExpressShipping extends AbstractShipping
 {
@@ -14,7 +12,7 @@ class ExpressShipping extends AbstractShipping
      *
      * @var string
      */
-    protected $code  = 'express_shipping';
+    protected $code = 'express_shipping';
 
     /**
      * Calculate.

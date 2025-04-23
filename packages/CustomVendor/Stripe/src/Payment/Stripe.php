@@ -6,7 +6,7 @@ use Webkul\Payment\Payment\Payment;
 
 class Stripe extends Payment
 {
-    protected $code  = 'stripe';
+    protected $code = 'stripe';
 
     public function getRedirectUrl()
     {
