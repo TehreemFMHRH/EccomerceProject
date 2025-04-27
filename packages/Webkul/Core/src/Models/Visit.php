@@ -7,11 +7,7 @@ use Webkul\Core\Contracts\Visit as VisitContract;
 
 class Visit extends BaseVisit implements VisitContract
 {
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'method',
         'request',

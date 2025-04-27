@@ -11,18 +11,10 @@ use Webkul\Sitemap\Repositories\SitemapRepository;
 
 class SitemapController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public SitemapRepository $sitemapRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,9 +24,7 @@ class SitemapController extends Controller
         return view('admin::marketing.search-seo.sitemaps.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -58,26 +48,22 @@ class SitemapController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request()->id;
+        $i = request()->id;
 
         $this->validate(request(), [
             'file_name' => 'required|regex:/^[\w\-\.]+$/|ends_with:.xml',
             'path'      => 'required|starts_with:/|regex:/^(?!.*\/\/)[\w\-\.\/]+$/|ends_with:/',
         ]);
 
-        Event::dispatch('marketing.search_seo.sitemap.update.before', $id);
+        Event::dispatch('marketing.search_seo.sitemap.update.before', $i);
 
         $sitemap = $this->sitemapRepository->update(request()->only([
             'file_name',
             'path',
-        ]), $id);
+        ]), $i);
 
         ProcessSitemap::dispatch($sitemap);
 
@@ -88,24 +74,19 @@ class SitemapController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function destroy($id)
+    
+    public function destroy($i)
     {
-        $sitemap = $this->sitemapRepository->findOrFail($id);
+        $sitemap = $this->sitemapRepository->findOrFail($i);
 
         $sitemap->deleteFromStorage();
 
         try {
-            Event::dispatch('marketing.search_seo.sitemap.delete.before', $id);
+            Event::dispatch('marketing.search_seo.sitemap.delete.before', $i);
 
-            $this->sitemapRepository->delete($id);
+            $this->sitemapRepository->delete($i);
 
-            Event::dispatch('marketing.search_seo.sitemap.delete.after', $id);
+            Event::dispatch('marketing.search_seo.sitemap.delete.after', $i);
 
             return response()->json([
                 'message' => trans('admin::app.marketing.search-seo.sitemaps.index.edit.delete-success'),

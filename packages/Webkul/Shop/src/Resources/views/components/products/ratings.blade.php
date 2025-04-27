@@ -1,17 +1,15 @@
 @props([
     'average' => 0,
-    'total'   => 0,
+    'total' => 0,
     'rating' => true,
 ])
 
 <v-product-ratings
     {{ $attributes->merge(['class' => 'flex w-max items-center rounded-md border border-zinc-200 px-4 py-2']) }}
-    average="{{ $average }}"
-    total="{{ $total }}"
->
+    average="{{ $average }}" total="{{ $t }}">
 </v-product-ratings>
 
-@pushOnce("scripts")
+@pushOnce('scripts')
     <script
         type="text/x-template"
         id="v-product-ratings-template"

@@ -33,7 +33,7 @@ it('should store the newly created search synonyms', function () {
 
     postJson(route('admin.marketing.search_seo.search_synonyms.store'), [
         'terms' => $term = fake()->randomElement(['jackets', 'shoes', 'footwear',  'phone', 'computers', 'electronics']),
-        'name'  => $name = fake()->name(),
+        'name'  => $na = fake()->name(),
     ])
         ->assertOk()
         ->assertSeeText(trans('admin::app.marketing.search-seo.search-synonyms.index.create.success'));
@@ -42,7 +42,7 @@ it('should store the newly created search synonyms', function () {
         SearchSynonym::class => [
             [
                 'terms' => $term,
-                'name'  => $name,
+                'name'  => $na,
             ],
         ],
     ]);

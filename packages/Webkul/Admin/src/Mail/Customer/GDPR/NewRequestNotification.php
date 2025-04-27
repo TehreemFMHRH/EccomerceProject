@@ -10,14 +10,10 @@ use Webkul\GDPR\Contracts\GDPRDataRequest;
 
 class NewRequestNotification extends Mailable
 {
-    /**
-     * Create a new message instance.
-     */
+    
     public function __construct(public GDPRDataRequest $gdprRequest) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         $subjectKey = $this->gdprRequest->type === 'update'
@@ -35,9 +31,7 @@ class NewRequestNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

@@ -13,11 +13,7 @@ class ProductCustomerGroupPrice extends Model implements ProductCustomerGroupPri
 {
     use HasFactory;
 
-    /**
-     * Add fillable property to the model.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'qty',
         'value_type',
@@ -27,25 +23,19 @@ class ProductCustomerGroupPrice extends Model implements ProductCustomerGroupPri
         'unique_id',
     ];
 
-    /**
-     * Get the product that owns the customer group price.
-     */
+    
     public function product()
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Get the product that owns the customer group price.
-     */
+    
     public function customer_group()
     {
         return $this->belongsTo(CustomerGroupProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductCustomerGroupPriceFactory::new();

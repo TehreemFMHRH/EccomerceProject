@@ -6,29 +6,19 @@ use Webkul\Customer\Repositories\CustomerRepository;
 
 class Storage
 {
-    /**
-     * Items contains email as key and product information as value
-     */
+    
     protected array $items = [];
 
-    /**
-     * Columns which will be selected from database
-     */
+    
     protected array $selectColumns = [
         'id',
         'email',
     ];
 
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerRepository $customerRepository) {}
 
-    /**
-     * Initialize storage
-     */
+    
     public function init(): void
     {
         $this->items = [];
@@ -36,9 +26,7 @@ class Storage
         $this->load();
     }
 
-    /**
-     * Load the Emails
-     */
+    
     public function load(array $emails = []): void
     {
         if (empty($emails)) {
@@ -47,44 +35,36 @@ class Storage
             $customers = $this->customerRepository->findWhereIn('email', $emails, $this->selectColumns);
         }
 
-        foreach ($customers as $customer) {
-            $this->set($customer->email, $customer->id);
+        foreach ($customers as $k) {
+            $this->set($k->email, $k->id);
         }
     }
 
-    /**
-     * Get email information
-     */
-    public function set(string $email, int $id): self
+    
+    public function set(string $e, int $i): self
     {
-        $this->items[$email] = $id;
+        $this->items[$e] = $i;
 
         return $this;
     }
 
-    /**
-     * Check if email exists
-     */
-    public function has(string $email): bool
+    
+    public function has(string $e): bool
     {
-        return isset($this->items[$email]);
+        return isset($this->items[$e]);
     }
 
-    /**
-     * Get email information
-     */
-    public function get(string $email): ?int
+    
+    public function get(string $e): ?int
     {
-        if (! $this->has($email)) {
+        if (! $this->has($e)) {
             return null;
         }
 
-        return $this->items[$email];
+        return $this->items[$e];
     }
 
-    /**
-     * Is storage is empty
-     */
+    
     public function isEmpty(): int
     {
         return empty($this->items);

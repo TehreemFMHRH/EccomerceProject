@@ -7,41 +7,25 @@ use Webkul\Shop\Mail\Customer\InvoiceOverdueReminder;
 
 trait InvoiceReminder
 {
-    /**
-     * Wether the core config have maximum limit of reminders.
-     *
-     * @return bool
-     */
+    
     private function hasOverdueRemindersLimit()
     {
         return (bool) $this->getOverdueRemindersLimit();
     }
 
-    /**
-     * Get maximum limit of reminders from the core config.
-     *
-     * @return int
-     */
+    
     private function getOverdueRemindersLimit()
     {
         return (int) core()->getConfigData('sales.invoice_settings.invoice_reminders.reminders_limit');
     }
 
-    /**
-     * Get interval between reminders.
-     *
-     * @return string
-     */
+    
     private function getIntervalBetweenReminders()
     {
         return core()->getConfigData('sales.invoice_settings.invoice_reminders.interval_between_reminders') ?: 'P1D';
     }
 
-    /**
-     * Send an Invoice reminder
-     *
-     * @return void
-     */
+    
     public function sendInvoiceReminder()
     {
         if ($this->hasOverdueRemindersLimit()) {
@@ -69,9 +53,7 @@ trait InvoiceReminder
         $this->save();
     }
 
-    /**
-     * Scope a query to include only the overdue invoices and at the limit of reminders.
-     */
+    
     public function scopeInOverdueAndRemindersLimit($query)
     {
         $query->where('state', '=', 'overdue');

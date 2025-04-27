@@ -9,21 +9,17 @@ use Webkul\Sales\Repositories\OrderItemRepository;
 
 class OrderController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
+    
     public function __construct(protected OrderItemRepository $orderItemRepository) {}
 
-    /**
-     * Returns the compare items of the customer.
-     */
-    public function recentItems(int $id): JsonResource
+    
+    public function recentItems(int $i): JsonResource
     {
         $orderItems = $this->orderItemRepository
             ->distinct('order_items.product_id')
             ->leftJoin('orders', 'order_items.order_id', 'orders.id')
             ->whereNull('order_items.parent_id')
-            ->where('orders.customer_id', $id)
+            ->where('orders.customer_id', $i)
             ->orderBy('orders.created_at', 'desc')
             ->limit(5)
             ->get();

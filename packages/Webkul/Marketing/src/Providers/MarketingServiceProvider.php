@@ -8,11 +8,7 @@ use Webkul\Marketing\Console\Commands\EmailsCommand;
 
 class MarketingServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
+    
     public function register()
     {
         if ($this->app->runningInConsole()) {
@@ -20,11 +16,7 @@ class MarketingServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
+    
     public function boot()
     {
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');

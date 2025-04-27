@@ -35,7 +35,7 @@ it('should store the tax category', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.taxes.categories.store'), $data = [
+    postJson(route('admin.settings.taxes.categories.store'), $dat = [
         'code'        => fake()->numerify('code#######'),
         'name'        => fake()->words(2, true),
         'description' => fake()->sentence(10),
@@ -47,9 +47,9 @@ it('should store the tax category', function () {
     $this->assertModelWise([
         TaxCategory::class => [
             [
-                'code'        => $data['code'],
-                'name'        => $data['name'],
-                'description' => $data['description'],
+                'code'        => $dat['code'],
+                'name'        => $dat['name'],
+                'description' => $dat['description'],
             ],
         ],
     ]);
@@ -91,7 +91,7 @@ it('should update the tax category', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.taxes.categories.update'), $data = [
+    putJson(route('admin.settings.taxes.categories.update'), $dat = [
         'id'          => $taxCategory->id,
         'code'        => fake()->numerify('code#######'),
         'name'        => fake()->words(2, true),
@@ -104,9 +104,9 @@ it('should update the tax category', function () {
     $this->assertModelWise([
         TaxCategory::class => [
             [
-                'code'        => $data['code'],
-                'name'        => $data['name'],
-                'description' => $data['description'],
+                'code'        => $dat['code'],
+                'name'        => $dat['name'],
+                'description' => $dat['description'],
             ],
         ],
     ]);

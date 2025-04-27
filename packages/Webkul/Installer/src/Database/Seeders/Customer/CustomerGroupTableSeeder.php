@@ -7,12 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerGroupTableSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('customer_groups')->delete();

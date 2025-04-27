@@ -6,9 +6,7 @@ use GuzzleHttp\Client;
 
 class Gemini
 {
-    /**
-     * New service instance.
-     */
+    
     public function __construct(
         protected string $model,
         protected string $prompt,
@@ -16,9 +14,7 @@ class Gemini
         protected bool $raw,
     ) {}
 
-    /**
-     * Send request to Gemini AI.
-     */
+    
     public function ask(): string
     {
         $httpClient = new Client;
@@ -28,7 +24,7 @@ class Gemini
         $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$apiKey}";
 
         try {
-            $result = $httpClient->request('POST', $endpoint, [
+            res = $httpClient->request('POST', $endpoint, [
                 'headers' => [
                     'Accept'       => 'application/json',
                     'Content-Type' => 'application/json',
@@ -40,9 +36,9 @@ class Gemini
                 ],
             ]);
 
-            $result = json_decode($result->getBody()->getContents(), true);
+            res = json_decode(res->getBody()->getContents(), true);
 
-            return $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            return res['candidates'][0]['content']['parts'][0]['text'] ?? '';
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             \Log::error($e->getMessage());
         }

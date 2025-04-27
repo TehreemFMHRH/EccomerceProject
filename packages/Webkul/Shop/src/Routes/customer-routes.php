@@ -14,36 +14,28 @@ use Webkul\Shop\Http\Controllers\Customer\SessionController;
 use Webkul\Shop\Http\Controllers\DataGridController;
 
 Route::prefix('customer')->group(function () {
-    /**
-     * Forgot password routes.
-     */
+    
     Route::controller(ForgotPasswordController::class)->prefix('forgot-password')->group(function () {
         Route::get('', 'create')->name('shop.customers.forgot_password.create');
 
         Route::post('', 'store')->name('shop.customers.forgot_password.store');
     });
 
-    /**
-     * Reset password routes.
-     */
+    
     Route::controller(ResetPasswordController::class)->prefix('reset-password')->group(function () {
         Route::get('{token}', 'create')->name('shop.customers.reset_password.create');
 
         Route::post('', 'store')->name('shop.customers.reset_password.store');
     });
 
-    /**
-     * Login routes.
-     */
+    
     Route::controller(SessionController::class)->prefix('login')->group(function () {
         Route::get('', 'index')->name('shop.customer.session.index');
 
         Route::post('', 'store')->name('shop.customer.session.create');
     });
 
-    /**
-     * Registration routes.
-     */
+    
     Route::controller(RegistrationController::class)->group(function () {
         Route::prefix('register')->group(function () {
             Route::get('', 'index')->name('shop.customers.register.index');
@@ -51,46 +43,30 @@ Route::prefix('customer')->group(function () {
             Route::post('', 'store')->name('shop.customers.register.store');
         });
 
-        /**
-         * Customer verification routes.
-         */
+        
         Route::get('verify-account/{token}', 'verifyAccount')->name('shop.customers.verify');
 
         Route::get('resend/verification/{email}', 'resendVerificationEmail')->name('shop.customers.resend.verification_email');
     });
 
-    /**
-     * Customer authenticated routes. All the below routes only be accessible
-     * if customer is authenticated.
-     */
+    
     Route::group(['middleware' => ['customer']], function () {
-        /**
-         * Datagrid routes.
-         */
+        
         Route::get('datagrid/look-up', [DataGridController::class, 'lookUp'])->name('shop.customer.datagrid.look_up');
 
-        /**
-         * Logout.
-         */
+        
         Route::delete('logout', [SessionController::class, 'destroy'])->defaults('_config', [
             'redirect' => 'shop.customer.session.index',
         ])->name('shop.customer.session.destroy');
 
-        /**
-         * Customer account. All the below routes are related to
-         * customer account details.
-         */
+        
         Route::prefix('account')->group(function () {
             Route::get('', [CustomerController::class, 'account'])->name('shop.customers.account.index');
 
-            /**
-             * Wishlist.
-             */
+            
             Route::get('wishlist', [WishlistController::class, 'index'])->name('shop.customers.account.wishlist.index');
 
-            /**
-             * Profile.
-             */
+            
             Route::controller(CustomerController::class)->group(function () {
                 Route::prefix('profile')->group(function () {
                     Route::get('', 'index')->name('shop.customers.account.profile.index');
@@ -105,9 +81,7 @@ Route::prefix('customer')->group(function () {
                 Route::get('reviews', 'reviews')->name('shop.customers.account.reviews.index');
             });
 
-            /**
-             * GDPR.
-             */
+            
             Route::controller(GDPRController::class)->prefix('gdpr')->group(function () {
                 Route::get('', 'index')->name('shop.customers.account.gdpr.index');
 
@@ -120,15 +94,11 @@ Route::prefix('customer')->group(function () {
                 Route::get('revoke/{id}', 'revoke')->name('shop.customers.account.gdpr.revoke');
             });
 
-            /**
-             * Cookie consent.
-             */
+            
             Route::get('your-cookie-consent-preferences', [GDPRController::class, 'cookieConsent'])
                 ->name('shop.customers.gdpr.cookie-consent');
 
-            /**
-             * Addresses.
-             */
+            
             Route::controller(AddressController::class)->prefix('addresses')->group(function () {
                 Route::get('', 'index')->name('shop.customers.account.addresses.index');
 
@@ -145,9 +115,7 @@ Route::prefix('customer')->group(function () {
                 Route::delete('delete/{id}', 'destroy')->name('shop.customers.account.addresses.delete');
             });
 
-            /**
-             * Orders.
-             */
+            
             Route::controller(OrderController::class)->prefix('orders')->group(function () {
                 Route::get('', 'index')->name('shop.customers.account.orders.index');
 
@@ -160,9 +128,7 @@ Route::prefix('customer')->group(function () {
                 Route::get('print/Invoice/{id}', 'printInvoice')->name('shop.customers.account.orders.print-invoice');
             });
 
-            /**
-             * Downloadable products.
-             */
+            
             Route::controller(DownloadableProductController::class)->prefix('downloadable-products')->group(function () {
                 Route::get('', 'index')->name('shop.customers.account.downloadable_products.index');
 

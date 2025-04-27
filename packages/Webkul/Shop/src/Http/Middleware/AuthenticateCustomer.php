@@ -6,13 +6,7 @@ use Closure;
 
 class AuthenticateCustomer
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $guard
-     * @return mixed
-     */
+    
     public function handle($request, Closure $next, $guard = 'customer')
     {
         if (! auth()->guard($guard)->check()) {

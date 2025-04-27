@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class NewsLetterDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('subscribers_list')
@@ -26,11 +22,7 @@ class NewsLetterDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -48,8 +40,8 @@ class NewsLetterDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status) {
+            'closure'    => function ($va) {
+                if ($va->status) {
                     return trans('admin::app.marketing.communications.subscribers.index.datagrid.true');
                 }
 
@@ -67,11 +59,7 @@ class NewsLetterDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.communications.subscribers.edit')) {

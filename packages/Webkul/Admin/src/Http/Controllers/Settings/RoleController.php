@@ -11,21 +11,13 @@ use Webkul\User\Repositories\RoleRepository;
 
 class RoleController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected RoleRepository $roleRepository,
         protected AdminRepository $adminRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -35,21 +27,13 @@ class RoleController extends Controller
         return view('admin::settings.roles.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::settings.roles.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $this->validate(request(), [
@@ -66,14 +50,14 @@ class RoleController extends Controller
 
         Event::dispatch('user.role.create.before');
 
-        $data = request()->only([
+        $dat = request()->only([
             'name',
             'description',
             'permission_type',
             'permissions',
         ]);
 
-        $role = $this->roleRepository->create($data);
+        $role = $this->roleRepository->create($dat);
 
         Event::dispatch('user.role.create.after', $role);
 
@@ -82,24 +66,16 @@ class RoleController extends Controller
         return redirect()->route('admin.settings.roles.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $role = $this->roleRepository->findOrFail($id);
+        $role = $this->roleRepository->findOrFail($i);
 
         return view('admin::settings.roles.edit', compact('role'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $this->validate(request(), [
             'name'            => 'required',
@@ -107,10 +83,8 @@ class RoleController extends Controller
             'description'     => 'required',
         ]);
 
-        /**
-         * Check for other admins if the role has been changed from all to custom.
-         */
-        $isChangedFromAll = request('permission_type') == 'custom' && $this->roleRepository->find($id)->permission_type == 'all';
+        
+        $isChangedFromAll = request('permission_type') == 'custom' && $this->roleRepository->find($i)->permission_type == 'all';
 
         if (
             $isChangedFromAll
@@ -121,7 +95,7 @@ class RoleController extends Controller
             return redirect()->route('admin.settings.roles.index');
         }
 
-        $data = array_merge(request()->only([
+        $dat = array_merge(request()->only([
             'name',
             'description',
             'permission_type',
@@ -129,9 +103,9 @@ class RoleController extends Controller
             'permissions' => request()->has('permissions') ? request('permissions') : [],
         ]);
 
-        Event::dispatch('user.role.update.before', $id);
+        Event::dispatch('user.role.update.before', $i);
 
-        $role = $this->roleRepository->update($data, $id);
+        $role = $this->roleRepository->update($dat, $i);
 
         Event::dispatch('user.role.update.after', $role);
 
@@ -140,12 +114,10 @@ class RoleController extends Controller
         return redirect()->route('admin.settings.roles.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $role = $this->roleRepository->findOrFail($id);
+        $role = $this->roleRepository->findOrFail($i);
 
         if ($role->admins->count() >= 1) {
             return new JsonResponse(['message' => trans('admin::app.settings.roles.being-used', [
@@ -163,11 +135,11 @@ class RoleController extends Controller
         }
 
         try {
-            Event::dispatch('user.role.delete.before', $id);
+            Event::dispatch('user.role.delete.before', $i);
 
-            $this->roleRepository->delete($id);
+            $this->roleRepository->delete($i);
 
-            Event::dispatch('user.role.delete.after', $id);
+            Event::dispatch('user.role.delete.after', $i);
 
             return new JsonResponse(['message' => trans('admin::app.settings.roles.delete-success')]);
         } catch (\Exception $e) {

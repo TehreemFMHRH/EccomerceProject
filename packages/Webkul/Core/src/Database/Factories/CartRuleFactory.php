@@ -8,16 +8,10 @@ use Webkul\CartRule\Models\CartRule;
 
 class CartRuleFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = CartRule::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [
@@ -43,9 +37,7 @@ class CartRuleFactory extends Factory
         ];
     }
 
-    /**
-     * Indicate that the user is guest.
-     */
+    
     public function guest(): Factory
     {
         return $this->state(function (array $attributes) {
@@ -53,9 +45,7 @@ class CartRuleFactory extends Factory
         });
     }
 
-    /**
-     * Indicate that the user is general.
-     */
+    
     public function general(): Factory
     {
         return $this->state(function (array $attributes) {
@@ -63,9 +53,7 @@ class CartRuleFactory extends Factory
         });
     }
 
-    /**
-     * Indicate that the user is wholesaler.
-     */
+    
     public function wholesale(): Factory
     {
         return $this->state(function (array $attributes) {

@@ -9,30 +9,16 @@ use Webkul\Product\Models\Product;
 
 class Price extends AbstractIndexer
 {
-    /**
-     * @var int
-     */
+    
     private $batchSize;
 
-    /**
-     * Channels
-     *
-     * @var array
-     */
+    
     protected $channels;
 
-    /**
-     * Customer Groups
-     *
-     * @var array
-     */
+    
     protected $customerGroups;
 
-    /**
-     * Create a new indexer instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerGroupRepository $customerGroupRepository,
 
@@ -41,11 +27,7 @@ class Price extends AbstractIndexer
         $this->batchSize = self::BATCH_SIZE;
     }
 
-    /**
-     * Reindex all products
-     *
-     * @return void
-     */
+    
     public function reindexFull()
     {
         while (true) {
@@ -79,11 +61,7 @@ class Price extends AbstractIndexer
         request()->query->remove('cursor');
     }
 
-    /**
-     * Reindexed products with price which depends on date
-     *
-     * @return void
-     */
+    
     public function reindexSelective()
     {
         while (true) {
@@ -131,11 +109,7 @@ class Price extends AbstractIndexer
         request()->query->remove('cursor');
     }
 
-    /**
-     * Reindex products by batch size
-     *
-     * @return void
-     */
+    
     public function reindexBatch($products)
     {
         $newIndices = [];
@@ -180,21 +154,13 @@ class Price extends AbstractIndexer
         $this->productPriceIndexRepository->insert($newIndices);
     }
 
-    /**
-     * Check if index value changed
-     *
-     * @return bool
-     */
+    
     public function isIndexChanged($oldIndex, $newIndex)
     {
         return (bool) count(array_diff_assoc($oldIndex, $newIndex));
     }
 
-    /**
-     * Returns indexer for product type
-     *
-     * @return string
-     */
+    
     public function getTypeIndexer($product)
     {
         static $typeIndexers = [];
@@ -206,11 +172,7 @@ class Price extends AbstractIndexer
         return $typeIndexers[$product->type] = $product->getTypeInstance()->getPriceIndexer();
     }
 
-    /**
-     * Returns all customer groups
-     *
-     * @return Collection
-     */
+    
     public function getChannels()
     {
         if ($this->channels) {
@@ -220,11 +182,7 @@ class Price extends AbstractIndexer
         return $this->channels = core()->getAllChannels();
     }
 
-    /**
-     * Returns all customer groups
-     *
-     * @return Collection
-     */
+    
     public function getCustomerGroups()
     {
         if ($this->customerGroups) {

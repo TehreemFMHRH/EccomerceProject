@@ -47,8 +47,8 @@ it('should store the newly created cart rule', function () {
     $this->loginAsAdmin();
 
     postJson(route('admin.marketing.promotions.cart_rules.store', [
-        'name'        => $name = fake()->name(),
-        'description' => $description = substr(fake()->paragraph(), 0, 50),
+        'name'        => $na = fake()->name(),
+        'description' => $de = substr(fake()->paragraph(), 0, 50),
 
         'channels' => [
             1,
@@ -72,8 +72,8 @@ it('should store the newly created cart rule', function () {
     $this->assertModelWise([
         CartRule::class => [
             [
-                'name'        => $name,
-                'description' => $description,
+                'name'        => $na,
+                'description' => $de,
                 'action_type' => $actionType,
             ],
         ],
@@ -141,8 +141,8 @@ it('should update the cart rule', function () {
     $this->loginAsAdmin();
 
     putJson(route('admin.marketing.promotions.cart_rules.update', $cartRule->id), [
-        'name'        => $name = fake()->name(),
-        'description' => $description = substr(substr(fake()->paragraph(), 0, 50), 0, 50),
+        'name'        => $na = fake()->name(),
+        'description' => $de = substr(substr(fake()->paragraph(), 0, 50), 0, 50),
 
         'channels' => [
             1,
@@ -166,8 +166,8 @@ it('should update the cart rule', function () {
     $this->assertModelWise([
         CartRule::class => [
             [
-                'name'        => $name,
-                'description' => $description,
+                'name'        => $na,
+                'description' => $de,
                 'action_type' => $actionType,
             ],
         ],

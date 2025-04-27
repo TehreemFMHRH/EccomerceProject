@@ -12,18 +12,10 @@ use Webkul\Marketing\Repositories\URLRewriteRepository;
 
 class URLRewriteController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public URLRewriteRepository $urlRewriteRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -33,9 +25,7 @@ class URLRewriteController extends Controller
         return view('admin::marketing.search-seo.url-rewrites.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -63,14 +53,10 @@ class URLRewriteController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request()->id;
+        $i = request()->id;
 
         $this->validate(request(), [
             'entity_type'   => 'required:in:category,product,cms_page',
@@ -80,7 +66,7 @@ class URLRewriteController extends Controller
             'locale'        => 'required|exists:locales,code',
         ]);
 
-        Event::dispatch('marketing.search_seo.url_rewrites.update.before', $id);
+        Event::dispatch('marketing.search_seo.url_rewrites.update.before', $i);
 
         $urlRewrite = $this->urlRewriteRepository->update(request()->only([
             'entity_type',
@@ -88,7 +74,7 @@ class URLRewriteController extends Controller
             'target_path',
             'redirect_type',
             'locale',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('marketing.search_seo.url_rewrites.update.after', $urlRewrite);
 
@@ -97,20 +83,15 @@ class URLRewriteController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function destroy($id)
+    
+    public function destroy($i)
     {
         try {
-            Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $id);
+            Event::dispatch('marketing.search_seo.url_rewrites.delete.before', $i);
 
-            $this->urlRewriteRepository->delete($id);
+            $this->urlRewriteRepository->delete($i);
 
-            Event::dispatch('marketing.search_seo.url_rewrites.delete.after', $id);
+            Event::dispatch('marketing.search_seo.url_rewrites.delete.after', $i);
 
             return response()->json([
                 'message' => trans('admin::app.marketing.search-seo.url-rewrites.index.edit.delete-success'),
@@ -123,9 +104,7 @@ class URLRewriteController extends Controller
         ], 500);
     }
 
-    /**
-     * Mass delete the search terms.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $urlRewriteIds = $massDestroyRequest->input('indices');

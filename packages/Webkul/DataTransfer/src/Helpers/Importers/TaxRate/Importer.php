@@ -13,19 +13,13 @@ use Webkul\Tax\Repositories\TaxRateRepository;
 
 class Importer extends AbstractImporter
 {
-    /**
-     * Error code for non existing identifier
-     */
+    
     const ERROR_IDENTIFIER_NOT_FOUND_FOR_DELETE = 'identifier_not_found_to_delete';
 
-    /**
-     * Error code for duplicated identifier
-     */
+    
     const ERROR_DUPLICATE_IDENTIFIER = 'duplicated_identifier';
 
-    /**
-     * Permanent entity columns
-     */
+    
     protected array $validColumnNames = [
         'identifier',
         'is_zip_range',
@@ -37,36 +31,22 @@ class Importer extends AbstractImporter
         'tax_rate',
     ];
 
-    /**
-     * Error message templates
-     */
+    
     protected array $messages = [
         self::ERROR_IDENTIFIER_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.tax-rates.validation.errors.identifier-not-found',
         self::ERROR_DUPLICATE_IDENTIFIER            => 'data_transfer::app.importers.tax-rates.validation.errors.duplicate-identifier',
     ];
 
-    /**
-     * Permanent entity columns
-     *
-     * @var string[]
-     */
+    
     protected $permanentAttributes = ['identifier'];
 
-    /**
-     * Permanent entity column
-     */
+    
     protected string $masterAttributeCode = 'identifier';
 
-    /**
-     * Identifiers storage
-     */
+    
     protected array $identifiers = [];
 
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ImportBatchRepository $importBatchRepository,
         protected TaxRateRepository $taxRateRepository,
@@ -75,9 +55,7 @@ class Importer extends AbstractImporter
         parent::__construct($importBatchRepository);
     }
 
-    /**
-     * Initialize Product error templates
-     */
+    
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -87,9 +65,7 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Validate data.
-     */
+    
     public function validateData(): void
     {
         $this->taxRateStorage->init();
@@ -97,23 +73,17 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
+    
     public function validateRow(array $rowData, int $rowNumber): bool
     {
-        /**
-         * If row is already validated than no need for further validation
-         */
+        
         if (isset($this->validatedRows[$rowNumber])) {
             return ! $this->errorHelper->isRowInvalid($rowNumber);
         }
 
         $this->validatedRows[$rowNumber] = true;
 
-        /**
-         * If import action is delete than no need for further validation
-         */
+        
         if ($this->import->action == Import::ACTION_DELETE) {
             if (! $this->isIdentifierExist($rowData['identifier'])) {
                 $this->skipRow($rowNumber, self::ERROR_IDENTIFIER_NOT_FOUND_FOR_DELETE);
@@ -124,9 +94,7 @@ class Importer extends AbstractImporter
             return true;
         }
 
-        /**
-         * Validate product attributes
-         */
+        
         $validator = Validator::make($rowData, [
             'identifier'   => 'required|string',
             'is_zip_range' => 'sometimes|boolean',
@@ -147,9 +115,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        /**
-         * Check if identifier is unique
-         */
+        
         if (! in_array($rowData['identifier'], $this->identifiers)) {
             $this->identifiers[] = $rowData['identifier'];
         } else {
@@ -164,9 +130,7 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Start the import process
-     */
+    
     public function importBatch(ImportBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -177,9 +141,7 @@ class Importer extends AbstractImporter
             $this->saveTaxRatesData($batch);
         }
 
-        /**
-         * Update import batch summary
-         */
+        
         $batch = $this->importBatchRepository->update([
             'state' => Import::STATE_PROCESSED,
 
@@ -195,14 +157,10 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete tax rates from current batch
-     */
+    
     protected function deleteTaxRates(ImportBatchContract $batch): bool
     {
-        /**
-         * Load tax rates storage with batch identifiers
-         */
+        
         $this->taxRateStorage->load(Arr::pluck($batch->data, 'identifier'));
 
         $idsToDelete = [];
@@ -224,22 +182,16 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save tax rates from current batch
-     */
+    
     protected function saveTaxRatesData(ImportBatchContract $batch): bool
     {
-        /**
-         * Load tax rate storage with batch identifier
-         */
+        
         $this->taxRateStorage->load(Arr::pluck($batch->data, 'identifier'));
 
         $taxRates = [];
 
         foreach ($batch->data as $rowData) {
-            /**
-             * Prepare tax rates for import
-             */
+            
             if ($this->isIdentifierExist($rowData['identifier'])) {
                 $taxRates['update'][$rowData['identifier']] = $rowData;
             } else {
@@ -268,17 +220,13 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Check if identifier exists
-     */
+    
     public function isIdentifierExist(string $identifier): bool
     {
         return $this->taxRateStorage->has($identifier);
     }
 
-    /**
-     * Prepare row data to save into the database
-     */
+    
     protected function prepareRowForDb(array $rowData): array
     {
         $rowData = parent::prepareRowForDb($rowData);

@@ -29,7 +29,7 @@ it('should return the create page of bundle product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.catalog.products.store'), $data = [
+    postJson(route('admin.catalog.products.store'), $dat = [
         'type'                => 'bundle',
         'attribute_family_id' => 1,
         'sku'                 => fake()->slug(),
@@ -41,8 +41,8 @@ it('should return the create page of bundle product', function () {
         ProductModel::class => [
             [
                 'id'   => $productId,
-                'type' => $data['type'],
-                'sku'  => $data['sku'],
+                'type' => $dat['type'],
+                'sku'  => $dat['sku'],
             ],
         ],
     ]);
@@ -139,7 +139,7 @@ it('should update the bundle product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.products.update', $product->id), $data = [
+    putJson(route('admin.catalog.products.update', $product->id), $dat = [
         'sku'                  => $product->sku,
         'url_key'              => $product->url_key,
         'short_description'    => fake()->sentence(),
@@ -176,13 +176,13 @@ it('should update the bundle product', function () {
                 'url_key'           => $product->url_key,
                 'type'              => 'bundle',
                 'product_id'        => $product->id,
-                'name'              => $data['name'],
-                'short_description' => $data['short_description'],
-                'description'       => $data['description'],
-                'price'             => $data['price'],
-                'weight'            => $data['weight'],
-                'locale'            => $data['locale'],
-                'channel'           => $data['channel'],
+                'name'              => $dat['name'],
+                'short_description' => $dat['short_description'],
+                'description'       => $dat['description'],
+                'price'             => $dat['price'],
+                'weight'            => $dat['weight'],
+                'locale'            => $dat['locale'],
+                'channel'           => $dat['channel'],
             ],
         ],
     ]);
@@ -200,9 +200,9 @@ it('should update the bundle product', function () {
                     'description'       => $product->description,
                     'price'             => $product->price,
                     'weight'            => $product->weight,
-                    'locale'            => $data['locale'],
+                    'locale'            => $dat['locale'],
                     'product_id'        => $product->id,
-                    'channel'           => $data['channel'],
+                    'channel'           => $dat['channel'],
                 ],
             ],
         ]);

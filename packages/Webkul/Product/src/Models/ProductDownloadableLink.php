@@ -33,41 +33,31 @@ class ProductDownloadableLink extends TranslatableModel implements ProductDownlo
 
     protected $with = ['translations'];
 
-    /**
-     * Get the product that owns the image.
-     */
+    
     public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Get image url for the file.
-     */
+    
     public function file_url(): string
     {
         return Storage::url($this->file);
     }
 
-    /**
-     * Get image url for the file.
-     */
+    
     public function getFileUrlAttribute(): string
     {
         return $this->file_url();
     }
 
-    /**
-     * Get image url for the sample file.
-     */
+    
     public function sample_file_url(): string
     {
         return Storage::url($this->sample_file);
     }
 
-    /**
-     * Get image url for the sample file.
-     */
+    
     public function getSampleFileUrlAttribute(): string
     {
         return $this->sample_file_url();
@@ -88,9 +78,7 @@ class ProductDownloadableLink extends TranslatableModel implements ProductDownlo
         return $array;
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductDownloadableLinkFactory::new();

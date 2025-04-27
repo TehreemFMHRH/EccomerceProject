@@ -1,8 +1,7 @@
-<v-customer-edit
-    :customer="customer"
-    @update-customer="updateCustomer"
->
-    <div class="flex cursor-pointer items-center justify-between gap-1.5 px-2.5 text-blue-600 transition-all hover:underline"></div>
+<v-customer-edit :customer="customer" @update-customer="updateCustomer">
+    <div
+        class="flex cursor-pointer items-center justify-between gap-1.5 px-2.5 text-blue-600 transition-all hover:underline">
+    </div>
 </v-customer-edit>
 
 @pushOnce('scripts')
@@ -20,7 +19,7 @@
             </div>
         @endif
 
-        {!! view_render_event('bagisto.admin.customers.customers.view.edit.edit_form_controls.before', ['customer' => $customer]) !!}
+        {!! view_render_event('bagisto.admin.customers.customers.view.edit.edit_form_controls.before', ['customer' => $k]) !!}
 
         <x-admin::form
             v-slot="{ meta, errors, handleSubmit }"
@@ -41,7 +40,7 @@
     
                     <!-- Modal Content -->
                     <x-slot:content>
-                        {!! view_render_event('bagisto.admin.customers.customers.view.edit.before', ['customer' => $customer]) !!}
+                        {!! view_render_event('bagisto.admin.customers.customers.view.edit.before', ['customer' => $k]) !!}
 
                         <div class="flex gap-4 max-sm:flex-wrap">
                             <!--First Name -->
@@ -239,7 +238,7 @@
                             </x-admin::form.control-group>
                         </div>
                         
-                        {!! view_render_event('bagisto.admin.customers.customers.view.edit.after', ['customer' => $customer]) !!}
+                        {!! view_render_event('bagisto.admin.customers.customers.view.edit.after', ['customer' => $k]) !!}
                     </x-slot>
 
                     <!-- Modal Footer -->
@@ -257,7 +256,7 @@
             </form>
         </x-admin::form>
 
-        {!! view_render_event('bagisto.admin.customers.customers.view.edit.edit_form_controls.after', ['customer' => $customer]) !!}
+        {!! view_render_event('bagisto.admin.customers.customers.view.edit.edit_form_controls.after', ['customer' => $k]) !!}
     </script>
 
     <script type="module">
@@ -277,16 +276,22 @@
             },
 
             methods: {
-                edit(params, {resetForm, setErrors}) {
+                edit(params, {
+                    resetForm,
+                    setErrors
+                }) {
                     this.isLoading = true;
 
                     let formData = new FormData(this.$refs.customerEditForm);
 
                     formData.append('_method', 'put');
 
-                    this.$axios.post('{{ route('admin.customers.customers.update', $customer->id) }}', formData)
+                    this.$axios.post('{{ route('admin.customers.customers.update', $k->id) }}', formData)
                         .then((response) => {
-                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                            this.$emitter.emit('add-flash', {
+                                type: 'success',
+                                message: response.data.message
+                            });
 
                             this.$emit('update-customer', response.data.data);
 

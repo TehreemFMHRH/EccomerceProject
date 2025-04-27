@@ -8,20 +8,11 @@ use Webkul\Product\Models\Product;
 
 class ProductListener
 {
-    /**
-     * Permanent redirect code
-     *
-     * @var int
-     */
+    
     const PERMANENT_REDIRECT_CODE = 301;
 
-    /**
-     * After product is updated
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function beforeUpdate($id)
+    
+    public function beforeUpdate($i)
     {
         $currentURLKey = request()->input('url_key');
 
@@ -29,17 +20,15 @@ class ProductListener
             return;
         }
 
-        $product = Product::find($id);
+        res = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
+$product = count(res) ? res[0] : null;
 
         if ($currentURLKey === $product->url_key) {
             return;
         }
 
         if (empty($product->url_key)) {
-            /**
-             * Delete category and product url rewrites
-             * if already exists for the request path
-             */
+            
             $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
             ->where('request_path', $currentURLKey)
             ->get();
@@ -55,10 +44,7 @@ class ProductListener
             return;
         }
 
-        /**
-         * Delete category and product url rewrites
-         * if already exists for the request path
-         */
+        
         $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
         ->where('request_path', $currentURLKey)
         ->get();
@@ -85,20 +71,13 @@ class ProductListener
         Event::dispatch('marketing.search_seo.url_rewrites.create.after', $urlRewrites);
     }
 
-    /**
-     * Before product is deleted
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function beforeDelete($id)
+    
+    public function beforeDelete($i)
     {
-        $product = Product::find($id);
+        res = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
+$product = count(res) ? res[0] : null;
 
-        /**
-         * Delete product url rewrites
-         * if already exists for the request path
-         */
+        
         $urlRewrites = URLRewrite::whereIn('entity_type', ['category', 'product'])
         ->where('target_path', $product->url_key)
         ->get();

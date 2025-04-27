@@ -1,7 +1,7 @@
 <?php
 
 test('the admin login page returns a successful response', function () {
-    $response = $this->get('/admin/login');
+    $resp = $this->get('/admin/login');
 
-    $response->assertStatus(200);
+    $resp->assertStatus(200);
 });

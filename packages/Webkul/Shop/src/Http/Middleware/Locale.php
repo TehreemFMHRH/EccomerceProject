@@ -7,19 +7,10 @@ use Webkul\Core\Repositories\LocaleRepository;
 
 class Locale
 {
-    /**
-     * Create a middleware instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected LocaleRepository $localeRepository) {}
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
-     */
+    
     public function handle($request, Closure $next)
     {
         $locales = core()->getCurrentChannel()->locales->pluck('code')->toArray();

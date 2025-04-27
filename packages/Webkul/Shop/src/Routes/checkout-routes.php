@@ -4,9 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Webkul\Shop\Http\Controllers\CartController;
 use Webkul\Shop\Http\Controllers\OnepageController;
 
-/**
- * Cart routes.
- */
+
 Route::controller(CartController::class)->prefix('checkout/cart')->group(function () {
     Route::get('', 'index')->name('shop.checkout.cart.index');
 });

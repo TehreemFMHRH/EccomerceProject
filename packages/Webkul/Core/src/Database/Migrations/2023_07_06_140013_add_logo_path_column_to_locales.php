@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void
     {
         if (Schema::hasColumn('locales', 'locale_image')) {
@@ -23,9 +21,7 @@ return new class extends Migration
         DB::table('locales')->whereNull('logo_path')->update(['logo_path'=> DB::raw('CONCAT("locales/", code, ".png")')]);
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         if (Schema::hasColumn('locales', 'locale_image')) {

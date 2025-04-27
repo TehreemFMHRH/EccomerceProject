@@ -17,9 +17,7 @@ class AttributeGroup extends Model implements AttributeGroupContract
         'is_user_defined',
     ];
 
-    /**
-     * Get the attributes that owns the attribute group.
-     */
+    
     public function custom_attributes()
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'attribute_group_mappings')

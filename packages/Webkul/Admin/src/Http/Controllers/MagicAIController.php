@@ -7,9 +7,7 @@ use Webkul\MagicAI\Facades\MagicAI;
 
 class MagicAIController extends Controller
 {
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function content(): JsonResponse
     {
         $this->validate(request(), [
@@ -18,12 +16,12 @@ class MagicAIController extends Controller
         ]);
 
         try {
-            $response = MagicAI::setModel(request()->input('model'))
+            $resp = MagicAI::setModel(request()->input('model'))
                 ->setPrompt(request()->input('prompt'))
                 ->ask();
 
             return new JsonResponse([
-                'content' => $response,
+                'content' => $resp,
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
@@ -32,9 +30,7 @@ class MagicAIController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function image(): JsonResponse
     {
         config([

@@ -1,13 +1,10 @@
 @props([
-    'name'  => '',
+    'name' => '',
     'value' => 1,
 ])
 
-<v-quantity-changer
-    {{ $attributes->merge(['class' => 'flex items-center border dark:border-gray-300']) }}
-    name="{{ $name }}"
-    value="{{ $value }}"
->
+<v-quantity-changer {{ $attributes->merge(['class' => 'flex items-center border dark:border-gray-300']) }}
+    name="{{ $na }}" value="{{ $va }}">
 </v-quantity-changer>
 
 @pushOnce('scripts')
@@ -46,10 +43,10 @@
         app.component("v-quantity-changer", {
             template: '#v-quantity-changer-template',
 
-            props:['name', 'value'],
+            props: ['name', 'value'],
 
             data() {
-                return  {
+                return {
                     quantity: this.value,
                 }
             },
@@ -68,7 +65,7 @@
                 decrease() {
                     if (this.quantity > 1) {
                         this.quantity -= 1;
-                        
+
                         this.$emit('change', this.quantity);
                     }
                 },

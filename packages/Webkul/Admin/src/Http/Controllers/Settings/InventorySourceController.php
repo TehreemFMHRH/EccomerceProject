@@ -11,18 +11,10 @@ use Webkul\Inventory\Repositories\InventorySourceRepository;
 
 class InventorySourceController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected InventorySourceRepository $inventorySourceRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,26 +24,18 @@ class InventorySourceController extends Controller
         return view('admin::settings.inventory-sources.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::settings.inventory-sources.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(InventorySourceRequest $inventorySourceRequest)
     {
         Event::dispatch('inventory.inventory_source.create.before');
 
-        $data = request()->only([
+        $dat = request()->only([
             'code',
             'name',
             'description',
@@ -70,7 +54,7 @@ class InventorySourceController extends Controller
             'status',
         ]);
 
-        $inventorySource = $this->inventorySourceRepository->create($data);
+        $inventorySource = $this->inventorySourceRepository->create($dat);
 
         Event::dispatch('inventory.inventory_source.create.after', $inventorySource);
 
@@ -79,32 +63,24 @@ class InventorySourceController extends Controller
         return redirect()->route('admin.settings.inventory_sources.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $inventorySource = $this->inventorySourceRepository->findOrFail($id);
+        $inventorySource = $this->inventorySourceRepository->findOrFail($i);
 
         return view('admin::settings.inventory-sources.edit', compact('inventorySource'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(InventorySourceRequest $inventorySourceRequest, int $id)
+    
+    public function update(InventorySourceRequest $inventorySourceRequest, int $i)
     {
-        Event::dispatch('inventory.inventory_source.update.before', $id);
+        Event::dispatch('inventory.inventory_source.update.before', $i);
 
         if (! $inventorySourceRequest->status) {
             $inventorySourceRequest['status'] = 0;
         }
 
-        $data = $inventorySourceRequest->only([
+        $dat = $inventorySourceRequest->only([
             'code',
             'name',
             'description',
@@ -123,7 +99,7 @@ class InventorySourceController extends Controller
             'status',
         ]);
 
-        $inventorySource = $this->inventorySourceRepository->update($data, $id);
+        $inventorySource = $this->inventorySourceRepository->update($dat, $i);
 
         Event::dispatch('inventory.inventory_source.update.after', $inventorySource);
 
@@ -132,23 +108,21 @@ class InventorySourceController extends Controller
         return redirect()->route('admin.settings.inventory_sources.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $this->inventorySourceRepository->findOrFail($id);
+        $this->inventorySourceRepository->findOrFail($i);
 
         if ($this->inventorySourceRepository->count() == 1) {
             return response()->json(['message' => trans('admin::app.settings.inventory-sources.last-delete-error')], 400);
         }
 
         try {
-            Event::dispatch('inventory.inventory_source.delete.before', $id);
+            Event::dispatch('inventory.inventory_source.delete.before', $i);
 
-            $this->inventorySourceRepository->delete($id);
+            $this->inventorySourceRepository->delete($i);
 
-            Event::dispatch('inventory.inventory_source.delete.after', $id);
+            Event::dispatch('inventory.inventory_source.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.inventory-sources.delete-success'),

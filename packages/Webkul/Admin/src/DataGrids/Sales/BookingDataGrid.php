@@ -8,11 +8,7 @@ use Webkul\DataGrid\DataGrid;
 
 class BookingDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('bookings')
@@ -27,11 +23,7 @@ class BookingDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -69,8 +61,8 @@ class BookingDataGrid extends DataGrid
             'sortable'        => true,
             'filterable'      => true,
             'filterable_type' => 'datetime_range',
-            'closure'         => function ($value) {
-                return Carbon::createFromTimestamp($value->from)->format('d M, Y H:iA');
+            'closure'         => function ($va) {
+                return Carbon::createFromTimestamp($va->from)->format('d M, Y H:iA');
             },
         ]);
 
@@ -82,8 +74,8 @@ class BookingDataGrid extends DataGrid
             'sortable'        => true,
             'filterable'      => true,
             'filterable_type' => 'datetime_range',
-            'closure'         => function ($value) {
-                return Carbon::createFromTimestamp($value->to)->format('d M, Y H:iA');
+            'closure'         => function ($va) {
+                return Carbon::createFromTimestamp($va->to)->format('d M, Y H:iA');
             },
         ]);
 
@@ -98,11 +90,7 @@ class BookingDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         $this->addAction([

@@ -9,49 +9,35 @@ use Webkul\Shop\Mail\Order\CreatedNotification;
 
 class Order extends Base
 {
-    /**
-     * After order is created
-     *
-     * @return void
-     */
-    public function afterCreated(OrderContract $order)
+    
+    public function afterCreated(OrderContract $o)
     {
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order')) {
                 return;
             }
 
-            $this->prepareMail($order, new CreatedNotification($order));
+            $this->prepareMail($o, new CreatedNotification($o));
         } catch (\Exception $e) {
             report($e);
         }
     }
 
-    /**
-     * Send cancel order mail.
-     *
-     * @param  \Webkul\Sales\Contracts\Order  $order
-     * @return void
-     */
-    public function afterCanceled($order)
+    
+    public function afterCanceled($o)
     {
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.cancel_order')) {
                 return;
             }
 
-            $this->prepareMail($order, new CanceledNotification($order));
+            $this->prepareMail($o, new CanceledNotification($o));
         } catch (\Exception $e) {
             report($e);
         }
     }
 
-    /**
-     * Send order comment mail.
-     *
-     * @param  \Webkul\Sales\Contracts\OrderComment  $comment
-     * @return void
-     */
+    
     public function afterCommented($comment)
     {
         if (! $comment->customer_notified) {
@@ -59,9 +45,7 @@ class Order extends Base
         }
 
         try {
-            /**
-             * Email to customer.
-             */
+            
             $this->prepareMail($comment, new CommentedNotification($comment));
         } catch (\Exception $e) {
             report($e);

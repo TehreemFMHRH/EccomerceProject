@@ -24,9 +24,7 @@ class OrderPayment extends Model implements OrderPaymentContract
         'additional' => 'array',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return OrderPaymentFactory::new();

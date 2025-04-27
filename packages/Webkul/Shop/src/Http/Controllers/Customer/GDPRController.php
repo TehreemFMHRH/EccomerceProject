@@ -12,11 +12,7 @@ use Webkul\Shop\Http\Controllers\Controller;
 
 class GDPRController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected GDPRDataRequestRepository $gdprDataRequestRepository,
         protected OrderRepository $orderRepository,
@@ -27,9 +23,7 @@ class GDPRController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -39,18 +33,16 @@ class GDPRController extends Controller
         return view('shop::customers.account.gdpr.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store()
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         $params = request()->all() + [
             'status'        => 'pending',
-            'customer_id'   => $customer->id,
-            'customer_name' => $customer->first_name.' '.$customer->last_name,
-            'email'         => $customer->email,
+            'customer_id'   => $k->id,
+            'customer_name' => $k->first_name.' '.$k->last_name,
+            'email'         => $k->email,
             'message'       => request()->get(request()->message),
         ];
 
@@ -67,22 +59,20 @@ class GDPRController extends Controller
         return redirect()->route('shop.customers.account.gdpr.index');
     }
 
-    /**
-     * Download the view in pdf form for the specified resource.
-     */
+    
     public function pdfView()
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         try {
-            $orders = $this->orderRepository->findWhere(['customer_id' => $customer->id])->toArray();
+            $orders = $this->orderRepository->findWhere(['customer_id' => $k->id])->toArray();
 
-            $address = $this->customerAddressRepository->where('address_type', 'customer')->where('customer_id', $customer->id)->get()->toArray();
+            $addr = $this->customerAddressRepository->where('address_type', 'customer')->where('customer_id', $k->id)->get()->toArray();
 
             $param = [
-                'customerInformation' => $customer,
+                'customerInformation' => $k,
                 'order'               => ! empty($orders) ? $orders : null,
-                'address'             => ! empty($address) ? $address : null,
+                'address'             => ! empty($addr) ? $addr : null,
             ];
 
             if (is_null($param['order'])) {
@@ -93,7 +83,7 @@ class GDPRController extends Controller
                 unset($param['address']);
             }
         } catch (\Exception $e) {
-            $param = ['customerInformation' => $customer];
+            $param = ['customerInformation' => $k];
         }
 
         $pdf = \PDF::loadView('shop::customers.account.gdpr.pdf', compact('param'));
@@ -103,22 +93,20 @@ class GDPRController extends Controller
         return $pdf->download('customerInfo.pdf');
     }
 
-    /**
-     * Show the view in HTML format for the specified resource.
-     */
+    
     public function htmlView()
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         try {
-            $orders = $this->orderRepository->findWhere(['customer_id' => $customer->id])->toArray();
+            $orders = $this->orderRepository->findWhere(['customer_id' => $k->id])->toArray();
 
-            $address = $this->customerAddressRepository->where('address_type', 'customer')->where('customer_id', $customer->id)->get();
+            $addr = $this->customerAddressRepository->where('address_type', 'customer')->where('customer_id', $k->id)->get();
 
             $param = [
-                'customerInformation' => $customer,
+                'customerInformation' => $k,
                 'order'               => ! empty($orders) ? $orders : null,
-                'address'             => ! empty($address) ? $address : null,
+                'address'             => ! empty($addr) ? $addr : null,
             ];
 
             if (is_null($param['order'])) {
@@ -130,34 +118,30 @@ class GDPRController extends Controller
             }
 
         } catch (\Exception $e) {
-            $param = ['customerInformation'=>$customer];
+            $param = ['customerInformation'=>$k];
         }
 
         return view('shop::customers.account.gdpr.pdf', compact('param'));
     }
 
-    /**
-     * Cookie Consent.
-     */
+    
     public function cookieConsent()
     {
         return view('shop::components.layouts.cookie.consent');
     }
 
-    /**
-     * Revoke a GDPR request.
-     */
-    public function revoke($id)
+    
+    public function revoke($i)
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
-        $data = $this->gdprDataRequestRepository->findWhere([
-            'id'          => $id,
-            'customer_id' => $customer->id,
+        $dat = $this->gdprDataRequestRepository->findWhere([
+            'id'          => $i,
+            'customer_id' => $k->id,
             'status'      => 'pending',
         ])->first();
 
-        if (! $data) {
+        if (! $dat) {
             session()->flash('error', trans('shop::app.customers.account.gdpr.revoke-failed'));
 
             return redirect()->route('shop.customers.account.gdpr.index');
@@ -168,7 +152,7 @@ class GDPRController extends Controller
         $gdprRequest = $this->gdprDataRequestRepository->update([
             'status'     => 'revoked',
             'revoked_at' => Carbon::now(),
-        ], $id);
+        ], $i);
 
         Event::dispatch('customer.account.gdpr-request.update.after', $gdprRequest);
 

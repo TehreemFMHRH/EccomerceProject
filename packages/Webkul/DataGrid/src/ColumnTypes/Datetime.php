@@ -10,9 +10,7 @@ use Webkul\DataGrid\Exceptions\InvalidColumnExpressionException;
 
 class Datetime extends Column
 {
-    /**
-     * Set filterable type.
-     */
+    
     public function setFilterableType(?string $filterableType): void
     {
         if (
@@ -25,9 +23,7 @@ class Datetime extends Column
         parent::setFilterableType($filterableType);
     }
 
-    /**
-     * Set filterable options.
-     */
+    
     public function setFilterableOptions(mixed $filterableOptions): void
     {
         if (empty($filterableOptions)) {
@@ -37,9 +33,7 @@ class Datetime extends Column
         parent::setFilterableOptions($filterableOptions);
     }
 
-    /**
-     * Process filter.
-     */
+    
     public function processFilter($queryBuilder, $requestedDates)
     {
         return $queryBuilder->where(function ($scopeQueryBuilder) use ($requestedDates) {
@@ -50,8 +44,8 @@ class Datetime extends Column
                     ? [[$requestedDates, $requestedDates]]
                     : [[$rangeOption['from'], $rangeOption['to']]];
             } elseif (is_array($requestedDates)) {
-                foreach ($requestedDates as $value) {
-                    $scopeQueryBuilder->whereBetween($this->columnName, [$value[0] ?? '', $value[1] ?? '']);
+                foreach ($requestedDates as $va) {
+                    $scopeQueryBuilder->whereBetween($this->columnName, [$va[0] ?? '', $va[1] ?? '']);
                 }
             } else {
                 throw new InvalidColumnExpressionException('Only string and array are allowed for datetime column type.');

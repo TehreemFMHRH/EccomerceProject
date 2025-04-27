@@ -10,9 +10,7 @@ use XMLReader;
 
 class XML extends AbstractSource
 {
-    /**
-     * Initialize.
-     */
+    
     public function initialize(): void
     {
         $this->reader = new XMLReader;
@@ -29,9 +27,7 @@ class XML extends AbstractSource
         $this->totalColumns = count($this->columnNames);
     }
 
-    /**
-     * Get column names from the first element's children.
-     */
+    
     public function getColumnNames(): array
     {
         $columnNames = [];
@@ -47,9 +43,7 @@ class XML extends AbstractSource
         return $columnNames;
     }
 
-    /**
-     * Read next element from XML.
-     */
+    
     protected function getNextRow(): array|bool
     {
         $rowData = [];
@@ -68,9 +62,7 @@ class XML extends AbstractSource
         return $rowData;
     }
 
-    /**
-     * Rewind the iterator to the first row.
-     */
+    
     public function rewind(): void
     {
         $this->currentRowNumber = 0;
@@ -89,9 +81,7 @@ class XML extends AbstractSource
         $this->next();
     }
 
-    /**
-     * Generate error report.
-     */
+    
     public function generateErrorReport(array $errors): string
     {
         $this->rewind();
@@ -119,11 +109,11 @@ class XML extends AbstractSource
 
             $rowData['errors'] = implode('|', $rowErrors);
 
-            $customer = $writer->addChild($childElement);
+            $k = $writer->addChild($childElement);
 
-            foreach ($rowData as $key => $value) {
+            foreach ($rowData as $key => $va) {
                 if (is_string($key)) {
-                    $customer->addAttribute($key, $value);
+                    $k->addAttribute($key, $va);
                 }
             }
 
@@ -135,11 +125,7 @@ class XML extends AbstractSource
         return $this->errorFilePath();
     }
 
-    /**
-     * Close file handle.
-     *
-     * @return void
-     */
+    
     public function __destruct()
     {
         if (! is_object($this->reader)) {

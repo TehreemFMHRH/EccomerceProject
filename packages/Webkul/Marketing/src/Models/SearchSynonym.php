@@ -12,19 +12,13 @@ class SearchSynonym extends Model implements SearchSynonymContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'name',
         'terms',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return SearchSynonymFactory::new();

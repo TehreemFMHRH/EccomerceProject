@@ -10,18 +10,10 @@ use Webkul\Marketing\Repositories\EventRepository;
 
 class EventController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected EventRepository $eventRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -31,11 +23,7 @@ class EventController extends Controller
         return view('admin::marketing.communications.events.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function store()
     {
         $this->validate(request(), [
@@ -59,30 +47,24 @@ class EventController extends Controller
         ], 200);
     }
 
-    /**
-     * Event Details
-     */
-    public function edit(int $id): JsonResponse
+    
+    public function edit(int $i): JsonResponse
     {
-        if ($id == 1) {
+        if ($i == 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.marketing.communications.events.edit-error'),
             ]);
         }
 
-        $event = $this->eventRepository->findOrFail($id);
+        $event = $this->eventRepository->findOrFail($i);
 
         return new JsonResponse($event);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function update()
     {
-        $id = request()->id;
+        $i = request()->id;
 
         $this->validate(request(), [
             'name'        => 'required',
@@ -90,13 +72,13 @@ class EventController extends Controller
             'date'        => 'date|required',
         ]);
 
-        Event::dispatch('marketing.events.update.before', $id);
+        Event::dispatch('marketing.events.update.before', $i);
 
         $event = $this->eventRepository->update(request()->only([
             'name',
             'description',
             'date',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('marketing.events.update.after', $event);
 
@@ -105,21 +87,17 @@ class EventController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(int $id)
+    
+    public function destroy(int $i)
     {
-        $this->eventRepository->findOrFail($id);
+        $this->eventRepository->findOrFail($i);
 
         try {
-            Event::dispatch('marketing.events.delete.before', $id);
+            Event::dispatch('marketing.events.delete.before', $i);
 
-            $this->eventRepository->delete($id);
+            $this->eventRepository->delete($i);
 
-            Event::dispatch('marketing.events.delete.after', $id);
+            Event::dispatch('marketing.events.delete.after', $i);
 
             return response()->json([
                 'message' => trans('admin::app.marketing.communications.events.delete-success'),

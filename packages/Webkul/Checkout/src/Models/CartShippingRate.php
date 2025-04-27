@@ -12,11 +12,7 @@ class CartShippingRate extends Model implements CartShippingRateContract
 {
     use HasFactory;
 
-    /**
-     * Fillable property of the model.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'carrier',
         'carrier_title',
@@ -35,18 +31,14 @@ class CartShippingRate extends Model implements CartShippingRateContract
         'applied_tax_rate',
     ];
 
-    /**
-     * Get the post that owns the comment.
-     */
+    
     public function shipping_address()
     {
         return $this->belongsTo(CartAddressProxy::modelClass(), 'cart_address_id')
             ->where('address_type', CartAddress::ADDRESS_TYPE_SHIPPING);
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return CartShippingRateFactory::new();

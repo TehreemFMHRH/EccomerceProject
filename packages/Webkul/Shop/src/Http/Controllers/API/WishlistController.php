@@ -11,19 +11,13 @@ use Webkul\Shop\Http\Resources\WishlistResource;
 
 class WishlistController extends APIController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected WishlistRepository $wishlistRepository,
 
     ) {}
 
-    /**
-     * Displays the listing resources if the customer has items on the wishlist.
-     */
+    
     public function index(): JsonResource
     {
         $this->removeInactiveItems();
@@ -38,9 +32,7 @@ class WishlistController extends APIController
         return WishlistResource::collection($items);
     }
 
-    /**
-     * Function to add items to the wishlist.
-     */
+    
     public function store(): JsonResource
     {
         $this->validate(request(), [
@@ -55,14 +47,14 @@ class WishlistController extends APIController
             ]);
         }
 
-        $data = [
+        $dat = [
             'channel_id'  => core()->getCurrentChannel()->id,
             'product_id'  => $product->id,
             'customer_id' => auth()->guard()->user()->id,
         ];
 
-        if (! $this->wishlistRepository->findOneWhere($data)) {
-            $this->wishlistRepository->create($data);
+        if (! $this->wishlistRepository->findOneWhere($dat)) {
+            $this->wishlistRepository->create($dat);
 
             return new JsonResource([
                 'message' => trans('shop::app.customers.account.wishlist.success'),
@@ -79,15 +71,11 @@ class WishlistController extends APIController
         ]);
     }
 
-    /**
-     * Move the wishlist item to the cart.
-     *
-     * @param  int  $id
-     */
-    public function moveToCart($id): JsonResource
+    
+    public function moveToCart($i): JsonResource
     {
         $wishlistItem = $this->wishlistRepository->findOneWhere([
-            'id'          => $id,
+            'id'          => $i,
             'customer_id' => auth()->guard('customer')->user()->id,
         ]);
 
@@ -124,15 +112,11 @@ class WishlistController extends APIController
         }
     }
 
-    /**
-     * Function to remove items to the wishlist.
-     *
-     * @param  int  $id
-     */
-    public function destroy($id): JsonResource
+    
+    public function destroy($i): JsonResource
     {
         $success = $this->wishlistRepository->deleteWhere([
-            'id'          => $id,
+            'id'          => $i,
             'customer_id' => auth()->guard('customer')->user()->id,
         ]);
 
@@ -148,9 +132,7 @@ class WishlistController extends APIController
         ]);
     }
 
-    /**
-     * Method for removing all items from the wishlist.
-     */
+    
     public function destroyAll(): JsonResource
     {
         $success = $this->wishlistRepository->deleteWhere([
@@ -168,23 +150,19 @@ class WishlistController extends APIController
         ]);
     }
 
-    /**
-     * Removing inactive wishlist items.
-     *
-     * @return int
-     */
+    
     protected function removeInactiveItems()
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
-        $customer->load(['wishlist_items.product']);
+        $k->load(['wishlist_items.product']);
 
-        $inactiveItemIds = $customer->wishlist_items
+        $inactiveItemIds = $k->wishlist_items
             ->filter(fn ($item) => ! $item->product->status)
             ->pluck('product_id')
             ->toArray();
 
-        return $customer->wishlist_items()
+        return $k->wishlist_items()
             ->whereIn('product_id', $inactiveItemIds)
             ->delete();
     }

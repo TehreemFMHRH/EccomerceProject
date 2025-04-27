@@ -7,30 +7,24 @@ use Webkul\Sales\Models\InvoiceItem;
 
 class InvoiceItemFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = InvoiceItem::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         $basePrice = $this->faker->randomFloat(2);
 
-        $quantity = $this->faker->randomNumber();
+        $q = $this->faker->randomNumber();
 
         return [
             'name'            => $this->faker->word,
             'sku'             => $this->faker->unique()->ean13,
-            'qty'             => $quantity,
+            'qty'             => $q,
             'price'           => $basePrice,
             'base_price'      => $basePrice,
-            'total'           => $quantity * $basePrice,
-            'base_total'      => $quantity * $basePrice,
+            'total'           => $q * $basePrice,
+            'base_total'      => $q * $basePrice,
             'tax_amount'      => 0,
             'base_tax_amount' => 0,
         ];

@@ -7,16 +7,10 @@ use Webkul\Tax\Models\TaxRate;
 
 class TaxRateFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = TaxRate::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [

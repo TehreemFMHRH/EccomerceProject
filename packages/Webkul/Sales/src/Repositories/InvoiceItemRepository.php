@@ -7,58 +7,53 @@ use Webkul\Core\Eloquent\Repository;
 
 class InvoiceItemRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+    
     public function model(): string
     {
         return 'Webkul\Sales\Contracts\InvoiceItem';
     }
 
-    /**
-     * @param  array  $data
-     * @return void
-     */
-    public function updateProductInventory($data)
+    
+    public function updateProductInventory($dat)
     {
-        if (! $data['product']) {
+        if (! $dat['product']) {
             return;
         }
 
-        if (! $data['product']->manage_stock) {
+        if (! $dat['product']->manage_stock) {
             return;
         }
 
-        $orderedInventory = $data['product']->ordered_inventories()
-            ->where('channel_id', $data['invoice']->order->channel->id)
+        $orderedInventory = $dat['product']->ordered_inventories()
+            ->where('channel_id', $dat['invoice']->order->channel->id)
             ->first();
 
         if ($orderedInventory) {
-            if (($orderedQty = $orderedInventory->qty - $data['qty']) < 0) {
+            if (($orderedQty = $orderedInventory->qty - $dat['qty']) < 0) {
                 $orderedQty = 0;
             }
 
             $orderedInventory->update(['qty' => $orderedQty]);
         }
 
-        $inventories = $data['product']->inventories()
-            ->where('vendor_id', $data['vendor_id'])
-            ->whereIn('inventory_source_id', $data['invoice']->order->channel->inventory_sources()->pluck('id'))
+        $inventories = $dat['product']->inventories()
+            ->where('vendor_id', $dat['vendor_id'])
+            ->whereIn('inventory_source_id', $dat['invoice']->order->channel->inventory_sources()->pluck('id'))
             ->orderBy('qty', 'desc')
             ->get();
 
         foreach ($inventories as $inventory) {
-            if ($inventory->qty >= $data['qty']) {
-                $inventory->update(['qty' => $inventory->qty - $data['qty']]);
+            if ($inventory->qty >= $dat['qty']) {
+                $inventory->update(['qty' => $inventory->qty - $dat['qty']]);
 
                 break;
             } else {
-                $data['qty'] -= $inventory->qty;
+                $dat['qty'] -= $inventory->qty;
 
                 $inventory->update(['qty' => 0]);
             }
         }
 
-        Event::dispatch('catalog.product.update.after', $data['product']);
+        Event::dispatch('catalog.product.update.after', $dat['product']);
     }
 }

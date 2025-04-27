@@ -51,7 +51,7 @@ it('should store the newly created inventory sources', function () {
 
     postJson(route('admin.settings.inventory_sources.store'), [
         'code'           => $code = fake()->numerify('code#######'),
-        'name'           => $name = fake()->name(),
+        'name'           => $na = fake()->name(),
         'priority'       => $priority = rand(1, 10),
         'contact_number' => $contactNumber = rand(1111111111, 9999999999),
         'contact_email'  => $contactEmail = fake()->email(),
@@ -71,7 +71,7 @@ it('should store the newly created inventory sources', function () {
         InventorySource::class => [
             [
                 'code'           => $code,
-                'name'           => $name,
+                'name'           => $na,
                 'priority'       => $priority,
                 'contact_email'  => $contactEmail,
                 'contact_number' => $contactNumber,
@@ -124,7 +124,7 @@ it('should update the inventory sources', function () {
 
     putJson(route('admin.settings.inventory_sources.update', $inventorySources->id), [
         'code'           => $code = strtolower(fake()->numerify('code######')),
-        'name'           => $name = fake()->name(),
+        'name'           => $na = fake()->name(),
         'priority'       => $priority = rand(1, 10),
         'contact_number' => $contactNumber = rand(1111111111, 9999999999),
         'contact_email'  => $contactEmail = fake()->email(),
@@ -144,7 +144,7 @@ it('should update the inventory sources', function () {
         InventorySource::class => [
             [
                 'code'           => $code,
-                'name'           => $name,
+                'name'           => $na,
                 'priority'       => $priority,
                 'contact_email'  => $contactEmail,
                 'contact_number' => $contactNumber,

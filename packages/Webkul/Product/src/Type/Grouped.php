@@ -15,11 +15,7 @@ use Webkul\Product\Repositories\ProductVideoRepository;
 
 class Grouped extends AbstractType
 {
-    /**
-     * Skip attribute for downloadable product type.
-     *
-     * @var array
-     */
+
     protected $skipAttributes = [
         'price',
         'cost',
@@ -34,25 +30,13 @@ class Grouped extends AbstractType
         'manage_stock',
     ];
 
-    /**
-     * Is a composite product type.
-     *
-     * @var bool
-     */
+
     protected $isComposite = true;
 
-    /**
-     * Product can be added to cart with options or not.
-     *
-     * @var bool
-     */
+
     protected $canBeAddedToCartWithoutOptions = false;
 
-    /**
-     * Create a new product type instance.
-     *
-     * @return void
-     */
+
     // public function __construct(
     //     CustomerRepository $customerRepository,
     //     AttributeRepository $attributeRepository,
@@ -73,32 +57,21 @@ class Grouped extends AbstractType
     //     );
     // }
 
-    /**
-     * Update.
-     *
-     * @param  int  $id
-     * @param  array  $attributes
-     * @return \Webkul\Product\Contracts\Product
-     */
-    public function update(array $data, $id, $attributes = [])
+
+    public function update(array $dat, $i, $attributes = [])
     {
-        $product = parent::update($data, $id);
+        $product = parent::update($dat, $i);
 
         if (! empty($attributes)) {
             return $product;
         }
 
-        ProductGroupedProduct::saveGroupedProducts($data, $product);
+        ProductGroupedProduct::saveGroupedProducts($dat, $product);
 
         return $product;
     }
 
-    /**
-     * Copy relationships.
-     *
-     * @param  \Webkul\Product\Models\Product  $product
-     * @return void
-     */
+
     protected function copyRelationships($product)
     {
         parent::copyRelationships($product);
@@ -114,31 +87,19 @@ class Grouped extends AbstractType
         }
     }
 
-    /**
-     * Returns children ids.
-     *
-     * @return array
-     */
+
     public function getChildrenIds()
     {
         return array_unique($this->product->grouped_products()->pluck('associated_product_id')->toArray());
     }
 
-    /**
-     * Check if catalog rule can be applied.
-     *
-     * @return bool
-     */
+
     public function priceRuleCanBeApplied()
     {
         return false;
     }
 
-    /**
-     * Is saleable.
-     *
-     * @return bool
-     */
+
     public function isSaleable()
     {
         if (! $this->product->status) {
@@ -154,9 +115,7 @@ class Grouped extends AbstractType
         return false;
     }
 
-    /**
-     * Is product have sufficient quantity.
-     */
+
     public function haveSufficientQuantity(int $qty): bool
     {
         foreach ($this->product->grouped_products as $groupedProduct) {
@@ -168,11 +127,7 @@ class Grouped extends AbstractType
         return false;
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @return string
-     */
+
     public function getPriceHtml()
     {
         return view('shop::products.prices.grouped', [
@@ -181,24 +136,19 @@ class Grouped extends AbstractType
         ])->render();
     }
 
-    /**
-     * Add product. Returns error message if can't prepare product.
-     *
-     * @param  array  $data
-     * @return array|string
-     */
-    public function prepareForCart($data)
+
+    public function prepareForCart($dat)
     {
         if (
-            ! isset($data['qty'])
-            || ! is_array($data['qty'])
+            ! isset($dat['qty'])
+            || ! is_array($dat['qty'])
         ) {
             return trans('product::app.checkout.cart.missing-options');
         }
 
         $cartProductsList = [];
 
-        foreach ($data['qty'] as $productId => $qty) {
+        foreach ($dat['qty'] as $productId => $qty) {
             if (! $qty) {
                 continue;
             }
@@ -230,27 +180,19 @@ class Grouped extends AbstractType
         return $products;
     }
 
-    /**
-     * Returns price indexer class for a specific product type
-     *
-     * @return string
-     */
+
     public function getPriceIndexer()
     {
         return app(GroupedIndexer::class);
     }
 
-    /**
-     * Returns validation rules.
-     *
-     * @return array
-     */
+
     public function getTypeValidationRules()
     {
         return [
             'links' => 'array',
-            'links' => function ($attribute, $value, $fail) {
-                $associatedProductIds = collect($value)->pluck('associated_product_id')->toArray();
+            'links' => function ($attribute, $va, $fail) {
+                $associatedProductIds = collect($va)->pluck('associated_product_id')->toArray();
 
                 $products = Product::whereIn('id', $associatedProductIds)
                     ->pluck('type')

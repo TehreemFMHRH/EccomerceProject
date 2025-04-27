@@ -7,18 +7,10 @@ use Webkul\Customer\Models\CustomerAddress;
 
 class CustomerAddressFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = CustomerAddress::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @throws \Exception
-     */
+    
     public function definition(): array
     {
         $fakerIt = \Faker\Factory::create('it_IT');

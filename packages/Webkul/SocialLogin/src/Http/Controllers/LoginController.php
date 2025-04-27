@@ -13,19 +13,10 @@ class LoginController extends Controller
 {
     use DispatchesJobs, ValidatesRequests;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerSocialAccountRepository $customerSocialAccountRepository) {}
 
-    /**
-     * Redirects to the social provider
-     *
-     * @param  string  $provider
-     * @return \Illuminate\Http\Response
-     */
+    
     public function redirectToProvider($provider)
     {
         try {
@@ -37,12 +28,7 @@ class LoginController extends Controller
         }
     }
 
-    /**
-     * Handles callback
-     *
-     * @param  string  $provider
-     * @return \Illuminate\Http\Response
-     */
+    
     public function handleProviderCallback($provider)
     {
         try {
@@ -51,11 +37,11 @@ class LoginController extends Controller
             return redirect()->route('shop.customer.session.index');
         }
 
-        $customer = $this->customerSocialAccountRepository->findOrCreateCustomer($user, $provider);
+        $k = $this->customerSocialAccountRepository->findOrCreateCustomer($user, $provider);
 
-        auth()->guard('customer')->login($customer, true);
+        auth()->guard('customer')->login($k, true);
 
-        Event::dispatch('customer.after.login', $customer);
+        Event::dispatch('customer.after.login', $k);
 
         return redirect()->intended(route('shop.customers.account.profile.index'));
     }

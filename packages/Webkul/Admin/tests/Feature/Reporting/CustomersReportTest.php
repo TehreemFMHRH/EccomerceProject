@@ -47,7 +47,7 @@ it('should return the customers stats report', function () {
 
 it('should return the customers with most reviews stats report', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $product = (new ProductFaker([
         'attributes' => [
@@ -65,8 +65,8 @@ it('should return the customers with most reviews stats report', function () {
 
     $productReviews = ProductReview::factory()->count(2)->create([
         'status'      => 'approved',
-        'customer_id' => $customer->id,
-        'name'        => $customer->name,
+        'customer_id' => $k->id,
+        'name'        => $k->name,
         'product_id'  => $product->id,
     ]);
 
@@ -77,8 +77,8 @@ it('should return the customers with most reviews stats report', function () {
         'type' => 'customers-with-most-reviews',
     ]))
         ->assertOk()
-        ->assertJsonPath('statistics.0.email', $customer->email)
-        ->assertJsonPath('statistics.0.id', $customer->id)
+        ->assertJsonPath('statistics.0.email', $k->email)
+        ->assertJsonPath('statistics.0.id', $k->id)
         ->assertJsonPath('statistics.0.reviews', $productReviews->count());
 
     foreach ($productReviews as $productReview) {
@@ -93,7 +93,7 @@ it('should return the customers with most reviews stats report', function () {
 
 it('should return the top customers group stats report', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     // Act and Assert.
     $this->loginAsAdmin();
@@ -102,15 +102,15 @@ it('should return the top customers group stats report', function () {
         'type' => 'top-customer-groups',
     ]))
         ->assertOk()
-        ->assertJsonPath('statistics.0.id', $customer->id)
+        ->assertJsonPath('statistics.0.id', $k->id)
         ->assertJsonPath('statistics.0.group_name', 'General');
 });
 
 it('should return the customers traffic stats report', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
-    visitor()->visit($customer);
+    visitor()->visit($k);
 
     // Act and Assert.
     $this->loginAsAdmin();
@@ -139,13 +139,13 @@ it('should return the customers with most orders stats report', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -162,10 +162,10 @@ it('should return the customers with most orders stats report', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -175,19 +175,19 @@ it('should return the customers with most orders stats report', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -197,40 +197,40 @@ it('should return the customers with most orders stats report', function () {
         'method_title' => core()->getConfigData('sales.payment_methods.'.$paymentMethod.'.title'),
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
     ]);
 
     OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'state'    => 'paid',
     ]);
 
@@ -254,7 +254,7 @@ it('should return the customers with most orders stats report', function () {
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     // Act and Assert.
@@ -264,10 +264,10 @@ it('should return the customers with most orders stats report', function () {
         'type' => 'customers-with-most-orders',
     ]))
         ->assertOk()
-        ->assertJsonPath('statistics.0.id', $customer->id)
-        ->assertJsonPath('statistics.0.email', $customer->email)
-        ->assertJsonPath('statistics.0.full_name', $customer->name)
-        ->assertJsonPath('statistics.0.orders', $customer->orders()->count());
+        ->assertJsonPath('statistics.0.id', $k->id)
+        ->assertJsonPath('statistics.0.email', $k->email)
+        ->assertJsonPath('statistics.0.full_name', $k->name)
+        ->assertJsonPath('statistics.0.orders', $k->orders()->count());
 
     $cart->refresh();
 
@@ -281,7 +281,7 @@ it('should return the customers with most orders stats report', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -313,7 +313,7 @@ it('should return the customers with most orders stats report', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -352,13 +352,13 @@ it('should return the customers with most sales stats report', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -375,10 +375,10 @@ it('should return the customers with most sales stats report', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -388,19 +388,19 @@ it('should return the customers with most sales stats report', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -410,40 +410,40 @@ it('should return the customers with most sales stats report', function () {
         'method_title' => core()->getConfigData('sales.payment_methods.'.$paymentMethod.'.title'),
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
     ]);
 
     OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'state'    => 'paid',
     ]);
 
@@ -467,7 +467,7 @@ it('should return the customers with most sales stats report', function () {
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     // Act and Assert.
@@ -477,10 +477,10 @@ it('should return the customers with most sales stats report', function () {
         'type' => 'customers-with-most-sales',
     ]))
         ->assertOk()
-        ->assertJsonPath('statistics.0.id', $customer->id)
-        ->assertJsonPath('statistics.0.email', $customer->email)
-        ->assertJsonPath('statistics.0.full_name', $customer->name)
-        ->assertJsonPath('statistics.0.orders', $customer->orders()->count());
+        ->assertJsonPath('statistics.0.id', $k->id)
+        ->assertJsonPath('statistics.0.email', $k->email)
+        ->assertJsonPath('statistics.0.full_name', $k->name)
+        ->assertJsonPath('statistics.0.orders', $k->orders()->count());
 
     $cart->refresh();
 
@@ -494,7 +494,7 @@ it('should return the customers with most sales stats report', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -526,7 +526,7 @@ it('should return the customers with most sales stats report', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [

@@ -12,11 +12,7 @@ use Webkul\Installer\Database\Seeders\Category\CategoryTableSeeder;
 
 class ProductTableSeeder extends Seeder
 {
-    /**
-     * Attribute Type Fields.
-     *
-     * @var array
-     */
+    
     public $attributeTypeFields = [
         'text'        => 'text_value',
         'textarea'    => 'text_value',
@@ -31,17 +27,10 @@ class ProductTableSeeder extends Seeder
         'checkbox'    => 'text_value',
     ];
 
-    /**
-     * Base path for the images.
-     */
+    
     const BASE_PATH = 'packages/Webkul/Installer/src/Resources/assets/images/seeders/products/';
 
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('products')->delete();
@@ -85,7 +74,7 @@ class ProductTableSeeder extends Seeder
             $localeSpecificAttributes = ['name', 'url_key', 'short_description', 'description', 'meta_title', 'meta_keywords', 'meta_description'];
 
             foreach ($productsData as $productData) {
-                foreach ($productData as $attributeCode => $value) {
+                foreach ($productData as $attributeCode => $va) {
                     if (in_array($attributeCode, $skipAttributes)) {
                         continue;
                     }
@@ -112,7 +101,7 @@ class ProductTableSeeder extends Seeder
                     $attributeValues[] = array_merge($attributeTypeValues, [
                         'attribute_id'                               => $attribute->id,
                         'product_id'                                 => $productData['product_id'],
-                        $this->attributeTypeFields[$attribute->type] => $value,
+                        $this->attributeTypeFields[$attribute->type] => $va,
                         'channel'                                    => $attribute->value_per_channel ? 'default' : null,
                         'locale'                                     => $attribute->value_per_locale ? $locale : null,
                         'unique_id'                                  => $uniqueId,
@@ -1008,11 +997,7 @@ class ProductTableSeeder extends Seeder
         ]);
     }
 
-    /**
-     * Retrieve all product data in array format.
-     *
-     * @return array
-     */
+    
     public function prepareProductsData($locales)
     {
         $products = [];
@@ -1335,11 +1320,7 @@ class ProductTableSeeder extends Seeder
         return $products;
     }
 
-    /**
-     * Store image in storage.
-     *
-     * @return string|null
-     */
+    
     public function productImages($targetPath, $file, $default = null)
     {
         if (file_exists(base_path(self::BASE_PATH.$file))) {

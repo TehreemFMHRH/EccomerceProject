@@ -89,7 +89,7 @@
                         <!-- Create Order Form -->
                         <form
                             method="post"
-                            action="{{ route('admin.customers.customers.cart.store', $customer->id) }}"
+                            action="{{ route('admin.customers.customers.cart.store', $k->id) }}"
                             ref="create-order"
                         >
                             @csrf
@@ -99,7 +99,7 @@
 
                 <a
                     class="inline-flex w-full max-w-max cursor-pointer items-center justify-between gap-x-2 px-1 py-1.5 text-center font-semibold text-gray-600 transition-all hover:rounded-md hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
-                    href="{{ route('admin.customers.customers.login_as_customer', $customer->id) }}"
+                    href="{{ route('admin.customers.customers.login_as_customer', $k->id) }}"
                     target="_blank"
                 >
                     <span class="icon-exit text-2xl"></span>
@@ -126,7 +126,7 @@
                         <!-- Delete Customer Account -->
                         <form
                             method="post"
-                            action="{{ route('admin.customers.customers.delete', $customer->id) }}"
+                            action="{{ route('admin.customers.customers.delete', $k->id) }}"
                             ref="delete-account"
                         >
                             @csrf
@@ -353,7 +353,7 @@
 
                 data() {
                     return {
-                        customer: @json($customer),
+                        customer: @json($k),
 
                         isUpdating: {},
                     };
@@ -365,11 +365,17 @@
                             message: '@lang('admin::app.customers.customers.view.address-delete-confirmation')',
 
                             agree: () => {
-                                this.$axios.post(`{{ route('admin.customers.customers.addresses.delete', '') }}/${id}`)
+                                this.$axios.post(
+                                        `{{ route('admin.customers.customers.addresses.delete', '') }}/${id}`
+                                        )
                                     .then((response) => {
-                                        this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                        this.$emitter.emit('add-flash', {
+                                            type: 'success',
+                                            message: response.data.message
+                                        });
 
-                                        this.customer.addresses = this.customer.addresses.filter(address => address.id !== id);
+                                        this.customer.addresses = this.customer.addresses.filter(
+                                            address => address.id !== id);
                                     })
                                     .catch((error) => {});
                             },
@@ -379,17 +385,21 @@
                     setAsDefault(address, index) {
                         this.isUpdating[index] = true;
 
-                        this.$axios.post(`{{ route('admin.customers.customers.addresses.set_default', '') }}/${this.customer.id}`, {
-                            set_as_default: address.id,
-                        })
+                        this.$axios.post(
+                                `{{ route('admin.customers.customers.addresses.set_default', '') }}/${this.customer.id}`, {
+                                    set_as_default: address.id,
+                                })
                             .then((response) => {
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.message
+                                });
 
                                 this.customer.addresses = this.customer.addresses.map(address => ({
                                     ...address,
-                                    default_address: address.id === response.data.data.id
-                                        ? response.data.data.default_address
-                                        : false,
+                                    default_address: address.id === response.data.data.id ?
+                                        response.data.data.default_address :
+                                        false,
                                 }));
 
                                 this.isUpdating[index] = false;
@@ -423,7 +433,7 @@
                             this.customer.addresses.forEach(address => address.default_address = false);
                         }
 
-                        this.customer.addresses =this.customer.addresses.map(address => {
+                        this.customer.addresses = this.customer.addresses.map(address => {
                             if (address.id === updatedAddress.id) {
                                 return {
                                     ...updatedAddress,

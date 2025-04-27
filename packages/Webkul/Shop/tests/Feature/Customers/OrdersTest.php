@@ -43,13 +43,13 @@ it('should view the order', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -66,10 +66,10 @@ it('should view the order', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -79,19 +79,19 @@ it('should view the order', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -101,17 +101,17 @@ it('should view the order', function () {
         'method_title' => core()->getConfigData('sales.payment_methods.'.$paymentMethod.'.title'),
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
@@ -119,29 +119,29 @@ it('should view the order', function () {
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
-    get(route('shop.customers.account.orders.view', $order->id))
+    get(route('shop.customers.account.orders.view', $o->id))
         ->assertOk()
         ->assertSeeText(trans('shop::app.customers.account.orders.view.information.sku'))
         ->assertSeeText(trans('shop::app.customers.account.orders.view.information.product-name'))
         ->assertSeeText(trans('shop::app.customers.account.orders.view.information.total-due'))
-        ->assertSeeText(trans('shop::app.customers.account.orders.view.page-title', ['order_id' => $order->increment_id]));
+        ->assertSeeText(trans('shop::app.customers.account.orders.view.page-title', ['order_id' => $o->increment_id]));
 
     $cart->refresh();
 
@@ -155,7 +155,7 @@ it('should view the order', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -185,7 +185,7 @@ it('should view the order', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -220,13 +220,13 @@ it('should cancel the customer order', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -243,10 +243,10 @@ it('should cancel the customer order', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -256,19 +256,19 @@ it('should cancel the customer order', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -278,17 +278,17 @@ it('should cancel the customer order', function () {
         'method_title' => core()->getConfigData('sales.payment_methods.'.$paymentMethod.'.title'),
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
@@ -296,24 +296,24 @@ it('should cancel the customer order', function () {
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
-    postJson(route('shop.customers.account.orders.cancel', $order->id))
+    postJson(route('shop.customers.account.orders.cancel', $o->id))
         ->assertRedirect();
 
     $cart->refresh();
@@ -328,7 +328,7 @@ it('should cancel the customer order', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -358,7 +358,7 @@ it('should cancel the customer order', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -393,13 +393,13 @@ it('should print the order invoice', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -416,10 +416,10 @@ it('should print the order invoice', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -429,19 +429,19 @@ it('should print the order invoice', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -451,17 +451,17 @@ it('should print the order invoice', function () {
         'method_title' => core()->getConfigData('sales.payment_methods.'.$paymentMethod.'.title'),
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
@@ -469,22 +469,22 @@ it('should print the order invoice', function () {
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     $invoice = Invoice::factory([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'state'    => 'paid',
     ])->create();
 
@@ -508,7 +508,7 @@ it('should print the order invoice', function () {
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     getJson(route('shop.customers.account.orders.print-invoice', $invoice->id))
         ->assertDownload('invoice-'.$invoice->created_at->format('d-m-Y').'.pdf');
@@ -525,7 +525,7 @@ it('should print the order invoice', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -557,7 +557,7 @@ it('should print the order invoice', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [

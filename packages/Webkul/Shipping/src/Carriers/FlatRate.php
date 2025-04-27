@@ -7,25 +7,13 @@ use Webkul\Checkout\Models\CartShippingRate;
 
 class FlatRate extends AbstractShipping
 {
-    /**
-     * Shipping method carrier code.
-     *
-     * @var string
-     */
+    
     protected $code = 'flatrate';
 
-    /**
-     * Shipping method code.
-     *
-     * @var string
-     */
+    
     protected $method = 'flatrate_flatrate';
 
-    /**
-     * Calculate rate for flatrate.
-     *
-     * @return \Webkul\Checkout\Models\CartShippingRate|false
-     */
+    
     public function calculate()
     {
         if (! $this->isAvailable()) {
@@ -35,9 +23,7 @@ class FlatRate extends AbstractShipping
         return $this->getRate();
     }
 
-    /**
-     * Get rate.
-     */
+    
     public function getRate(): CartShippingRate
     {
         $cart = Cart::getCart();

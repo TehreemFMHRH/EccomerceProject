@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class SearchTermDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('search_terms')
@@ -36,11 +32,7 @@ class SearchTermDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -111,11 +103,7 @@ class SearchTermDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.search_terms.edit')) {
@@ -144,11 +132,7 @@ class SearchTermDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('marketing.search_terms.delete')) {

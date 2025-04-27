@@ -8,22 +8,16 @@ use Webkul\Core\Acl\AclItem;
 
 class Acl
 {
-    /**
-     * acl items.
-     */
+    
     protected array $items = [];
 
-    /**
-     * Add a new acl item.
-     */
+    
     public function addItem(AclItem $aclItem): void
     {
         $this->items[] = $aclItem;
     }
 
-    /**
-     * Get all acl items.
-     */
+    
     public function getItems(): Collection
     {
         if (! $this->items) {
@@ -34,9 +28,7 @@ class Acl
             ->sortBy('sort');
     }
 
-    /**
-     * Acl Config.
-     */
+    
     private function getAclConfig(): array
     {
         static $aclConfig;
@@ -50,9 +42,7 @@ class Acl
         return $aclConfig;
     }
 
-    /**
-     * Get all roles.
-     */
+    
     public function getRoles(): Collection
     {
         static $roles;
@@ -67,9 +57,7 @@ class Acl
         return $roles;
     }
 
-    /**
-     * Prepare acl items.
-     */
+    
     private function prepareAclItems(): void
     {
         $aclWithDotNotation = [];
@@ -93,14 +81,12 @@ class Acl
         }
     }
 
-    /**
-     * Process sub acl items.
-     */
+    
     private function processSubAclItems($aclItem): Collection
     {
         return collect($aclItem)
             ->sortBy('sort')
-            ->filter(fn ($value) => is_array($value))
+            ->filter(fn ($va) => is_array($va))
             ->map(function ($subAclItem) {
                 $subSubAclItems = $this->processSubAclItems($subAclItem);
 

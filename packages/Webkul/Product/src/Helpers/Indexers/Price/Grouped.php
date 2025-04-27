@@ -4,11 +4,7 @@ namespace Webkul\Product\Helpers\Indexers\Price;
 
 class Grouped extends AbstractType
 {
-    /**
-     * Returns product specific pricing for customer group
-     *
-     * @return array
-     */
+    
     public function getIndices()
     {
         return [
@@ -22,11 +18,7 @@ class Grouped extends AbstractType
         ];
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @return float
-     */
+    
     public function getMinimalPrice($qty = null)
     {
         $minPrices = [];
@@ -46,11 +38,7 @@ class Grouped extends AbstractType
         return empty($minPrices) ? 0 : min($minPrices);
     }
 
-    /**
-     * Get product regular minimal price.
-     *
-     * @return float
-     */
+    
     public function getRegularMinimalPrice()
     {
         $minPrices = [];
@@ -62,11 +50,7 @@ class Grouped extends AbstractType
         return empty($minPrices) ? 0 : min($minPrices);
     }
 
-    /**
-     * Get product maximum price.
-     *
-     * @return float
-     */
+    
     public function getMaximumPrice()
     {
         $maxPrices = [];
@@ -86,11 +70,7 @@ class Grouped extends AbstractType
         return empty($maxPrices) ? 0 : max($maxPrices);
     }
 
-    /**
-     * Get product regular maximum price.
-     *
-     * @return float
-     */
+    
     public function getRegularMaximumPrice()
     {
         $maxPrices = [];

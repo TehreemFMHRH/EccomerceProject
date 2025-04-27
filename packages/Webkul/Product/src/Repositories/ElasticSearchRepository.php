@@ -9,28 +9,20 @@ use Webkul\Marketing\Repositories\SearchSynonymRepository;
 
 class ElasticSearchRepository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected AttributeRepository $attributeRepository,
         protected SearchSynonymRepository $searchSynonymRepository
     ) {}
 
-    /**
-     * Return elastic search index name
-     */
+    
     public function getIndexName(): string
     {
         return 'products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index';
     }
 
-    /**
-     * Returns product ids from Elasticsearch
-     */
+    
     public function search(array $params, array $options): array
     {
         $filters = $this->getFilters($params);
@@ -62,9 +54,7 @@ class ElasticSearchRepository
         ];
     }
 
-    /**
-     * Prepare filters for search results
-     */
+    
     public function getFilters(array $params): array
     {
         if (! empty($params['query'])) {
@@ -92,20 +82,12 @@ class ElasticSearchRepository
         return $filters;
     }
 
-    /**
-     * Return applied filters
-     */
+    
     public function getFilterValue(mixed $attribute, array $params): array
     {
         switch ($attribute->type) {
             case 'boolean':
-                /**
-                 * Need to remove this condition after the next release.
-                 *
-                 * Previously, these attributes were not indexed in Elasticsearch.
-                 * Therefore, we need to check if the attributes exist in the index
-                 * to maintain backward compatibility.
-                 */
+                
                 if (in_array($attribute->code, ['status', 'visible_individually'])) {
                     return [
                         'bool' => [
@@ -173,9 +155,7 @@ class ElasticSearchRepository
         }
     }
 
-    /**
-     * Returns sort options
-     */
+    
     public function getSortOptions(array $options): array
     {
         if ($options['order'] == 'rand') {
@@ -207,9 +187,7 @@ class ElasticSearchRepository
         ];
     }
 
-    /**
-     * Get product maximum price from the product indexes.
-     */
+    
     public function getMaxPrice(array $params = [])
     {
         $filters = $this->getFilters($params);
@@ -244,9 +222,7 @@ class ElasticSearchRepository
         return $results['aggregations']['max_price']['value'] ?? 0;
     }
 
-    /**
-     * Get product minimum price from the product indexes.
-     */
+    
     public function getMinPrice(array $params = [])
     {
         $filters = $this->getFilters($params);

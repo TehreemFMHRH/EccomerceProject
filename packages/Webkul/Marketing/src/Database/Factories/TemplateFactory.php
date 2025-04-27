@@ -7,16 +7,10 @@ use Webkul\Marketing\Models\Template;
 
 class TemplateFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Template::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition()
     {
         $statusType = ['active', 'inactive', 'draft'];

@@ -13,9 +13,7 @@ class CustomerNote extends Model implements CustomerNoteContract
         'customer_notified',
     ];
 
-    /**
-     * Get the order record associated with the order comment.
-     */
+    
     public function customer()
     {
         return $this->belongsTo(CustomerProxy::modelClass());

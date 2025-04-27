@@ -9,18 +9,10 @@ use Webkul\Shop\Http\Controllers\Controller;
 
 class DownloadableProductController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected DownloadableLinkPurchasedRepository $downloadableLinkPurchasedRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -30,16 +22,11 @@ class DownloadableProductController extends Controller
         return view('shop::customers.account.downloadable_products.index');
     }
 
-    /**
-     * Download the for the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function download($id)
+    
+    public function download($i)
     {
         $downloadableLinkPurchased = $this->downloadableLinkPurchasedRepository->findOneByField([
-            'id'          => $id,
+            'id'          => $i,
             'customer_id' => auth()->guard('customer')->user()->id,
         ]);
 
@@ -92,7 +79,7 @@ class DownloadableProductController extends Controller
                 ? $privateDisk->download($downloadableLinkPurchased->file)
                 : abort(404);
         } else {
-            $fileName = $name = substr($downloadableLinkPurchased->url, strrpos($downloadableLinkPurchased->url, '/') + 1);
+            $fileName = $na = substr($downloadableLinkPurchased->url, strrpos($downloadableLinkPurchased->url, '/') + 1);
 
             $tempImage = tempnam(sys_get_temp_dir(), $fileName);
 

@@ -393,11 +393,7 @@
             mounted() {
                 this.getCart();
 
-                /**
-                 * To Do: Implement this.
-                 *
-                 * Action.
-                 */
+                
                 this.$emitter.on('update-mini-cart', (cart) => {
                     this.cart = cart;
                 });

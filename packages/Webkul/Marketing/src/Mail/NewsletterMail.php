@@ -9,19 +9,13 @@ use Webkul\Marketing\Contracts\Campaign;
 
 class NewsletterMail extends Mailable
 {
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
-        public string $email,
+        public string $e,
         public Campaign $campaign
     ) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -32,9 +26,7 @@ class NewsletterMail extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

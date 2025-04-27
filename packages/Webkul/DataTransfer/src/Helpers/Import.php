@@ -18,123 +18,59 @@ use Webkul\DataTransfer\Repositories\ImportRepository;
 
 class Import
 {
-    /**
-     * Import state for pending import.
-     *
-     * @var string
-     */
+    
     public const STATE_PENDING = 'pending';
 
-    /**
-     * Import state for validated import.
-     *
-     * @var string
-     */
+    
     public const STATE_VALIDATED = 'validated';
 
-    /**
-     * Import state for processing import.
-     *
-     * @var string
-     */
+    
     public const STATE_PROCESSING = 'processing';
 
-    /**
-     * Import state for processed import.
-     *
-     * @var string
-     */
+    
     public const STATE_PROCESSED = 'processed';
 
-    /**
-     * Import state for linking import.
-     *
-     * @var string
-     */
+    
     public const STATE_LINKING = 'linking';
 
-    /**
-     * Import state for linked import.
-     *
-     * @var string
-     */
+    
     public const STATE_LINKED = 'linked';
 
-    /**
-     * Import state for indexing import.
-     *
-     * @var string
-     */
+    
     public const STATE_INDEXING = 'indexing';
 
-    /**
-     * Import state for indexed import.
-     *
-     * @var string
-     */
+    
     public const STATE_INDEXED = 'indexed';
 
-    /**
-     * Import state for completed import.
-     *
-     * @var string
-     */
+    
     public const STATE_COMPLETED = 'completed';
 
-    /**
-     * Validation strategy for skipping the error during the import process.
-     *
-     * @var string
-     */
+    
     public const VALIDATION_STRATEGY_SKIP_ERRORS = 'skip-errors';
 
-    /**
-     * Validation strategy for stopping the import process on error.
-     *
-     * @var string
-     */
+    
     public const VALIDATION_STRATEGY_STOP_ON_ERROR = 'stop-on-errors';
 
-    /**
-     * Action constant for updating/creating for the resource.
-     *
-     * @var string
-     */
+    
     public const ACTION_APPEND = 'append';
 
-    /**
-     * Action constant for deleting the resource.
-     *
-     * @var string
-     */
+    
     public const ACTION_DELETE = 'delete';
 
-    /**
-     * Import instance.
-     */
+    
     protected ImportContract $import;
 
-    /**
-     * Type importer instance.
-     *
-     * @var AbstractImporter
-     */
+    
     protected $typeImporter;
 
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ImportRepository $importRepository,
         protected ImportBatchRepository $importBatchRepository,
         protected Error $errorHelper
     ) {}
 
-    /**
-     * Set import instance.
-     */
+    
     public function setImport(ImportContract $import): self
     {
         $this->import = $import;
@@ -142,27 +78,19 @@ class Import
         return $this;
     }
 
-    /**
-     * Returns import instance.
-     */
+    
     public function getImport(): ImportContract
     {
         return $this->import;
     }
 
-    /**
-     * Returns error helper instance.
-     *
-     * @return \Webkul\DataTransfer\Helpers\Error
-     */
+    
     public function getErrorHelper()
     {
         return $this->errorHelper;
     }
 
-    /**
-     * Returns source helper instance.
-     */
+    
     public function getSource(): AbstractSource
     {
         if (Str::endsWith($this->import->file_path, '.csv')) {
@@ -196,9 +124,7 @@ class Import
         throw new \InvalidArgumentException("Unsupported file type: {$this->import->file_path}");
     }
 
-    /**
-     * Validates import and returns validation result.
-     */
+    
     public function validate(): bool
     {
         try {
@@ -230,9 +156,7 @@ class Import
         return $this->isValid();
     }
 
-    /**
-     * Starts import process.
-     */
+    
     public function isValid(): bool
     {
         if ($this->isErrorLimitExceeded()) {
@@ -246,9 +170,7 @@ class Import
         return true;
     }
 
-    /**
-     * Check if error limit has been exceeded.
-     */
+    
     public function isErrorLimitExceeded(): bool
     {
         if (
@@ -261,9 +183,7 @@ class Import
         return false;
     }
 
-    /**
-     * Starts import process.
-     */
+    
     public function start(?ImportBatchContract $importBatch = null): bool
     {
         DB::beginTransaction();
@@ -273,25 +193,19 @@ class Import
 
             $typeImporter->importData($importBatch);
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
+            
             DB::rollBack();
 
             throw $e;
         } finally {
-            /**
-             * Commit transaction
-             */
+            
             DB::commit();
         }
 
         return true;
     }
 
-    /**
-     * Link import resources.
-     */
+    
     public function link(ImportBatchContract $importBatch): bool
     {
         DB::beginTransaction();
@@ -301,25 +215,19 @@ class Import
 
             $typeImporter->linkData($importBatch);
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
+            
             DB::rollBack();
 
             throw $e;
         } finally {
-            /**
-             * Commit transaction
-             */
+            
             DB::commit();
         }
 
         return true;
     }
 
-    /**
-     * Index import resources.
-     */
+    
     public function index(ImportBatchContract $importBatch): bool
     {
         DB::beginTransaction();
@@ -329,25 +237,19 @@ class Import
 
             $typeImporter->indexData($importBatch);
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
+            
             DB::rollBack();
 
             throw $e;
         } finally {
-            /**
-             * Commit transaction
-             */
+            
             DB::commit();
         }
 
         return true;
     }
 
-    /**
-     * Started the import process.
-     */
+    
     public function started(): void
     {
         $import = $this->importRepository->update([
@@ -361,9 +263,7 @@ class Import
         Event::dispatch('data_transfer.imports.started', $import);
     }
 
-    /**
-     * Started the import linking process.
-     */
+    
     public function linking(): void
     {
         $import = $this->importRepository->update([
@@ -375,9 +275,7 @@ class Import
         Event::dispatch('data_transfer.imports.linking', $import);
     }
 
-    /**
-     * Started the import indexing process.
-     */
+    
     public function indexing(): void
     {
         $import = $this->importRepository->update([
@@ -389,9 +287,7 @@ class Import
         Event::dispatch('data_transfer.imports.indexing', $import);
     }
 
-    /**
-     * Start the import process.
-     */
+    
     public function completed(): void
     {
         $summary = $this->importBatchRepository
@@ -416,17 +312,15 @@ class Import
         Event::dispatch('data_transfer.imports.completed', $import);
     }
 
-    /**
-     * Returns import stats.
-     */
+    
     public function stats(string $state): array
     {
-        $total = $this->import->batches->count();
+        $t = $this->import->batches->count();
 
         $completed = $this->import->batches->where('state', $state)->count();
 
-        $progress = $total
-            ? round($completed / $total * 100)
+        $progress = $t
+            ? round($completed / $t * 100)
             : 0;
 
         $summary = $this->importBatchRepository
@@ -443,9 +337,9 @@ class Import
 
         return [
             'batches'  => [
-                'total'     => $total,
+                'total'     => $t,
                 'completed' => $completed,
-                'remaining' => $total - $completed,
+                'remaining' => $t - $completed,
             ],
             'progress' => $progress,
             'summary'  => $summary ?? [
@@ -456,9 +350,7 @@ class Import
         ];
     }
 
-    /**
-     * Return all error grouped by error code.
-     */
+    
     public function getFormattedErrors(): array
     {
         $errors = [];
@@ -476,21 +368,15 @@ class Import
         return $errors;
     }
 
-    /**
-     * Uploads error report and save the path to the database.
-     */
+    
     public function uploadErrorReport(): ?string
     {
-        /**
-         * Return null if there are no errors.
-         */
+        
         if (! $this->errorHelper->getErrorsCount()) {
             return null;
         }
 
-        /**
-         * Return null if there are no invalid rows.
-         */
+        
         if (! $this->errorHelper->getInvalidRowsCount()) {
             return null;
         }
@@ -502,9 +388,7 @@ class Import
             ->generateErrorReport($errors);
     }
 
-    /**
-     * Validates source file and returns validation result.
-     */
+    
     public function getTypeImporter(): AbstractImporter
     {
         if (! $this->typeImporter) {
@@ -518,25 +402,19 @@ class Import
         return $this->typeImporter;
     }
 
-    /**
-     * Returns number of checked rows.
-     */
+    
     public function getProcessedRowsCount(): int
     {
         return $this->getTypeImporter()->getProcessedRowsCount();
     }
 
-    /**
-     * Is linking resource required for the import operation.
-     */
+    
     public function isLinkingRequired(): bool
     {
         return $this->getTypeImporter()->isLinkingRequired();
     }
 
-    /**
-     * Is indexing resource required for the import operation.
-     */
+    
     public function isIndexingRequired(): bool
     {
         return $this->getTypeImporter()->isIndexingRequired();

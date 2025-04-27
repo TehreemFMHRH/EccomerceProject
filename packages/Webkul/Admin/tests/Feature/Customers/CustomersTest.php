@@ -26,7 +26,7 @@ it('should returns the customers page', function () {
 
 it('should return listing items of customers', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
@@ -37,27 +37,27 @@ it('should return listing items of customers', function () {
         'X-Requested-With' => 'XMLHttpRequest',
     ])
         ->assertOk()
-        ->assertJsonPath('records.0.customer_id', $customer->id)
-        ->assertJsonPath('records.0.email', $customer->email)
-        ->assertJsonPath('records.0.full_name', $customer->name);
+        ->assertJsonPath('records.0.customer_id', $k->id)
+        ->assertJsonPath('records.0.email', $k->email)
+        ->assertJsonPath('records.0.full_name', $k->name);
 });
 
 it('should return the view page of customer', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    get(route('admin.customers.customers.view', $customer->id))
+    get(route('admin.customers.customers.view', $k->id))
         ->assertOk()
-        ->assertSeeText($customer->first_name)
-        ->assertSeeText($customer->last_name)
-        ->assertSeeText($customer->gender)
-        ->assertSeeText($customer->email)
-        ->assertSeeText($customer->phone)
+        ->assertSeeText($k->first_name)
+        ->assertSeeText($k->last_name)
+        ->assertSeeText($k->gender)
+        ->assertSeeText($k->email)
+        ->assertSeeText($k->phone)
         ->assertSeeText(trans('admin::app.customers.customers.view.title'));
 });
 
@@ -77,7 +77,7 @@ it('should create a new customer', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.customers.customers.store'), $data = [
+    postJson(route('admin.customers.customers.store'), $dat = [
         'first_name' => fake()->firstName(),
         'last_name'  => fake()->lastName(),
         'gender'     => fake()->randomElement(['male', 'female', 'other']),
@@ -89,10 +89,10 @@ it('should create a new customer', function () {
     $this->assertModelWise([
         Customer::class => [
             [
-                'first_name' => $data['first_name'],
-                'last_name'  => $data['last_name'],
-                'gender'     => $data['gender'],
-                'email'      => $data['email'],
+                'first_name' => $dat['first_name'],
+                'last_name'  => $dat['last_name'],
+                'gender'     => $dat['gender'],
+                'email'      => $dat['email'],
             ],
         ],
     ]);
@@ -110,7 +110,7 @@ it('should create a new customer and send notification to the customer', functio
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.customers.customers.store'), $data = [
+    postJson(route('admin.customers.customers.store'), $dat = [
         'first_name' => fake()->firstName(),
         'last_name'  => fake()->lastName(),
         'gender'     => fake()->randomElement(['male', 'female', 'other']),
@@ -122,10 +122,10 @@ it('should create a new customer and send notification to the customer', functio
     $this->assertModelWise([
         Customer::class => [
             [
-                'first_name' => $data['first_name'],
-                'last_name'  => $data['last_name'],
-                'gender'     => $data['gender'],
-                'email'      => $data['email'],
+                'first_name' => $dat['first_name'],
+                'last_name'  => $dat['last_name'],
+                'gender'     => $dat['gender'],
+                'email'      => $dat['email'],
             ],
         ],
     ]);
@@ -135,7 +135,7 @@ it('should create a new customer and send notification to the customer', functio
 
 it('should search the customers for mega search', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
@@ -143,55 +143,55 @@ it('should search the customers for mega search', function () {
     $this->loginAsAdmin();
 
     getJson(route('admin.customers.customers.search'), [
-        'query' => $customer->name,
+        'query' => $k->name,
     ])
         ->assertOk()
-        ->assertJsonPath('data.0.id', $customer->id)
-        ->assertJsonPath('data.0.first_name', $customer->first_name)
-        ->assertJsonPath('data.0.email', $customer->email);
+        ->assertJsonPath('data.0.id', $k->id)
+        ->assertJsonPath('data.0.first_name', $k->first_name)
+        ->assertJsonPath('data.0.email', $k->email);
 });
 
 it('should login the customer from the admin panel', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    get(route('admin.customers.customers.login_as_customer', $customer->id))
+    get(route('admin.customers.customers.login_as_customer', $k->id))
         ->assertRedirect(route('shop.customers.account.profile.index'))
         ->isRedirection();
 });
 
 it('should fail the validation with errors for notes', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.customer.note.store', $customer->id))
+    postJson(route('admin.customer.note.store', $k->id))
         ->assertJsonValidationErrorFor('note')
         ->assertUnprocessable();
 });
 
 it('should store the notes for the customer', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.customer.note.store', $customer->id), [
+    postJson(route('admin.customer.note.store', $k->id), [
         'note' => $note = substr(fake()->paragraph(), 0, 50),
     ])
-        ->assertRedirect(route('admin.customers.customers.view', $customer->id))
+        ->assertRedirect(route('admin.customers.customers.view', $k->id))
         ->isRedirection();
 
     $this->assertModelWise([
@@ -207,18 +207,18 @@ it('should store the notes for the customer and send email to the customer', fun
     // Arrange.
     Mail::fake();
 
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.customer.note.store', $customer->id), [
+    postJson(route('admin.customer.note.store', $k->id), [
         'note'              => $note = substr(fake()->paragraph(), 0, 50),
         'customer_notified' => 1,
     ])
-        ->assertRedirect(route('admin.customers.customers.view', $customer->id))
+        ->assertRedirect(route('admin.customers.customers.view', $k->id))
         ->isRedirection();
 
     $this->assertModelWise([
@@ -236,14 +236,14 @@ it('should store the notes for the customer and send email to the customer', fun
 
 it('should fail the validation with errors when certain inputs are not provided when update in customer', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.customers.customers.update', $customer->id))
+    putJson(route('admin.customers.customers.update', $k->id))
         ->assertJsonValidationErrorFor('first_name')
         ->assertJsonValidationErrorFor('last_name')
         ->assertJsonValidationErrorFor('gender')
@@ -253,17 +253,17 @@ it('should fail the validation with errors when certain inputs are not provided 
 
 it('should update the the existing customer', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.customers.customers.update', $customer->id), $data = [
+    putJson(route('admin.customers.customers.update', $k->id), $dat = [
         'first_name' => fake()->firstName(),
-        'last_name'  => $customer->last_name,
-        'gender'     => $customer->gender,
+        'last_name'  => $k->last_name,
+        'gender'     => $k->gender,
         'email'      => fake()->email(),
     ])
         ->assertOk()
@@ -272,10 +272,10 @@ it('should update the the existing customer', function () {
     $this->assertModelWise([
         Customer::class => [
             [
-                'first_name' => $data['first_name'],
-                'last_name'  => $customer->last_name,
-                'gender'     => $customer->gender,
-                'email'      => $data['email'],
+                'first_name' => $dat['first_name'],
+                'last_name'  => $k->last_name,
+                'gender'     => $k->gender,
+                'email'      => $dat['email'],
             ],
         ],
     ]);
@@ -296,9 +296,9 @@ it('should mass delete the customers', function () {
         ->assertOk()
         ->assertSeeText(trans('admin::app.customers.customers.index.datagrid.delete-success'));
 
-    foreach ($customers as $customer) {
+    foreach ($customers as $k) {
         $this->assertDatabaseMissing('customers', [
-            'id' => $customer->id,
+            'id' => $k->id,
         ]);
     }
 });
@@ -319,11 +319,11 @@ it('should mass update the customers', function () {
         ->assertOk()
         ->assertSeeText(trans('admin::app.customers.customers.index.datagrid.update-success'));
 
-    foreach ($customers as $customer) {
+    foreach ($customers as $k) {
         $this->assertModelWise([
             Customer::class => [
                 [
-                    'id'     => $customer->id,
+                    'id'     => $k->id,
                     'status' => 1,
                 ],
             ],
@@ -333,18 +333,18 @@ it('should mass update the customers', function () {
 
 it('should delete a specific customer', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.customers.customers.delete', $customer->id))
+    postJson(route('admin.customers.customers.delete', $k->id))
         ->assertRedirect(route('admin.customers.customers.index'))
         ->isRedirection();
 
     $this->assertDatabaseMissing('customers', [
-        'id' => $customer->id,
+        'id' => $k->id,
     ]);
 });

@@ -10,11 +10,7 @@ use Webkul\Installer\Helpers\DatabaseManager;
 
 class CanInstall
 {
-    /**
-     * Handles Requests for Installer middleware.
-     *
-     * @return void
-     */
+    
     public function handle(Request $request, Closure $next)
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
@@ -30,11 +26,7 @@ class CanInstall
         return $next($request);
     }
 
-    /**
-     * Application Already Installed.
-     *
-     * @return bool
-     */
+    
     public function isAlreadyInstalled()
     {
         if (file_exists(storage_path('installed'))) {

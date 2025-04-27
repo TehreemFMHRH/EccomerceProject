@@ -10,19 +10,13 @@ use Webkul\Core\Eloquent\Repository;
 
 class LocaleRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return Locale::class;
     }
 
-    /**
-     * Create.
-     *
-     * @return mixed
-     */
+    
     public function create(array $attributes)
     {
         Event::dispatch('core.locale.create.before');
@@ -36,16 +30,12 @@ class LocaleRepository extends Repository
         return $locale;
     }
 
-    /**
-     * Update.
-     *
-     * @return mixed
-     */
-    public function update(array $attributes, $id)
+    
+    public function update(array $attributes, $i)
     {
-        Event::dispatch('core.locale.update.before', $id);
+        Event::dispatch('core.locale.update.before', $i);
 
-        $locale = parent::update($attributes, $id);
+        $locale = parent::update($attributes, $i);
 
         $this->uploadImage($attributes, $locale);
 
@@ -54,32 +44,21 @@ class LocaleRepository extends Repository
         return $locale;
     }
 
-    /**
-     * Delete.
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function delete($id)
+    
+    public function delete($i)
     {
-        Event::dispatch('core.locale.delete.before', $id);
+        Event::dispatch('core.locale.delete.before', $i);
 
-        $locale = parent::find($id);
+        $locale = parent::find($i);
 
-        $locale->delete($id);
+        $locale->delete($i);
 
         Storage::delete((string) $locale->logo_path);
 
-        Event::dispatch('core.locale.delete.after', $id);
+        Event::dispatch('core.locale.delete.after', $i);
     }
 
-    /**
-     * Upload image.
-     *
-     * @param  array  $attributes
-     * @param  \Webkul\Core\Models\Locale  $locale
-     * @return void
-     */
+    
     public function uploadImage($localeImages, $locale)
     {
         if (! isset($localeImages['logo_path'])) {

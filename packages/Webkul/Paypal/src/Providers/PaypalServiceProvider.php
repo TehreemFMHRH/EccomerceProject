@@ -6,21 +6,13 @@ use Illuminate\Support\ServiceProvider;
 
 class PaypalServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
+    
     public function register()
     {
         $this->registerConfig();
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
+    
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__.'/../Http/routes.php');
@@ -32,11 +24,7 @@ class PaypalServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
     }
 
-    /**
-     * Register package config.
-     *
-     * @return void
-     */
+    
     protected function registerConfig()
     {
         $this->mergeConfigFrom(

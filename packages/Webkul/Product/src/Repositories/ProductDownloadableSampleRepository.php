@@ -8,20 +8,14 @@ use Webkul\Core\Eloquent\Repository;
 
 class ProductDownloadableSampleRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+    
     public function model(): string
     {
         return 'Webkul\Product\Contracts\ProductDownloadableSample';
     }
 
-    /**
-     * @param  array  $data
-     * @param  int  $productId
-     * @return mixed
-     */
-    public function upload($data, $productId)
+    
+    public function upload($dat, $productId)
     {
         if (! request()->hasFile('file')) {
             return [];
@@ -34,26 +28,23 @@ class ProductDownloadableSampleRepository extends Repository
         ];
     }
 
-    /**
-     * @param  Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
-    public function saveSamples(array $data, $product)
+    
+    public function saveSamples(array $dat, $product)
     {
         $previousSampleIds = $product->downloadable_samples()->pluck('id');
 
-        if (isset($data['downloadable_samples'])) {
-            foreach ($data['downloadable_samples'] as $sampleId => $data) {
+        if (isset($dat['downloadable_samples'])) {
+            foreach ($dat['downloadable_samples'] as $sampleId => $dat) {
                 if (Str::contains($sampleId, 'sample_')) {
                     $this->create(array_merge([
                         'product_id' => $product->id,
-                    ], $data));
+                    ], $dat));
                 } else {
                     if (is_numeric($index = $previousSampleIds->search($sampleId))) {
                         $previousSampleIds->forget($index);
                     }
 
-                    $this->update($data, $sampleId);
+                    $this->update($dat, $sampleId);
                 }
             }
         }

@@ -17,44 +17,28 @@ use Webkul\DataTransfer\Repositories\ImportBatchRepository;
 
 abstract class AbstractImporter
 {
-    /**
-     * Error code for system exception.
-     */
+    
     public const ERROR_CODE_SYSTEM_EXCEPTION = 'system_exception';
 
-    /**
-     * Error code for column not found.
-     */
+    
     public const ERROR_CODE_COLUMN_NOT_FOUND = 'column_not_found';
 
-    /**
-     * Error code for column empty header.
-     */
+    
     public const ERROR_CODE_COLUMN_EMPTY_HEADER = 'column_empty_header';
 
-    /**
-     * Error code for column name invalid.
-     */
+    
     public const ERROR_CODE_COLUMN_NAME_INVALID = 'column_name_invalid';
 
-    /**
-     * Error code for invalid attribute.
-     */
+    
     public const ERROR_CODE_INVALID_ATTRIBUTE = 'invalid_attribute_name';
 
-    /**
-     * Error code for wrong quotes.
-     */
+    
     public const ERROR_CODE_WRONG_QUOTES = 'wrong_quotes';
 
-    /**
-     * Error code for wrong columns number.
-     */
+    
     public const ERROR_CODE_COLUMNS_NUMBER = 'wrong_columns_number';
 
-    /**
-     * Error message templates.
-     */
+    
     protected array $errorMessages = [
         self::ERROR_CODE_SYSTEM_EXCEPTION    => 'data_transfer::app.validation.errors.system',
         self::ERROR_CODE_COLUMN_NOT_FOUND    => 'data_transfer::app.validation.errors.column-not-found',
@@ -67,85 +51,49 @@ abstract class AbstractImporter
 
     public const BATCH_SIZE = 100;
 
-    /**
-     * Is linking required
-     */
+    
     protected bool $linkingRequired = false;
 
-    /**
-     * Is indexing required
-     */
+    
     protected bool $indexingRequired = false;
 
-    /**
-     * Error helper instance.
-     *
-     * @var \Webkul\DataTransfer\Helpers\Error
-     */
+    
     protected $errorHelper;
 
-    /**
-     * Import instance.
-     */
+    
     protected ImportContract $import;
 
-    /**
-     * Source instance.
-     *
-     * @var \Webkul\DataTransfer\Helpers\Source
-     */
+    
     protected $source;
 
-    /**
-     * Valid column names
-     */
+    
     protected array $validColumnNames = [];
 
-    /**
-     * Array of numbers of validated rows as keys and boolean TRUE as values
-     */
+    
     protected array $validatedRows = [];
 
-    /**
-     * Number of rows processed by validation
-     */
+    
     protected int $processedRowsCount = 0;
 
-    /**
-     * Number of created items
-     */
+    
     protected int $createdItemsCount = 0;
 
-    /**
-     * Number of updated items
-     */
+    
     protected int $updatedItemsCount = 0;
 
-    /**
-     * Number of deleted items
-     */
+    
     protected int $deletedItemsCount = 0;
 
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected ImportBatchRepository $importBatchRepository) {}
 
-    /**
-     * Validate data row
-     */
+    
     abstract public function validateRow(array $rowData, int $rowNumber): bool;
 
-    /**
-     * Import data rows
-     */
+    
     abstract public function importBatch(ImportBatchContract $importBatchContract): bool;
 
-    /**
-     * Initialize Product error messages
-     */
+    
     protected function initErrorMessages(): void
     {
         foreach ($this->errorMessages as $errorCode => $message) {
@@ -153,9 +101,7 @@ abstract class AbstractImporter
         }
     }
 
-    /**
-     * Import instance.
-     */
+    
     public function setImport(ImportContract $import): self
     {
         $this->import = $import;
@@ -163,11 +109,7 @@ abstract class AbstractImporter
         return $this;
     }
 
-    /**
-     * Import instance.
-     *
-     * @param  \Webkul\DataTransfer\Helpers\Source  $errorHelper
-     */
+    
     public function setSource($source)
     {
         $this->source = $source;
@@ -175,11 +117,7 @@ abstract class AbstractImporter
         return $this;
     }
 
-    /**
-     * Import instance.
-     *
-     * @param  \Webkul\DataTransfer\Helpers\Error  $errorHelper
-     */
+    
     public function setErrorHelper($errorHelper): self
     {
         $this->errorHelper = $errorHelper;
@@ -189,27 +127,19 @@ abstract class AbstractImporter
         return $this;
     }
 
-    /**
-     * Import instance.
-     *
-     * @return \Webkul\DataTransfer\Helpers\Source
-     */
+    
     public function getSource()
     {
         return $this->source;
     }
 
-    /**
-     * Retrieve valid column names
-     */
+    
     public function getValidColumnNames(): array
     {
         return $this->validColumnNames;
     }
 
-    /**
-     * Validate data.
-     */
+    
     public function validateData(): void
     {
         Event::dispatch('data_transfer.imports.validate.before', $this->import);
@@ -232,9 +162,7 @@ abstract class AbstractImporter
             }
         }
 
-        /**
-         * Add Columns Errors
-         */
+        
         foreach ($errors as $errorCode => $error) {
             $this->addErrors($errorCode, $error);
         }
@@ -246,9 +174,7 @@ abstract class AbstractImporter
         Event::dispatch('data_transfer.imports.validate.after', $this->import);
     }
 
-    /**
-     * Save validated batches
-     */
+    
     protected function saveValidatedBatches(): self
     {
         $source = $this->getSource();
@@ -257,9 +183,7 @@ abstract class AbstractImporter
 
         $source->rewind();
 
-        /**
-         * Clean previous saved batches
-         */
+        
         $this->importBatchRepository->deleteWhere([
             'import_id' => $this->import->id,
         ]);
@@ -296,9 +220,7 @@ abstract class AbstractImporter
         return $this;
     }
 
-    /**
-     * Start the import process
-     */
+    
     public function importData(?ImportBatchContract $importBatch = null): bool
     {
         if ($importBatch) {
@@ -342,9 +264,7 @@ abstract class AbstractImporter
         return true;
     }
 
-    /**
-     * Link resource data.
-     */
+    
     public function linkData(ImportBatchContract $importBatch): bool
     {
         $this->linkBatch($importBatch);
@@ -352,9 +272,7 @@ abstract class AbstractImporter
         return true;
     }
 
-    /**
-     * Index resource data.
-     */
+    
     public function indexData(ImportBatchContract $importBatch): bool
     {
         $this->indexBatch($importBatch);
@@ -362,9 +280,7 @@ abstract class AbstractImporter
         return true;
     }
 
-    /**
-     * Add errors to error aggregator
-     */
+    
     protected function addErrors(string $code, mixed $errors): void
     {
         $this->errorHelper->addError(
@@ -374,14 +290,7 @@ abstract class AbstractImporter
         );
     }
 
-    /**
-     * Add row as skipped
-     *
-     * @param  int|null  $rowNumber
-     * @param  string|null  $columnName
-     * @param  string|null  $errorMessage
-     * @return $this
-     */
+    
     protected function skipRow($rowNumber, string $errorCode, $columnName = null, $errorMessage = null): self
     {
         $this->errorHelper->addError(
@@ -396,53 +305,41 @@ abstract class AbstractImporter
         return $this;
     }
 
-    /**
-     * Prepare row data to save into the database
-     */
+    
     protected function prepareRowForDb(array $rowData): array
     {
-        $rowData = array_map(function ($value) {
-            return $value === '' ? null : $value;
+        $rowData = array_map(function ($va) {
+            return $va === '' ? null : $va;
         }, $rowData);
 
         return $rowData;
     }
 
-    /**
-     * Returns number of checked rows
-     */
+    
     public function getProcessedRowsCount(): int
     {
         return $this->processedRowsCount;
     }
 
-    /**
-     * Returns number of created items count
-     */
+    
     public function getCreatedItemsCount(): int
     {
         return $this->createdItemsCount;
     }
 
-    /**
-     * Returns number of updated items count
-     */
+    
     public function getUpdatedItemsCount(): int
     {
         return $this->updatedItemsCount;
     }
 
-    /**
-     * Returns number of deleted items count
-     */
+    
     public function getDeletedItemsCount(): int
     {
         return $this->deletedItemsCount;
     }
 
-    /**
-     * Is linking resource required for the import operation
-     */
+    
     public function isLinkingRequired(): bool
     {
         if ($this->import->action == Import::ACTION_DELETE) {
@@ -452,9 +349,7 @@ abstract class AbstractImporter
         return $this->linkingRequired;
     }
 
-    /**
-     * Is indexing resource required for the import operation
-     */
+    
     public function isIndexingRequired(): bool
     {
         if ($this->import->action == Import::ACTION_DELETE) {

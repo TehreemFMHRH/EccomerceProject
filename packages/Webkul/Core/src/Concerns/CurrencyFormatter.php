@@ -7,46 +7,37 @@ use Webkul\Core\Enums\CurrencyPositionEnum;
 
 trait CurrencyFormatter
 {
-    /**
-     * Format currency.
-     */
-    public function formatCurrency(?float $price, Currency $currency): string
+    
+    public function formatCurrency(?float $r, Currency $currency): string
     {
         if ($currency->currency_position) {
-            return $this->useCustomCurrencyFormatter($price, $currency);
+            return $this->useCustomCurrencyFormatter($r, $currency);
         }
 
-        return $this->useDefaultCurrencyFormatter($price, $currency);
+        return $this->useDefaultCurrencyFormatter($r, $currency);
     }
 
-    /**
-     * Use default formatter.
-     */
-    public function useDefaultCurrencyFormatter(?float $price, Currency $currency): string
+    
+    public function useDefaultCurrencyFormatter(?float $r, Currency $currency): string
     {
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
 
         if ($currency->symbol) {
-            /**
-             * If, somehow, the currency symbol mentioned matches with the user-defined symbol,
-             * then we can simply use the 'formatCurrency' method.
-             */
+            
             if ($this->currencySymbol($currency) == $currency->symbol) {
-                return $formatter->formatCurrency($price, $currency->code);
+                return $formatter->formatCurrency($r, $currency->code);
             }
 
             $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, $currency->symbol);
 
-            return $formatter->format($price);
+            return $formatter->format($r);
         }
 
-        return $formatter->formatCurrency($price, $currency->code);
+        return $formatter->formatCurrency($r, $currency->code);
     }
 
-    /**
-     * Use custom formatter.
-     */
-    public function useCustomCurrencyFormatter(?float $price, Currency $currency): string
+    
+    public function useCustomCurrencyFormatter(?float $r, Currency $currency): string
     {
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
 
@@ -54,7 +45,7 @@ trait CurrencyFormatter
 
         $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, $currency->decimal ?? 2);
 
-        $formattedCurrency = preg_replace('/^\s+|\s+$/u', '', $formatter->format($price));
+        $formattedCurrency = preg_replace('/^\s+|\s+$/u', '', $formatter->format($r));
 
         if (! empty($currency->group_separator)) {
             $formattedCurrency = str_replace(
@@ -87,11 +78,7 @@ trait CurrencyFormatter
         };
     }
 
-    /**
-     * Return currency symbol from currency code.
-     *
-     * @param  string|\Webkul\Core\Contracts\Currency  $currency
-     */
+    
     public function currencySymbol($currency): string
     {
         $code = $currency instanceof \Webkul\Core\Contracts\Currency ? $currency->code : $currency;

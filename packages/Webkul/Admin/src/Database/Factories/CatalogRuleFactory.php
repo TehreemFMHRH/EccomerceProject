@@ -8,16 +8,10 @@ use Webkul\CatalogRule\Models\CatalogRule;
 
 class CatalogRuleFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = CatalogRule::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         $startsFrom = $this->faker->dateTimeBetween('now', '+30 days');
@@ -34,9 +28,7 @@ class CatalogRuleFactory extends Factory
         ];
     }
 
-    /**
-     * Configure the model factory.
-     */
+    
     public function configure(): static
     {
         return $this->afterCreating(function (CatalogRule $catalogRule) {

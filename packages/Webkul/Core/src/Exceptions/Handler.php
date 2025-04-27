@@ -11,9 +11,7 @@ use Throwable;
 
 class Handler extends BaseHandler
 {
-    /**
-     * Register the exception handling callbacks for the application.
-     */
+    
     public function register(): void
     {
         if (config('app.debug')) {
@@ -29,9 +27,7 @@ class Handler extends BaseHandler
         $this->handleServerException();
     }
 
-    /**
-     * Handle the authentication exception.
-     */
+    
     protected function handleAuthenticationException(): void
     {
         $this->renderable(function (AuthenticationException $exception, Request $request) {
@@ -49,9 +45,7 @@ class Handler extends BaseHandler
         });
     }
 
-    /**
-     * Handle the http exceptions.
-     */
+    
     protected function handleHttpException(): void
     {
         $this->renderable(function (HttpException $exception, Request $request) {
@@ -78,9 +72,7 @@ class Handler extends BaseHandler
         });
     }
 
-    /**
-     * Handle validation exceptions.
-     */
+    
     protected function handleValidationException(): void
     {
         $this->renderable(function (ValidationException $exception, Request $request) {
@@ -88,9 +80,7 @@ class Handler extends BaseHandler
         });
     }
 
-    /**
-     * Handle the server exceptions.
-     */
+    
     protected function handleServerException(): void
     {
         $this->renderable(function (Throwable $throwable, Request $request) {

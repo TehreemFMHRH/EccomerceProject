@@ -6,25 +6,13 @@ use Webkul\Checkout\Models\CartShippingRate;
 
 class Free extends AbstractShipping
 {
-    /**
-     * Shipping method carrier code.
-     *
-     * @var string
-     */
+    
     protected $code = 'free';
 
-    /**
-     * Shipping method code.
-     *
-     * @var string
-     */
+    
     protected $method = 'free_free';
 
-    /**
-     * Calculate rate for free shipping.
-     *
-     * @return CartShippingRate|false
-     */
+    
     public function calculate()
     {
         if (! $this->isAvailable()) {
@@ -34,9 +22,7 @@ class Free extends AbstractShipping
         return $this->getRate();
     }
 
-    /**
-     * Get rate.
-     */
+    
     public function getRate(): CartShippingRate
     {
         $cartShippingRate = new CartShippingRate;

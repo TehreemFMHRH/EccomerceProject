@@ -6,11 +6,7 @@ use Webkul\Core\Facades\Menu;
 use Webkul\Core\Facades\SystemConfig;
 
 if (! function_exists('core')) {
-    /**
-     * Core helper.
-     *
-     * @return \Webkul\Core\Core
-     */
+    
     function core()
     {
         return Core::getFacadeRoot();
@@ -18,11 +14,7 @@ if (! function_exists('core')) {
 }
 
 if (! function_exists('menu')) {
-    /**
-     * Menu helper.
-     *
-     * @return \Webkul\Core\Menu
-     */
+    
     function menu()
     {
         return Menu::getFacadeRoot();
@@ -30,11 +22,7 @@ if (! function_exists('menu')) {
 }
 
 if (! function_exists('acl')) {
-    /**
-     * Acl helper.
-     *
-     * @return \Webkul\Core\Acl
-     */
+    
     function acl()
     {
         return Acl::getFacadeRoot();
@@ -42,11 +30,7 @@ if (! function_exists('acl')) {
 }
 
 if (! function_exists('system_config')) {
-    /**
-     * System Config helper.
-     *
-     * @return \Webkul\Core\SystemConfig
-     */
+    
     function system_config()
     {
         return SystemConfig::getFacadeRoot();
@@ -54,9 +38,7 @@ if (! function_exists('system_config')) {
 }
 
 if (! function_exists('clean_path')) {
-    /**
-     * Clean path.
-     */
+    
     function clean_path(string $path): string
     {
         return collect(explode('/', $path))
@@ -76,23 +58,23 @@ if (! function_exists('array_permutation')) {
             }
 
             if (empty($results)) {
-                foreach ($values as $value) {
-                    $results[] = [$key => $value];
+                foreach ($values as $va) {
+                    $results[] = [$key => $va];
                 }
             } else {
                 $append = [];
 
-                foreach ($results as &$result) {
-                    $result[$key] = array_shift($values);
+                foreach ($results as &res) {
+                    res[$key] = array_shift($values);
 
-                    $copy = $result;
+                    $copy = res;
 
                     foreach ($values as $item) {
                         $copy[$key] = $item;
                         $append[] = $copy;
                     }
 
-                    array_unshift($values, $result[$key]);
+                    array_unshift($values, res[$key]);
                 }
 
                 $results = array_merge($results, $append);

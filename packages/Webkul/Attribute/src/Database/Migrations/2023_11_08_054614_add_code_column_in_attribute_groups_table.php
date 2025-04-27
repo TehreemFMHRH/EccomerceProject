@@ -7,9 +7,7 @@ use Illuminate\Support\Str;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void
     {
         Schema::table('attribute_groups', function (Blueprint $table) {
@@ -27,9 +25,7 @@ return new class extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::table('attribute_groups', function (Blueprint $table) {

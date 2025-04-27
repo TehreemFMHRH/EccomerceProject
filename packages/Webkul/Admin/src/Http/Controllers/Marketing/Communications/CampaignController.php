@@ -11,21 +11,13 @@ use Webkul\Marketing\Repositories\TemplateRepository;
 
 class CampaignController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CampaignRepository $campaignRepository,
         protected TemplateRepository $templateRepository,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -35,11 +27,7 @@ class CampaignController extends Controller
         return view('admin::marketing.communications.campaigns.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         $templates = $this->templateRepository->findByField('status', 'active');
@@ -47,11 +35,7 @@ class CampaignController extends Controller
         return view('admin::marketing.communications.campaigns.create', compact('templates'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $validatedData = $this->validate(request(), [
@@ -75,26 +59,18 @@ class CampaignController extends Controller
         return redirect()->route('admin.marketing.communications.campaigns.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $campaign = $this->campaignRepository->findOrFail($id);
+        $campaign = $this->campaignRepository->findOrFail($i);
 
         $templates = $this->templateRepository->findByField('status', 'active');
 
         return view('admin::marketing.communications.campaigns.edit', compact('campaign', 'templates'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $validatedData = $this->validate(request(), [
             'name'                  => 'required',
@@ -105,12 +81,12 @@ class CampaignController extends Controller
             'customer_group_id'     => 'required',
         ]);
 
-        Event::dispatch('marketing.campaigns.update.before', $id);
+        Event::dispatch('marketing.campaigns.update.before', $i);
 
         $campaign = $this->campaignRepository->update([
             ...$validatedData,
             'status' => request()->input('status') ? 1 : 0,
-        ], $id);
+        ], $i);
 
         Event::dispatch('marketing.campaigns.update.after', $campaign);
 
@@ -119,17 +95,15 @@ class CampaignController extends Controller
         return redirect()->route('admin.marketing.communications.campaigns.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            Event::dispatch('marketing.campaigns.delete.before', $id);
+            Event::dispatch('marketing.campaigns.delete.before', $i);
 
-            $this->campaignRepository->delete($id);
+            $this->campaignRepository->delete($i);
 
-            Event::dispatch('marketing.campaigns.delete.after', $id);
+            Event::dispatch('marketing.campaigns.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.marketing.communications.campaigns.delete-success'),

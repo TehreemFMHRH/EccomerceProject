@@ -7,16 +7,10 @@ use Webkul\Checkout\Models\CartAddress;
 
 class CartAddressFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var \Webkul\Checkout\Models\CartAddress
-     */
+    
     protected $model = CartAddress::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [

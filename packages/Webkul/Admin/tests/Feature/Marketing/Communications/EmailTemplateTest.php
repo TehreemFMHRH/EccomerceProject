@@ -56,8 +56,8 @@ it('should store the newly create email template', function () {
     $this->loginAsAdmin();
 
     postJson(route('admin.marketing.communications.email_templates.store', [
-        'name'    => $name = fake()->name(),
-        'status'  => $status = fake()->randomElement(['active', 'inactive', 'draft']),
+        'name'    => $na = fake()->name(),
+        'status'  => $st = fake()->randomElement(['active', 'inactive', 'draft']),
         'content' => $content = substr(fake()->paragraph(), 0, 50),
     ]))
         ->assertRedirect(route('admin.marketing.communications.email_templates.index'))
@@ -66,8 +66,8 @@ it('should store the newly create email template', function () {
     $this->assertModelWise([
         Template::class => [
             [
-                'name'    => $name,
-                'status'  => $status,
+                'name'    => $na,
+                'status'  => $st,
                 'content' => $content,
             ],
         ],
@@ -123,7 +123,7 @@ it('should update the existing the template', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.marketing.communications.email_templates.update', $marketingEmailTemplate->id), $data = [
+    putJson(route('admin.marketing.communications.email_templates.update', $marketingEmailTemplate->id), $dat = [
         'name'    => $marketingEmailTemplate->name,
         'status'  => fake()->randomElement(['active', 'inactive', 'draft']),
         'content' => substr(fake()->paragraph(), 0, 50),
@@ -135,8 +135,8 @@ it('should update the existing the template', function () {
         Template::class => [
             [
                 'name'    => $marketingEmailTemplate->name,
-                'status'  => $data['status'],
-                'content' => $data['content'],
+                'status'  => $dat['status'],
+                'content' => $dat['content'],
             ],
         ],
     ]);

@@ -26,25 +26,19 @@ class DownloadableLinkPurchased extends Model implements DownloadableLinkPurchas
         'download_canceled',
     ];
 
-    /**
-     * Get the customer record associated with the item.
-     */
+    
     public function customer()
     {
         return $this->belongsTo(CustomerProxy::modelClass());
     }
 
-    /**
-     * Get the order record associated with the item.
-     */
+    
     public function order()
     {
         return $this->belongsTo(OrderProxy::modelClass());
     }
 
-    /**
-     * Get the order item record associated with the item.
-     */
+    
     public function order_item()
     {
         return $this->belongsTo(OrderItemProxy::modelClass());

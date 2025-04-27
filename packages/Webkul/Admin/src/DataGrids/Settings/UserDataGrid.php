@@ -9,25 +9,13 @@ use Webkul\User\Repositories\RoleRepository;
 
 class UserDataGrid extends DataGrid
 {
-    /**
-     * Index.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'user_id';
 
-    /**
-     * Constructor for the class.
-     *
-     * @return void
-     */
+    
     public function __construct(protected RoleRepository $roleRepository) {}
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('admins')
@@ -49,11 +37,7 @@ class UserDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -103,8 +87,8 @@ class UserDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status) {
+            'closure'    => function ($va) {
+                if ($va->status) {
                     return trans('admin::app.settings.users.index.datagrid.active');
                 }
 
@@ -133,11 +117,7 @@ class UserDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('settings.users.users.edit')) {

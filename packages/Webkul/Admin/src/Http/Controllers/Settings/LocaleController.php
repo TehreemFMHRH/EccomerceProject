@@ -9,18 +9,10 @@ use Webkul\Core\Repositories\LocaleRepository;
 
 class LocaleController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected LocaleRepository $localeRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -30,9 +22,7 @@ class LocaleController extends Controller
         return view('admin::settings.locales.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -55,21 +45,17 @@ class LocaleController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(int $id): JsonResponse
+    
+    public function edit(int $i): JsonResponse
     {
-        $locale = $this->localeRepository->findOrFail($id);
+        $locale = $this->localeRepository->findOrFail($i);
 
         return new JsonResponse([
             'data' => $locale,
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(): JsonResponse
     {
         $this->validate(request(), [
@@ -90,12 +76,10 @@ class LocaleController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $locale = $this->localeRepository->findOrFail($id);
+        $locale = $this->localeRepository->findOrFail($i);
 
         if ($locale->count() == 1) {
             return response()->json([
@@ -104,7 +88,7 @@ class LocaleController extends Controller
         }
 
         try {
-            $locale->delete($id);
+            $locale->delete($i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.locales.index.delete-success'),

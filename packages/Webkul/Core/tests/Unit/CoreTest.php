@@ -179,15 +179,15 @@ it('should format the price with default symbol based on the current currency an
         'currency_position' => null,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($expectedSymbol.$price);
+    expect($formattedPrice)->toBe($expectedSymbol.$r);
 });
 
 it('should format the price with custom symbol based on the current currency and use default formatter if currency position is not defined', function () {
@@ -201,15 +201,15 @@ it('should format the price with custom symbol based on the current currency and
         'currency_position' => null,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($expectedSymbol.$price);
+    expect($formattedPrice)->toBe($expectedSymbol.$r);
 });
 
 it('should format the price based on the current currency and place the symbol on the left side', function () {
@@ -220,15 +220,15 @@ it('should format the price based on the current currency and place the symbol o
         'currency_position' => CurrencyPositionEnum::LEFT->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($channel->base_currency->symbol.$price);
+    expect($formattedPrice)->toBe($channel->base_currency->symbol.$r);
 });
 
 it('should format the price based on the current currency and place the symbol on the left side with space', function () {
@@ -239,15 +239,15 @@ it('should format the price based on the current currency and place the symbol o
         'currency_position' => CurrencyPositionEnum::LEFT_WITH_SPACE->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($channel->base_currency->symbol.' '.$price);
+    expect($formattedPrice)->toBe($channel->base_currency->symbol.' '.$r);
 });
 
 it('should format the price based on the current currency and place the symbol on the right side', function () {
@@ -258,15 +258,15 @@ it('should format the price based on the current currency and place the symbol o
         'currency_position' => CurrencyPositionEnum::RIGHT->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.$channel->base_currency->symbol);
+    expect($formattedPrice)->toBe($r.$channel->base_currency->symbol);
 });
 
 it('should format the price based on the current currency and place the symbol on the right side with space', function () {
@@ -277,15 +277,15 @@ it('should format the price based on the current currency and place the symbol o
         'currency_position' => CurrencyPositionEnum::RIGHT_WITH_SPACE->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.' '.$channel->base_currency->symbol);
+    expect($formattedPrice)->toBe($r.' '.$channel->base_currency->symbol);
 });
 
 it('should format the price based on the current currency and place the code on the left side if the symbol is not present', function () {
@@ -297,15 +297,15 @@ it('should format the price based on the current currency and place the code on 
         'currency_position' => CurrencyPositionEnum::LEFT->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($channel->base_currency->code.$price);
+    expect($formattedPrice)->toBe($channel->base_currency->code.$r);
 });
 
 it('should format the price based on the current currency and place the code on the left side with space if the symbol is not present', function () {
@@ -317,15 +317,15 @@ it('should format the price based on the current currency and place the code on 
         'currency_position' => CurrencyPositionEnum::LEFT_WITH_SPACE->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($channel->base_currency->code.' '.$price);
+    expect($formattedPrice)->toBe($channel->base_currency->code.' '.$r);
 });
 
 it('should format the price based on the current currency and place the code on the right side if the symbol is not present', function () {
@@ -337,15 +337,15 @@ it('should format the price based on the current currency and place the code on 
         'currency_position' => CurrencyPositionEnum::RIGHT->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.$channel->base_currency->code);
+    expect($formattedPrice)->toBe($r.$channel->base_currency->code);
 });
 
 it('should format the price based on the current currency and place the code on the right side with space if the symbol is not present', function () {
@@ -357,15 +357,15 @@ it('should format the price based on the current currency and place the code on 
         'currency_position' => CurrencyPositionEnum::RIGHT_WITH_SPACE->value,
     ]);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $channel->base_currency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price);
+    $formattedPrice = core()->formatPrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.' '.$channel->base_currency->code);
+    expect($formattedPrice)->toBe($r.' '.$channel->base_currency->code);
 });
 
 it('should format the price based on the mentioned currency and place the symbol on the left side', function () {
@@ -381,15 +381,15 @@ it('should format the price based on the mentioned currency and place the symbol
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->symbol.$price);
+    expect($formattedPrice)->toBe($indianCurrency->symbol.$r);
 });
 
 it('should format the price based on the mentioned currency and place the symbol on the left side with space', function () {
@@ -405,15 +405,15 @@ it('should format the price based on the mentioned currency and place the symbol
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->symbol.' '.$price);
+    expect($formattedPrice)->toBe($indianCurrency->symbol.' '.$r);
 });
 
 it('should format the price based on the mentioned currency and place the symbol on the right side', function () {
@@ -429,15 +429,15 @@ it('should format the price based on the mentioned currency and place the symbol
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($price.$indianCurrency->symbol);
+    expect($formattedPrice)->toBe($r.$indianCurrency->symbol);
 });
 
 it('should format the price based on the mentioned currency and place the symbol on the right side with space', function () {
@@ -453,15 +453,15 @@ it('should format the price based on the mentioned currency and place the symbol
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($price.' '.$indianCurrency->symbol);
+    expect($formattedPrice)->toBe($r.' '.$indianCurrency->symbol);
 });
 
 it('should format the price based on the mentioned currency and place the code on the left side if the symbol is not present', function () {
@@ -477,15 +477,15 @@ it('should format the price based on the mentioned currency and place the code o
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->code.$price);
+    expect($formattedPrice)->toBe($indianCurrency->code.$r);
 });
 
 it('should format the price based on the mentioned currency and place the code on the left side with space if the symbol is not present', function () {
@@ -501,15 +501,15 @@ it('should format the price based on the mentioned currency and place the code o
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->code.' '.$price);
+    expect($formattedPrice)->toBe($indianCurrency->code.' '.$r);
 });
 
 it('should format the price based on the mentioned currency and place the code on the right side if the symbol is not present', function () {
@@ -525,15 +525,15 @@ it('should format the price based on the mentioned currency and place the code o
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($price.$indianCurrency->code);
+    expect($formattedPrice)->toBe($r.$indianCurrency->code);
 });
 
 it('should format the price based on the mentioned currency and place the code on the right side with space if the symbol is not present', function () {
@@ -549,15 +549,15 @@ it('should format the price based on the mentioned currency and place the code o
 
     $channel->currencies()->sync(Currency::all()->pluck('id')->toArray());
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     core()->setCurrentChannel($channel);
 
     // Act
-    $formattedPrice = core()->formatPrice($price, $indianCurrency->code);
+    $formattedPrice = core()->formatPrice($r, $indianCurrency->code);
 
     // Assert
-    expect($formattedPrice)->toBe($price.' '.$indianCurrency->code);
+    expect($formattedPrice)->toBe($r.' '.$indianCurrency->code);
 });
 
 it('should format the base price and place the symbol on the left side', function () {
@@ -571,13 +571,13 @@ it('should format the base price and place the symbol on the left side', functio
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->symbol.$price);
+    expect($formattedPrice)->toBe($indianCurrency->symbol.$r);
 });
 
 it('should format the base price and place the symbol on the left side with space', function () {
@@ -591,13 +591,13 @@ it('should format the base price and place the symbol on the left side with spac
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->symbol.' '.$price);
+    expect($formattedPrice)->toBe($indianCurrency->symbol.' '.$r);
 });
 
 it('should format the base price and place the symbol on the right side', function () {
@@ -611,13 +611,13 @@ it('should format the base price and place the symbol on the right side', functi
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.$indianCurrency->symbol);
+    expect($formattedPrice)->toBe($r.$indianCurrency->symbol);
 });
 
 it('should format the base price and place the symbol on the right side with space', function () {
@@ -631,13 +631,13 @@ it('should format the base price and place the symbol on the right side with spa
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.' '.$indianCurrency->symbol);
+    expect($formattedPrice)->toBe($r.' '.$indianCurrency->symbol);
 });
 
 it('should format the base price and place the code on the left side if symbol is not present', function () {
@@ -651,13 +651,13 @@ it('should format the base price and place the code on the left side if symbol i
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->code.$price);
+    expect($formattedPrice)->toBe($indianCurrency->code.$r);
 });
 
 it('should format the base price and place the code on the left side with space if symbol is not present', function () {
@@ -671,13 +671,13 @@ it('should format the base price and place the code on the left side with space 
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($indianCurrency->code.' '.$price);
+    expect($formattedPrice)->toBe($indianCurrency->code.' '.$r);
 });
 
 it('should format the base price and place the code on the right side if symbol is not present', function () {
@@ -691,13 +691,13 @@ it('should format the base price and place the code on the right side if symbol 
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.$indianCurrency->code);
+    expect($formattedPrice)->toBe($r.$indianCurrency->code);
 });
 
 it('should format the base price and place the code on the right side with space if symbol is not present', function () {
@@ -711,11 +711,11 @@ it('should format the base price and place the code on the right side with space
 
     config()->set('app.currency', $indianCurrency->code);
 
-    $price = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
+    $r = number_format(fake()->randomFloat(min: 1, max: 500), $indianCurrency->decimal);
 
     // Act
-    $formattedPrice = core()->formatBasePrice($price);
+    $formattedPrice = core()->formatBasePrice($r);
 
     // Assert
-    expect($formattedPrice)->toBe($price.' '.$indianCurrency->code);
+    expect($formattedPrice)->toBe($r.' '.$indianCurrency->code);
 });

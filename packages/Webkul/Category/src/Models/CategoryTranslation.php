@@ -12,18 +12,10 @@ class CategoryTranslation extends Model implements CategoryTranslationContract
 {
     use HasFactory;
 
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
+    
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'name',
         'description',
@@ -34,9 +26,7 @@ class CategoryTranslation extends Model implements CategoryTranslationContract
         'locale_id',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return CategoryTranslationFactory::new();

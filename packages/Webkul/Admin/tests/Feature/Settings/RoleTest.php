@@ -42,7 +42,7 @@ it('should store the newly created roles', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.roles.store'), $data = [
+    postJson(route('admin.settings.roles.store'), $dat = [
         'name'            => fake()->name(),
         'permission_type' => fake()->randomElement(['custom', 'all']),
         'description'     => fake()->sentence(),
@@ -56,9 +56,9 @@ it('should store the newly created roles', function () {
     $this->assertModelWise([
         Role::class => [
             [
-                'name'            => $data['name'],
-                'permission_type' => $data['permission_type'],
-                'description'     => $data['description'],
+                'name'            => $dat['name'],
+                'permission_type' => $dat['permission_type'],
+                'description'     => $dat['description'],
             ],
         ],
     ]);
@@ -71,7 +71,7 @@ it('should returns the edit page of roles', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.roles.edit', $role->id), $data = [
+    putJson(route('admin.settings.roles.edit', $role->id), $dat = [
         'name'            => fake()->name(),
         'permission_type' => fake()->randomElement(['custom', 'all']),
         'description'     => fake()->sentence(),
@@ -82,9 +82,9 @@ it('should returns the edit page of roles', function () {
     $this->assertModelWise([
         Role::class => [
             [
-                'name'            => $data['name'],
-                'permission_type' => $data['permission_type'],
-                'description'     => $data['description'],
+                'name'            => $dat['name'],
+                'permission_type' => $dat['permission_type'],
+                'description'     => $dat['description'],
             ],
         ],
     ]);
@@ -111,7 +111,7 @@ it('should update the existing role', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.roles.update', $role->id), $data = [
+    putJson(route('admin.settings.roles.update', $role->id), $dat = [
         'name'            => fake()->name(),
         'permission_type' => fake()->randomElement(['custom', 'all']),
         'description'     => fake()->sentence(),
@@ -122,9 +122,9 @@ it('should update the existing role', function () {
     $this->assertModelWise([
         Role::class => [
             [
-                'name'            => $data['name'],
-                'permission_type' => $data['permission_type'],
-                'description'     => $data['description'],
+                'name'            => $dat['name'],
+                'permission_type' => $dat['permission_type'],
+                'description'     => $dat['description'],
             ],
         ],
     ]);

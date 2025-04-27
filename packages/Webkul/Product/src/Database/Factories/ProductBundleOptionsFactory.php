@@ -7,16 +7,10 @@ use Webkul\Product\Models\ProductBundleOption;
 
 class ProductBundleOptionsFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = ProductBundleOption::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [

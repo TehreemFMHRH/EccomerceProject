@@ -4,11 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Reporting;
 
 class SaleController extends Controller
 {
-    /**
-     * Request param functions.
-     *
-     * @var array
-     */
+    
     protected $typeFunctions = [
         'total-sales'         => 'getTotalSalesStats',
         'average-sales'       => 'getAverageSalesStats',
@@ -21,11 +17,7 @@ class SaleController extends Controller
         'top-payment-methods' => 'getTopPaymentMethods',
     ];
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         return view('admin::reporting.sales.index')->with([
@@ -34,11 +26,7 @@ class SaleController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function view()
     {
         return view('admin::reporting.view')->with([

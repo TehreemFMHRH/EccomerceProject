@@ -21,9 +21,7 @@ class AttributeFamily extends Model implements AttributeFamilyContract
         'name',
     ];
 
-    /**
-     * Get all the attributes for the attribute groups.
-     */
+    
     public function custom_attributes()
     {
         return (AttributeProxy::modelClass())::join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
@@ -33,9 +31,7 @@ class AttributeFamily extends Model implements AttributeFamilyContract
             ->select('attributes.*');
     }
 
-    /**
-     * Get all the comparable attributes which belongs to attribute family.
-     */
+    
     public function getComparableAttributesBelongsToFamily()
     {
         return (AttributeProxy::modelClass())::join('attribute_group_mappings', 'attribute_group_mappings.attribute_id', '=', 'attributes.id')
@@ -45,25 +41,19 @@ class AttributeFamily extends Model implements AttributeFamilyContract
             ->get();
     }
 
-    /**
-     * Get all the attributes for the attribute groups.
-     */
+    
     public function getCustomAttributesAttribute()
     {
         return $this->custom_attributes()->get();
     }
 
-    /**
-     * Get all the attribute groups.
-     */
+    
     public function attribute_groups(): HasMany
     {
         return $this->hasMany(AttributeGroupProxy::modelClass())->orderBy('position');
     }
 
-    /**
-     * Get all the attributes for the attribute groups.
-     */
+    
     public function getConfigurableAttributesAttribute()
     {
         return $this->custom_attributes()
@@ -72,17 +62,13 @@ class AttributeFamily extends Model implements AttributeFamilyContract
             ->get();
     }
 
-    /**
-     * Get all the products.
-     */
+    
     public function products(): HasMany
     {
         return $this->hasMany(ProductProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return AttributeFamilyFactory::new();

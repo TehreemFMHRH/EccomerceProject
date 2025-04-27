@@ -24,12 +24,12 @@ it('returns a new products listing', function () {
         ->create();
 
     // Act
-    $response = getJson(route('shop.api.products.index', ['new' => 1]))
+    $resp = getJson(route('shop.api.products.index', ['new' => 1]))
         ->assertOk()
         ->collect();
 
     // Assert
-    expect($response['data'])->each(function (Expectation $product) {
+    expect($resp['data'])->each(function (Expectation $product) {
         return $product->is_new->toBeTrue();
     });
 });
@@ -53,12 +53,12 @@ it('returns a featured products listing', function () {
         ->create();
 
     // Act
-    $response = getJson(route('shop.api.products.index', ['featured' => 1]))
+    $resp = getJson(route('shop.api.products.index', ['featured' => 1]))
         ->assertOk()
         ->collect();
 
     // Assert
-    expect($response['data'])->each(function (Expectation $product) {
+    expect($resp['data'])->each(function (Expectation $product) {
         return $product->is_featured->toBeTrue();
     });
 });

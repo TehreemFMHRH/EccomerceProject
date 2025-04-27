@@ -117,7 +117,7 @@ it('should update the virtual product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.products.update', $product->id), $data = [
+    putJson(route('admin.catalog.products.update', $product->id), $dat = [
         'sku'               => $product->sku,
         'url_key'           => $product->url_key,
         'short_description' => fake()->sentence(),
@@ -146,13 +146,13 @@ it('should update the virtual product', function () {
                 'type'              => $product->type,
                 'url_key'           => $product->url_key,
                 'sku'               => $product->sku,
-                'name'              => $data['name'],
-                'short_description' => $data['short_description'],
-                'description'       => $data['description'],
-                'price'             => $data['price'],
-                'weight'            => $data['weight'],
-                'locale'            => $data['locale'],
-                'channel'           => $data['channel'],
+                'name'              => $dat['name'],
+                'short_description' => $dat['short_description'],
+                'description'       => $dat['description'],
+                'price'             => $dat['price'],
+                'weight'            => $dat['weight'],
+                'locale'            => $dat['locale'],
+                'channel'           => $dat['channel'],
             ],
         ],
     ]);

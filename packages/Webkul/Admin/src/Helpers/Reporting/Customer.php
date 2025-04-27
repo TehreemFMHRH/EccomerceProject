@@ -10,11 +10,7 @@ use Webkul\Sales\Repositories\OrderRepository;
 
 class Customer extends AbstractReporting
 {
-    /**
-     * Create a helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected OrderRepository $orderRepository,
@@ -23,9 +19,7 @@ class Customer extends AbstractReporting
         parent::__construct();
     }
 
-    /**
-     * Retrieves total customers and their progress.
-     */
+    
     public function getTotalCustomersProgress(): array
     {
         return [
@@ -35,31 +29,19 @@ class Customer extends AbstractReporting
         ];
     }
 
-    /**
-     * Returns previous customers over time
-     *
-     * @param  string  $period
-     * @param  bool  $includeEmpty
-     */
+    
     public function getPreviousTotalCustomersOverTime($period = 'auto', $includeEmpty = true): array
     {
         return $this->getTotalCustomersOverTime($this->lastStartDate, $this->lastEndDate, $period);
     }
 
-    /**
-     * Returns current customers over time
-     *
-     * @param  string  $period
-     * @param  bool  $includeEmpty
-     */
+    
     public function getCurrentTotalCustomersOverTime($period = 'auto', $includeEmpty = true): array
     {
         return $this->getTotalCustomersOverTime($this->startDate, $this->endDate, $period);
     }
 
-    /**
-     * Retrieves today customers and their progress.
-     */
+    
     public function getTodayCustomersProgress(): array
     {
         return [
@@ -69,12 +51,7 @@ class Customer extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total customers by date
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalCustomers($startDate, $endDate): int
     {
         return $this->customerRepository
@@ -84,9 +61,7 @@ class Customer extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Retrieves total reviews and their progress.
-     */
+    
     public function getTotalReviewsProgress(): array
     {
         return [
@@ -96,12 +71,7 @@ class Customer extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total reviews by date
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalReviews($startDate, $endDate): int
     {
         return $this->reviewRepository
@@ -113,11 +83,7 @@ class Customer extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Gets customer with most sales.
-     *
-     * @param  int  $limit
-     */
+    
     public function getCustomersWithMostSales($limit = null): Collection
     {
         $tablePrefix = DB::getTablePrefix();
@@ -139,11 +105,7 @@ class Customer extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Gets customer with most orders.
-     *
-     * @param  int  $limit
-     */
+    
     public function getCustomersWithMostOrders($limit = null): Collection
     {
         $tablePrefix = DB::getTablePrefix();
@@ -164,11 +126,7 @@ class Customer extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Gets customer with most orders.
-     *
-     * @param  int  $limit
-     */
+    
     public function getCustomersWithMostReviews($limit = null): Collection
     {
         $tablePrefix = DB::getTablePrefix();
@@ -194,11 +152,7 @@ class Customer extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Gets customer with most sales.
-     *
-     * @param  int  $limit
-     */
+    
     public function getGroupsWithMostCustomers($limit = null): Collection
     {
         return $this->customerRepository
@@ -214,13 +168,7 @@ class Customer extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Returns over time stats.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @param  string  $period
-     */
+    
     public function getTotalCustomersOverTime($startDate, $endDate, $period = 'auto'): array
     {
         $config = $this->getTimeInterval($startDate, $endDate, $period);
@@ -241,11 +189,11 @@ class Customer extends AbstractReporting
         $stats = [];
 
         foreach ($config['intervals'] as $interval) {
-            $total = $results->where('date', $interval['filter'])->first();
+            $t = $results->where('date', $interval['filter'])->first();
 
             $stats[] = [
                 'label' => $interval['start'],
-                'total' => $total?->total ?? 0,
+                'total' => $t?->total ?? 0,
             ];
         }
 

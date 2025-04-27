@@ -7,16 +7,10 @@ use Webkul\Checkout\Models\CartShippingRate;
 
 class CartShippingRateFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = CartShippingRate::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [

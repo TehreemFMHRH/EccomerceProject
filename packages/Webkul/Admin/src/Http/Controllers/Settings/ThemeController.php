@@ -13,11 +13,7 @@ use Webkul\Theme\Models\ThemeCustomization;
 
 class ThemeController extends Controller
 {
-    /**
-     * Display a listing resource for the available tax rates.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -27,11 +23,7 @@ class ThemeController extends Controller
         return view('admin::settings.themes.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse|string
-     */
+    
     public function store()
     {
         if (request()->has('id')) {
@@ -63,24 +55,16 @@ class ThemeController extends Controller
         ]);
     }
 
-    /**
-     * Edit the theme
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $theme = ThemeCustomization::find($id);
+        $theme = ThemeCustomization::find($i);
 
         return view('admin::settings.themes.edit', compact('theme'));
     }
 
-    /**
-     * Update the specified resource
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $this->validate(request(), [
             'name'       => 'required',
@@ -92,7 +76,7 @@ class ThemeController extends Controller
 
         $locale = request('locale');
 
-        $data = request()->only(
+        $dat = request()->only(
             'locale',
             'type',
             'name',
@@ -103,11 +87,11 @@ class ThemeController extends Controller
             $locale
         );
 
-        Event::dispatch('theme_customization.update.before', $id);
+        Event::dispatch('theme_customization.update.before', $i);
 
-        $data['status'] = request()->input('status') == 'on';
+        $dat['status'] = request()->input('status') == 'on';
 
-        $theme = ThemeCustomization::update($data, [$id]);
+        $theme = ThemeCustomization::update($dat, [$i]);
 
         Event::dispatch('theme_customization.update.after', $theme);
 
@@ -116,20 +100,16 @@ class ThemeController extends Controller
         return redirect()->route('admin.settings.themes.index');
     }
 
-    /**
-     * Delete a specified theme.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(int $id)
+    
+    public function destroy(int $i)
     {
-        Event::dispatch('theme_customization.delete.before', $id);
+        Event::dispatch('theme_customization.delete.before', $i);
 
-        ThemeCustomization::delete($id);
+        ThemeCustomization::delete($i);
 
-        Storage::deleteDirectory('theme/'.$id);
+        Storage::deleteDirectory('theme/'.$i);
 
-        Event::dispatch('theme_customization.delete.after', $id);
+        Event::dispatch('theme_customization.delete.after', $i);
 
         return new JsonResponse([
             'message' => trans('admin::app.settings.themes.delete-success'),

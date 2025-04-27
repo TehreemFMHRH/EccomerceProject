@@ -9,11 +9,7 @@ use Webkul\Shop\Http\Requests\Customer\LoginRequest;
 
 class CustomerController extends APIController
 {
-    /**
-     * Login Customer
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function login(LoginRequest $request)
     {
         if (! auth()->guard('customer')->attempt($request->only(['email', 'password']))) {
@@ -42,9 +38,7 @@ class CustomerController extends APIController
             ], Response::HTTP_FORBIDDEN);
         }
 
-        /**
-         * Event passed to prepare cart after login.
-         */
+        
         Event::dispatch('customer.after.login', auth()->guard()->user());
 
         return response()->json([]);

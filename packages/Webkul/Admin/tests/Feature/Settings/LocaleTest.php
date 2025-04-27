@@ -39,7 +39,7 @@ it('should store the newly created locale', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.locales.store'), $data = [
+    postJson(route('admin.settings.locales.store'), $dat = [
         'code'      => fake()->locale(),
         'name'      => fake()->name(),
         'direction' => fake()->randomElement(['ltr', 'rtl']),
@@ -53,22 +53,22 @@ it('should store the newly created locale', function () {
     $this->assertModelWise([
         Locale::class => [
             [
-                'code'      => $data['code'],
-                'name'      => $data['name'],
-                'direction' => $data['direction'],
-                'logo_path' => 'locales/'.$data['code'].'.png',
+                'code'      => $dat['code'],
+                'name'      => $dat['name'],
+                'direction' => $dat['direction'],
+                'logo_path' => 'locales/'.$dat['code'].'.png',
             ],
         ],
     ]);
 
-    Storage::assertExists('locales/'.$data['code'].'.png');
+    Storage::assertExists('locales/'.$dat['code'].'.png');
 });
 
 it('should not store the new locale if the file has been tampered with', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.locales.store'), $data = [
+    postJson(route('admin.settings.locales.store'), $dat = [
         'code'      => fake()->locale(),
         'name'      => fake()->name(),
         'direction' => fake()->randomElement(['ltr', 'rtl']),
@@ -79,7 +79,7 @@ it('should not store the new locale if the file has been tampered with', functio
         ->assertJsonValidationErrorFor('logo_path.0')
         ->assertUnprocessable();
 
-    Storage::assertMissing('locales/'.$data['code'].'.php');
+    Storage::assertMissing('locales/'.$dat['code'].'.php');
 });
 
 it('should return the locale for edit', function () {
@@ -119,7 +119,7 @@ it('should update the specified locale', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.locales.update'), $data = [
+    putJson(route('admin.settings.locales.update'), $dat = [
         'id'        => $locale->id,
         'code'      => $locale->code,
         'name'      => fake()->name(),
@@ -134,9 +134,9 @@ it('should update the specified locale', function () {
     $this->assertModelWise([
         Locale::class => [
             [
-                'name'      => $data['name'],
-                'code'      => $data['code'],
-                'direction' => $data['direction'],
+                'name'      => $dat['name'],
+                'code'      => $dat['code'],
+                'direction' => $dat['direction'],
                 'logo_path' => 'locales/'.$locale->code.'.png',
             ],
         ],

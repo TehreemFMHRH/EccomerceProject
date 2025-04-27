@@ -7,27 +7,19 @@ use Webkul\Core\Repositories\SubscribersListRepository;
 
 class SubscriptionController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected SubscribersListRepository $subscriptionRepository) {}
 
-    /**
-     * Subscribes email to the email subscription list
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $this->validate(request(), [
             'email' => 'email|required',
         ]);
 
-        $email = request()->input('email');
+        $e = request()->input('email');
 
-        $subscription = $this->subscriptionRepository->findOneByField('email', $email);
+        $subscription = $this->subscriptionRepository->findOneByField('email', $e);
 
         if ($subscription) {
             session()->flash('error', trans('shop::app.subscription.already'));
@@ -37,20 +29,20 @@ class SubscriptionController extends Controller
 
         Event::dispatch('customer.subscription.before');
 
-        $customer = auth()->user();
+        $k = auth()->user();
 
         $subscription = $this->subscriptionRepository->create([
-            'email'         => $email,
+            'email'         => $e,
             'channel_id'    => core()->getCurrentChannel()->id,
             'is_subscribed' => 1,
             'token'         => uniqid(),
-            'customer_id'   => $customer->id ?? null,
+            'customer_id'   => $k->id ?? null,
         ]);
 
-        if ($customer) {
-            $customer->subscribed_to_news_letter = 1;
+        if ($k) {
+            $k->subscribed_to_news_letter = 1;
 
-            $customer->save();
+            $k->save();
         }
 
         Event::dispatch('customer.subscription.after', $subscription);
@@ -60,12 +52,7 @@ class SubscriptionController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * To unsubscribe from a the subscription list
-     *
-     * @param  string  $token
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($token)
     {
         $this->subscriptionRepository->deleteWhere(['token' => $token]);

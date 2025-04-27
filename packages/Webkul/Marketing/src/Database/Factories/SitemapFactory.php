@@ -7,16 +7,10 @@ use Webkul\Sitemap\Models\Sitemap;
 
 class SitemapFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Sitemap::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition()
     {
         return [

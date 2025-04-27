@@ -24,25 +24,19 @@ class CartRuleCoupon extends Model implements CartRuleCouponContract
         'is_primary',
     ];
 
-    /**
-     * Get the cart rule that owns the cart rule coupon.
-     */
+    
     public function cart_rule(): BelongsTo
     {
         return $this->belongsTo(CartRuleProxy::modelClass());
     }
 
-    /**
-     * Get the cart rule that owns the cart rule coupon.
-     */
+    
     public function coupon_usage()
     {
         return $this->hasMany(CartRuleCouponUsageProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return CartRuleCouponFactory::new();

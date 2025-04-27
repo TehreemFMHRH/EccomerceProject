@@ -11,21 +11,13 @@ use Webkul\Core\Repositories\ExchangeRateRepository;
 
 class ExchangeRateController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ExchangeRateRepository $exchangeRateRepository,
         protected CurrencyRepository $currencyRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -37,9 +29,7 @@ class ExchangeRateController extends Controller
         return view('admin::settings.exchange-rates.index', compact('currencies'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -61,14 +51,12 @@ class ExchangeRateController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(int $id): JsonResponse
+    
+    public function edit(int $i): JsonResponse
     {
         $currencies = $this->currencyRepository->all();
 
-        $exchangeRate = $this->exchangeRateRepository->findOrFail($id);
+        $exchangeRate = $this->exchangeRateRepository->findOrFail($i);
 
         return new JsonResponse([
             'data' => [
@@ -78,9 +66,7 @@ class ExchangeRateController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(): JsonResponse
     {
         $this->validate(request(), [
@@ -102,11 +88,7 @@ class ExchangeRateController extends Controller
         ]);
     }
 
-    /**
-     * Update Rates Using Exchange Rates API
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function updateRates()
     {
         try {
@@ -120,19 +102,17 @@ class ExchangeRateController extends Controller
         return redirect()->route('admin.settings.exchange_rates.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            $this->exchangeRateRepository->findOrFail($id);
+            $this->exchangeRateRepository->findOrFail($i);
 
-            Event::dispatch('core.exchange_rate.delete.before', $id);
+            Event::dispatch('core.exchange_rate.delete.before', $i);
 
-            $this->exchangeRateRepository->delete($id);
+            $this->exchangeRateRepository->delete($i);
 
-            Event::dispatch('core.exchange_rate.delete.after', $id);
+            Event::dispatch('core.exchange_rate.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.exchange-rates.index.delete-success'),

@@ -8,17 +8,13 @@ use Webkul\Product\Contracts\ProductReviewAttachment;
 
 class ProductReviewAttachmentRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return ProductReviewAttachment::class;
     }
 
-    /**
-     * Upload.
-     */
+    
     public function upload(array $attachments, ProductReview $review): void
     {
         foreach ($attachments as $attachment) {

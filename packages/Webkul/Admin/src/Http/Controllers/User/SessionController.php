@@ -6,11 +6,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 
 class SessionController extends Controller
 {
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         if (auth()->guard('admin')->check()) {
@@ -28,11 +24,7 @@ class SessionController extends Controller
         return view('admin::users.sessions.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $this->validate(request(), [
@@ -71,12 +63,7 @@ class SessionController extends Controller
         return redirect()->intended(route('admin.dashboard.index'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy()
     {
         auth()->guard('admin')->logout();

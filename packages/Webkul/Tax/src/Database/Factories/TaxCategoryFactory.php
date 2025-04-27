@@ -7,16 +7,10 @@ use Webkul\Tax\Models\TaxCategory;
 
 class TaxCategoryFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = TaxCategory::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [

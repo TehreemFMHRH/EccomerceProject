@@ -7,11 +7,7 @@ use Illuminate\Support\ServiceProvider;
 
 class ThemeServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
+    
     public function register()
     {
         include __DIR__.'/../Http/helpers.php';
@@ -25,11 +21,7 @@ class ThemeServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
+    
     public function boot()
     {
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');

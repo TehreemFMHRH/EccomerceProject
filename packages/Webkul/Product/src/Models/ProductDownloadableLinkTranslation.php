@@ -16,9 +16,7 @@ class ProductDownloadableLinkTranslation extends Model implements ProductDownloa
 
     protected $fillable = ['title'];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductDownloadableLinkTranslationFactory::new();

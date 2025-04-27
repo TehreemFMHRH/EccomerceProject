@@ -4,11 +4,7 @@ namespace Webkul\Product\Helpers\Indexers\Price;
 
 class Bundle extends AbstractType
 {
-    /**
-     * Returns product specific pricing for customer group
-     *
-     * @return array
-     */
+    
     public function getIndices()
     {
         return [
@@ -22,12 +18,7 @@ class Bundle extends AbstractType
         ];
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @param  int  $qty
-     * @return float
-     */
+    
     public function getMinimalPrice($qty = null)
     {
         $minPrice = 0;
@@ -59,11 +50,7 @@ class Bundle extends AbstractType
         return $minPrice;
     }
 
-    /**
-     * Get product regular minimal price.
-     *
-     * @return float
-     */
+    
     public function getRegularMinimalPrice()
     {
         $minPrice = 0;
@@ -98,11 +85,7 @@ class Bundle extends AbstractType
         return $minPrice;
     }
 
-    /**
-     * Get product maximum price.
-     *
-     * @return float
-     */
+    
     public function getMaximumPrice()
     {
         $optionPrices = [];
@@ -143,11 +126,7 @@ class Bundle extends AbstractType
         return $maxPrice;
     }
 
-    /**
-     * Get product regular maximum price.
-     *
-     * @return float
-     */
+    
     public function getRegularMaximumPrice()
     {
         $optionPrices = [];
@@ -182,11 +161,7 @@ class Bundle extends AbstractType
         return $maxPrice;
     }
 
-    /**
-     * Check if product has required options or not.
-     *
-     * @return bool
-     */
+    
     protected function haveRequiredOptions()
     {
         foreach ($this->product->bundle_options as $option) {
@@ -198,13 +173,7 @@ class Bundle extends AbstractType
         return false;
     }
 
-    /**
-     * Get product regular minimal price.
-     *
-     * @param  \Webkul\Product\Contracts\ProductBundleOption  $option
-     * @param  bool  $minPrice
-     * @return float
-     */
+    
     public function getOptionProductsPrices($option, $minPrice = true)
     {
         $optionPrices = [];

@@ -109,9 +109,7 @@
                 },
 
                 getFormattedData() {
-                    /**
-                     * If someone is passing invalid props, this case will check first if they are valid, then continue.
-                     */
+                    
                      if (this.isTypeSupported()) {
                         switch (this.defaultType) {
                             case 'price':
@@ -140,9 +138,7 @@
                         }
                     }
 
-                    /**
-                     * Otherwise, we will load the default formatting.
-                     */
+                    
                     return {
                         formattedAllowedMinRange: this.allowedMinRange,
                         formattedAllowedMaxRange: this.allowedMaxRange,

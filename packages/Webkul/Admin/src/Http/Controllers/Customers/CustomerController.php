@@ -20,42 +20,26 @@ use Webkul\Customer\Repositories\CustomerRepository;
 
 class CustomerController extends Controller
 {
-    /**
-     * Ajax request for orders.
-     */
+    
     public const ORDERS = 'orders';
 
-    /**
-     * Ajax request for invoices.
-     */
+    
     public const INVOICES = 'invoices';
 
-    /**
-     * Ajax request for reviews.
-     */
+    
     public const REVIEWS = 'reviews';
 
-    /**
-     * Static pagination count.
-     *
-     * @var int
-     */
+    
     public const COUNT = 10;
 
-    /**
-     * Create a new controller instance.
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected CustomerGroupRepository $customerGroupRepository,
         protected CustomerNoteRepository $customerNoteRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -67,9 +51,7 @@ class CustomerController extends Controller
         return view('admin::customers.customers.index', compact('groups'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -85,7 +67,7 @@ class CustomerController extends Controller
 
         Event::dispatch('customer.registration.before');
 
-        $data = array_merge([
+        $dat = array_merge([
             'password'    => bcrypt($password),
             'is_verified' => 1,
             'channel_id'  => core()->getCurrentChannel()->id,
@@ -100,49 +82,45 @@ class CustomerController extends Controller
             'channel_id',
         ]));
 
-        if (empty($data['phone'])) {
-            $data['phone'] = null;
+        if (empty($dat['phone'])) {
+            $dat['phone'] = null;
         }
 
         Event::dispatch('customer.create.before');
 
-        $customer = $this->customerRepository->create($data);
+        $k = $this->customerRepository->create($dat);
 
         if (core()->getConfigData('emails.general.notifications.emails.general.notifications.customer_account_credentials')) {
             try {
-                Mail::queue(new NewCustomerNotification($customer, $password));
+                Mail::queue(new NewCustomerNotification($k, $password));
             } catch (\Exception $e) {
                 report($e);
             }
         }
 
-        Event::dispatch('customer.create.after', $customer);
+        Event::dispatch('customer.create.after', $k);
 
-        Event::dispatch('customer.registration.after', $customer);
+        Event::dispatch('customer.registration.after', $k);
 
         return new JsonResponse([
-            'data'    => $customer,
+            'data'    => $k,
             'message' => trans('admin::app.customers.customers.index.create.create-success'),
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $this->validate(request(), [
             'first_name'    => 'string|required',
             'last_name'     => 'string|required',
             'gender'        => 'required',
-            'email'         => 'required|unique:customers,email,'.$id,
+            'email'         => 'required|unique:customers,email,'.$i,
             'date_of_birth' => 'date|before:today',
-            'phone'         => 'unique:customers,phone,'.$id,
+            'phone'         => 'unique:customers,phone,'.$i,
         ]);
 
-        $data = request()->only([
+        $dat = request()->only([
             'first_name',
             'last_name',
             'gender',
@@ -154,41 +132,37 @@ class CustomerController extends Controller
             'is_suspended',
         ]);
 
-        if (empty($data['phone'])) {
-            $data['phone'] = null;
+        if (empty($dat['phone'])) {
+            $dat['phone'] = null;
         }
 
-        Event::dispatch('customer.update.before', $id);
+        Event::dispatch('customer.update.before', $i);
 
-        $customer = $this->customerRepository->update($data, $id);
+        $k = $this->customerRepository->update($dat, $i);
 
-        Event::dispatch('customer.update.after', $customer);
+        Event::dispatch('customer.update.after', $k);
 
         return new JsonResponse([
             'message' => trans('admin::app.customers.customers.update-success'),
             'data'    => [
-                'customer' => $customer->fresh(),
-                'group'    => $customer->group,
+                'customer' => $k->fresh(),
+                'group'    => $k->group,
             ],
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(int $id)
+    
+    public function destroy(int $i)
     {
-        $customer = $this->customerRepository->findorFail($id);
+        $k = $this->customerRepository->findorFail($i);
 
-        if (! $customer) {
+        if (! $k) {
             return response()->json(['message' => trans('admin::app.customers.customers.delete-failed')], 400);
         }
 
-        if (! $this->customerRepository->haveActiveOrders($customer)) {
+        if (! $this->customerRepository->haveActiveOrders($k)) {
 
-            $this->customerRepository->delete($id);
+            $this->customerRepository->delete($i);
 
             session()->flash('success', trans('admin::app.customers.customers.delete-success'));
 
@@ -200,37 +174,29 @@ class CustomerController extends Controller
         return redirect()->route('admin.customers.customers.index');
     }
 
-    /**
-     * Login as customer
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function loginAsCustomer(int $id)
+    
+    public function loginAsCustomer(int $i)
     {
-        $customer = $this->customerRepository->findOrFail($id);
+        $k = $this->customerRepository->findOrFail($i);
 
-        auth()->guard('customer')->login($customer);
+        auth()->guard('customer')->login($k);
 
-        session()->flash('success', trans('admin::app.customers.customers.index.login-message', ['customer_name' => $customer->name]));
+        session()->flash('success', trans('admin::app.customers.customers.index.login-message', ['customer_name' => $k->name]));
 
         return redirect(route('shop.customers.account.profile.index'));
     }
 
-    /**
-     * To store the response of the note.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function storeNotes(int $id)
+    
+    public function storeNotes(int $i)
     {
         $this->validate(request(), [
             'note' => 'string|required',
         ]);
 
-        Event::dispatch('customer.note.create.before', $id);
+        Event::dispatch('customer.note.create.before', $i);
 
         $customerNote = $this->customerNoteRepository->create([
-            'customer_id'       => $id,
+            'customer_id'       => $i,
             'note'              => request()->input('note'),
             'customer_notified' => request()->input('customer_notified', 0),
         ]);
@@ -239,15 +205,13 @@ class CustomerController extends Controller
 
         session()->flash('success', trans('admin::app.customers.customers.view.note-created-success'));
 
-        return redirect()->route('admin.customers.customers.view', $id);
+        return redirect()->route('admin.customers.customers.view', $i);
     }
 
-    /**
-     * View all details of customer.
-     */
-    public function show(int $id)
+    
+    public function show(int $i)
     {
-        $customer = $this->customerRepository->with(['addresses', 'group'])->findOrFail($id);
+        $k = $this->customerRepository->with(['addresses', 'group'])->findOrFail($i);
 
         $groups = $this->customerGroupRepository->findWhere([['code', '<>', 'guest']]);
 
@@ -267,11 +231,7 @@ class CustomerController extends Controller
         return view('admin::customers.customers.view', compact('customer', 'groups'));
     }
 
-    /**
-     * Result of search customer.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function search()
     {
         $customers = $this->customerRepository->scopeQuery(function ($query) {
@@ -283,9 +243,7 @@ class CustomerController extends Controller
         return response()->json($customers);
     }
 
-    /**
-     * To mass update the customer.
-     */
+    
     public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
     {
         $selectedCustomerIds = $massUpdateRequest->input('indices');
@@ -293,11 +251,11 @@ class CustomerController extends Controller
         foreach ($selectedCustomerIds as $customerId) {
             Event::dispatch('customer.update.before', $customerId);
 
-            $customer = $this->customerRepository->update([
+            $k = $this->customerRepository->update([
                 'status' => $massUpdateRequest->input('value'),
             ], $customerId);
 
-            Event::dispatch('customer.update.after', $customer);
+            Event::dispatch('customer.update.after', $k);
         }
 
         return new JsonResponse([
@@ -305,32 +263,26 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * To mass delete the customer.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $customers = $this->customerRepository->findWhereIn('id', $massDestroyRequest->input('indices'));
 
         try {
-            /**
-             * Ensure that customers do not have any active orders before performing deletion.
-             */
-            foreach ($customers as $customer) {
-                if ($this->customerRepository->haveActiveOrders($customer)) {
+            
+            foreach ($customers as $k) {
+                if ($this->customerRepository->haveActiveOrders($k)) {
                     throw new \Exception(trans('admin::app.customers.customers.index.datagrid.order-pending'));
                 }
             }
 
-            /**
-             * After ensuring that they have no active orders delete the corresponding customer.
-             */
-            foreach ($customers as $customer) {
-                Event::dispatch('customer.delete.before', $customer);
+            
+            foreach ($customers as $k) {
+                Event::dispatch('customer.delete.before', $k);
 
-                $this->customerRepository->delete($customer->id);
+                $this->customerRepository->delete($k->id);
 
-                Event::dispatch('customer.delete.after', $customer);
+                Event::dispatch('customer.delete.after', $k);
             }
 
             return new JsonResponse([

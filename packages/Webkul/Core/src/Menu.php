@@ -8,42 +8,28 @@ use Webkul\Core\Menu\MenuItem;
 
 class Menu
 {
-    /**
-     * Menu items.
-     */
+    
     private array $items = [];
 
-    /**
-     * Config menu.
-     */
+    
     private array $configMenu = [];
 
-    /**
-     * Contains current item key.
-     */
+    
     private string $currentKey = '';
 
-    /**
-     * Menu area for admin.
-     */
+    
     const ADMIN = 'admin';
 
-    /**
-     * Menu area for customer.
-     */
+    
     const CUSTOMER = 'customer';
 
-    /**
-     * Add a new menu item.
-     */
+    
     public function addItem(MenuItem $menuItem): void
     {
         $this->items[] = $menuItem;
     }
 
-    /**
-     * Get all menu items.
-     */
+    
     public function getItems(?string $area = null): Collection
     {
         if (! $area) {
@@ -83,9 +69,7 @@ class Menu
             ->sortBy('sort');
     }
 
-    /**
-     * Prepare menu items.
-     */
+    
     private function prepareMenuItems(): void
     {
         $menuWithDotNotation = [];
@@ -114,14 +98,12 @@ class Menu
         }
     }
 
-    /**
-     * Process sub menu items.
-     */
+    
     private function processSubMenuItems($menuItem): Collection
     {
         return collect($menuItem)
             ->sortBy('sort')
-            ->filter(fn ($value) => is_array($value))
+            ->filter(fn ($va) => is_array($va))
             ->map(function ($subMenuItem) {
                 $subSubMenuItems = $this->processSubMenuItems($subMenuItem);
 
@@ -136,9 +118,7 @@ class Menu
             });
     }
 
-    /**
-     * Get current active menu.
-     */
+    
     public function getCurrentActiveMenu(?string $area = null): ?MenuItem
     {
         $currentKey = implode('.', array_slice(explode('.', $this->currentKey), 0, 2));
@@ -146,9 +126,7 @@ class Menu
         return $this->findMatchingItem($this->getItems($area), $currentKey);
     }
 
-    /**
-     * Finding the matching item.
-     */
+    
     private function findMatchingItem($items, $currentKey): ?MenuItem
     {
         foreach ($items as $item) {
@@ -168,9 +146,7 @@ class Menu
         return null;
     }
 
-    /**
-     * Remove unauthorized menu item.
-     */
+    
     private function removeUnauthorizedMenuItem(): array
     {
         return collect($this->items)->map(function ($item) {
@@ -180,9 +156,7 @@ class Menu
         })->toArray();
     }
 
-    /**
-     * Remove unauthorized menuItem's children. This will handle all levels.
-     */
+    
     private function removeChildrenUnauthorizedMenuItem(MenuItem &$menuItem): void
     {
         if ($menuItem->haveChildren()) {

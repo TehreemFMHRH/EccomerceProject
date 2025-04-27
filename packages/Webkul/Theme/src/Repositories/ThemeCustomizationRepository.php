@@ -11,78 +11,59 @@ use Webkul\Theme\Contracts\ThemeCustomization;
 
 class ThemeCustomizationRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return ThemeCustomization::class;
     }
 
-    /**
-     * Update the specified theme
-     *
-     * @param  array  $data
-     * @param  int  $id
-     */
-    public function update($data, $id): ThemeCustomization
+
+    public function update($dat, $i): ThemeCustomization
     {
         $locale = core()->getRequestedLocaleCode();
 
-        if ($data['type'] == 'static_content') {
-            $data[$locale]['options']['html'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $data[$locale]['options']['html']);
-            $data[$locale]['options']['css'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $data[$locale]['options']['css']);
+        if ($dat['type'] == 'static_content') {
+            $dat[$locale]['options']['html'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $dat[$locale]['options']['html']);
+            $dat[$locale]['options']['css'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $dat[$locale]['options']['css']);
         }
 
-        if (in_array($data['type'], ['image_carousel', 'services_content'])) {
-            unset($data[$locale]['options']);
+        if (in_array($dat['type'], ['image_carousel', 'services_content'])) {
+            unset($dat[$locale]['options']);
         }
 
-        $theme = parent::update($data, $id);
+        $theme = parent::update($dat, $i);
 
-        if (in_array($data['type'], ['image_carousel', 'services_content'])) {
+        if (in_array($dat['type'], ['image_carousel', 'services_content'])) {
             $this->uploadImage(request()->all(), $theme);
         }
 
         return $theme;
     }
 
-    /**
-     * Mass update the status of themes in the repository.
-     *
-     * This method updates multiple records in the database based on the provided
-     * theme IDs.
-     *
-     * @param  int  $themeIds
-     * @return int The number of records updated.
-     */
-    public function massUpdateStatus(array $data, array $themeIds)
+
+    public function massUpdateStatus(array $dat, array $themeIds)
     {
-        return $this->model->whereIn('id', $themeIds)->update($data);
+        return $this->model->whereIn('id', $themeIds)->update($dat);
     }
 
-    /**
-     * Upload images
-     *
-     * @return void|string
-     */
-    public function uploadImage(array $data, ThemeCustomization $theme)
+
+    public function uploadImage(array $dat, ThemeCustomization $theme)
     {
         $locale = core()->getRequestedLocaleCode();
 
-        if (isset($data[$locale]['deleted_sliders'])) {
-            foreach ($data[$locale]['deleted_sliders'] as $slider) {
+        if (isset($dat[$locale]['deleted_sliders'])) {
+            foreach ($dat[$locale]['deleted_sliders'] as $slider) {
                 Storage::delete(str_replace('storage/', '', $slider['image']));
             }
         }
 
-        if (! isset($data[$locale]['options'])) {
+        if (! isset($dat[$locale]['options'])) {
             return;
         }
 
         $options = [];
 
-        foreach ($data[$locale]['options'] as $image) {
+        foreach ($dat[$locale]['options'] as $image) {
             if (isset($image['service_icon'])) {
                 $options['services'][] = [
                     'service_icon' => $image['service_icon'],
@@ -102,7 +83,7 @@ class ThemeCustomizationRepository extends Repository
                     return redirect()->back();
                 }
 
-                if (($data['type'] ?? '') == 'static_content') {
+                if (($dat['type'] ?? '') == 'static_content') {
                     return Storage::url($path);
                 }
 

@@ -9,11 +9,7 @@ use Webkul\Sales\Repositories\OrderRepository;
 
 class OnepageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (! core()->getConfigData('sales.checkout.shopping_cart.cart_page')) {
@@ -22,9 +18,7 @@ class OnepageController extends Controller
 
         Event::dispatch('checkout.load.index');
 
-        /**
-         * If guest checkout is not allowed then redirect back to the cart page
-         */
+        
         if (
             ! auth()->guard('customer')->check()
             && ! core()->getConfigData('sales.checkout.shopping_cart.allow_guest_checkout')
@@ -32,28 +26,21 @@ class OnepageController extends Controller
             return redirect()->route('shop.customer.session.index');
         }
 
-        /**
-         * If user is suspended then redirect back to the cart page
-         */
+        
         if (auth()->guard('customer')->user()?->is_suspended) {
             session()->flash('warning', trans('shop::app.checkout.cart.suspended-account-message'));
 
             return redirect()->route('shop.checkout.cart.index');
         }
 
-        /**
-         * If cart has errors then redirect back to the cart page
-         */
+        
         if (Cart::hasError()) {
             return redirect()->route('shop.checkout.cart.index');
         }
 
         $cart = Cart::getCart();
 
-        /**
-         * If cart is has downloadable items and customer is not logged in
-         * then redirect back to the cart page
-         */
+        
         if (
             ! auth()->guard('customer')->check()
             && (
@@ -67,14 +54,10 @@ class OnepageController extends Controller
         return view('shop::checkout.onepage.index', compact('cart'));
     }
 
-    /**
-     * Order success page.
-     *
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
-     */
+    
     public function success(OrderRepository $orderRepository)
     {
-        if (! $order = $orderRepository->find(session('order_id'))) {
+        if (! $o = $orderRepository->find(session('order_id'))) {
             return redirect()->route('shop.checkout.cart.index');
         }
 
@@ -87,12 +70,12 @@ class OnepageController extends Controller
             try {
                 $model = core()->getConfigData('general.magic_ai.checkout_message.model');
 
-                $response = MagicAI::setModel($model)
+                $resp = MagicAI::setModel($model)
                     ->setTemperature(0)
-                    ->setPrompt($this->getCheckoutPrompt($order))
+                    ->setPrompt($this->getCheckoutPrompt($o))
                     ->ask();
 
-                $order->checkout_message = $response;
+                $o->checkout_message = $resp;
             } catch (\Exception $e) {
             }
         }
@@ -100,19 +83,14 @@ class OnepageController extends Controller
         return view('shop::checkout.success', compact('order'));
     }
 
-    /**
-     * Order success page.
-     *
-     * @param  \Webkul\Sales\Contracts\Order  $order
-     * @return string
-     */
-    public function getCheckoutPrompt($order)
+    
+    public function getCheckoutPrompt($o)
     {
         $prompt = core()->getConfigData('general.magic_ai.checkout_message.prompt');
 
         $products = '';
 
-        foreach ($order->items as $item) {
+        foreach ($o->items as $item) {
             $products .= "Name: $item->name\n";
             $products .= "Qty: $item->qty_ordered\n";
             $products .= 'Price: '.core()->formatPrice($item->total)."\n\n";
@@ -120,7 +98,7 @@ class OnepageController extends Controller
 
         $prompt .= "\n\nProduct Details:\n $products";
 
-        $prompt .= "Customer Details:\n $order->customer_full_name \n\n";
+        $prompt .= "Customer Details:\n $o->customer_full_name \n\n";
 
         $prompt .= "Current Locale:\n ".core()->getCurrentLocale()->name."\n\n";
 

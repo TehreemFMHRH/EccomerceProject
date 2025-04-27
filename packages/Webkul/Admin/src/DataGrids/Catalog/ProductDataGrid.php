@@ -10,32 +10,18 @@ use Webkul\DataGrid\DataGrid;
 
 class ProductDataGrid extends DataGrid
 {
-    /**
-     * Primary column.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'product_id';
 
-    /**
-     * Constructor for the class.
-     *
-     * @return void
-     */
+    
     public function __construct(protected AttributeFamilyRepository $attributeFamilyRepository) {}
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
 
-        /**
-         * Query Builder to fetch records from `product_flat` table
-         */
+        
         $queryBuilder = DB::table('product_flat')
             ->distinct()
             ->leftJoin('attribute_families as af', 'product_flat.attribute_family_id', '=', 'af.id')
@@ -78,11 +64,7 @@ class ProductDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Prepare columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $channels = core()->getAllChannels();
@@ -197,11 +179,7 @@ class ProductDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('catalog.products.copy')) {
@@ -232,11 +210,7 @@ class ProductDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('catalog.products.delete')) {
@@ -266,9 +240,7 @@ class ProductDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Process request.
-     */
+    
     protected function processRequest(): void
     {
         if (
@@ -280,9 +252,7 @@ class ProductDataGrid extends DataGrid
             return;
         }
 
-        /**
-         * Store all request parameters in this variable; avoid using direct request helpers afterward.
-         */
+        
         $params = $this->validatedRequest();
 
         if (isset($params['export']) && (bool) $params['export']) {
@@ -320,11 +290,11 @@ class ProductDataGrid extends DataGrid
         $this->queryBuilder->whereIn('product_flat.product_id', $ids)
             ->orderBy(DB::raw('FIELD(product_flat.product_id, '.implode(',', $ids).')'));
 
-        $total = $results['hits']['total']['value'];
+        $t = $results['hits']['total']['value'];
 
         $this->paginator = new LengthAwarePaginator(
-            $total ? $this->queryBuilder->get() : [],
-            $total,
+            $t ? $this->queryBuilder->get() : [],
+            $t,
             $pagination['per_page'],
             $pagination['page'],
             [
@@ -336,14 +306,12 @@ class ProductDataGrid extends DataGrid
         $this->dispatchEvent('process_request.after', $this);
     }
 
-    /**
-     * Process request.
-     */
+    
     protected function getElasticFilters($params): array
     {
         $filters = [];
 
-        foreach ($params as $attribute => $value) {
+        foreach ($params as $attribute => $va) {
             if (in_array($attribute, ['channel', 'locale'])) {
                 continue;
             }
@@ -352,15 +320,13 @@ class ProductDataGrid extends DataGrid
                 $attribute = 'name';
             }
 
-            $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            $filters['filter'][] = $this->getFilterValue($attribute, $va);
         }
 
         return $filters;
     }
 
-    /**
-     * Return applied filters
-     */
+    
     public function getFilterValue(mixed $attribute, mixed $values): array
     {
         switch ($attribute) {
@@ -382,10 +348,10 @@ class ProductDataGrid extends DataGrid
             case 'name':
                 $filters = [];
 
-                foreach ($values as $value) {
+                foreach ($values as $va) {
                     $filters['bool']['should'][] = [
                         'match_phrase_prefix' => [
-                            $attribute => $value,
+                            $attribute => $va,
                         ],
                     ];
                 }
@@ -401,9 +367,7 @@ class ProductDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Process request.
-     */
+    
     protected function getElasticSort($params): array
     {
         $sort = $params['column'] ?? $this->primaryColumn;

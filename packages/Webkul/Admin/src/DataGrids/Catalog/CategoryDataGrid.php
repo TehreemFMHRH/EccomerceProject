@@ -7,18 +7,10 @@ use Webkul\DataGrid\DataGrid;
 
 class CategoryDataGrid extends DataGrid
 {
-    /**
-     * Index.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'category_id';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('categories')
@@ -41,11 +33,7 @@ class CategoryDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -89,8 +77,8 @@ class CategoryDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status) {
+            'closure'    => function ($va) {
+                if ($va->status) {
                     return '<span class="badge badge-md badge-success">'.trans('admin::app.catalog.categories.index.datagrid.active').'</span>';
                 }
 
@@ -99,11 +87,7 @@ class CategoryDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('catalog.categories.edit')) {

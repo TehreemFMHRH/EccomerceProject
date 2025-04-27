@@ -20,11 +20,7 @@ use Webkul\Tax\Facades\Tax;
 
 class Bundle extends AbstractType
 {
-    /**
-     * Skip attribute for Bundle product type.
-     *
-     * @var array
-     */
+
     protected $skipAttributes = [
         'price',
         'cost',
@@ -39,39 +35,19 @@ class Bundle extends AbstractType
         'manage_stock',
     ];
 
-    /**
-     * Is a composite product type.
-     *
-     * @var bool
-     */
+
     protected $isComposite = true;
 
-    /**
-     * Product children price can be calculated or not.
-     *
-     * @var bool
-     */
+
     protected $isChildrenCalculated = true;
 
-    /**
-     * Show quantity box.
-     *
-     * @var bool
-     */
+
     protected $showQuantityBox = true;
 
-    /**
-     * Product can be added to cart with options or not.
-     *
-     * @var bool
-     */
+
     protected $canBeAddedToCartWithoutOptions = false;
 
-    /**
-     * Create a new product type instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         CustomerRepository $customerRepository,
         AttributeRepository $attributeRepository,
@@ -95,32 +71,21 @@ class Bundle extends AbstractType
         );
     }
 
-    /**
-     * Update.
-     *
-     * @param  int  $id
-     * @param  array  $attributes
-     * @return \Webkul\Product\Contracts\Product
-     */
-    public function update(array $data, $id, $attributes = [])
+
+    public function update(array $dat, $i, $attributes = [])
     {
-        $product = parent::update($data, $id, $attributes);
+        $product = parent::update($dat, $i, $attributes);
 
         if (! empty($attributes)) {
             return $product;
         }
 
-        $this->productBundleOptionRepository->saveBundleOptions($data, $product);
+        $this->productBundleOptionRepository->saveBundleOptions($dat, $product);
 
         return $product;
     }
 
-    /**
-     * Copy relationships.
-     *
-     * @param  \Webkul\Product\Models\Product  $product
-     * @return void
-     */
+
     protected function copyRelationships($product)
     {
         parent::copyRelationships($product);
@@ -136,42 +101,25 @@ class Bundle extends AbstractType
         }
     }
 
-    /**
-     * Returns children ids.
-     *
-     * @return array
-     */
+
     public function getChildrenIds()
     {
         return array_unique($this->product->bundle_options()->pluck('product_id')->toArray());
     }
 
-    /**
-     * Check if catalog rule can be applied.
-     *
-     * @return bool
-     */
+
     public function priceRuleCanBeApplied()
     {
         return false;
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @param  int  $qty
-     * @return float
-     */
+
     public function getFinalPrice($qty = null)
     {
         return round(0, 2);
     }
 
-    /**
-     * Returns product prices.
-     *
-     * @return array
-     */
+
     public function getProductPrices()
     {
         return [
@@ -201,11 +149,7 @@ class Bundle extends AbstractType
         ];
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @return string
-     */
+
     public function getPriceHtml()
     {
         return view('shop::products.prices.bundle', [
@@ -214,33 +158,28 @@ class Bundle extends AbstractType
         ])->render();
     }
 
-    /**
-     * Add product. Returns error message if can't prepare product.
-     *
-     * @param  array  $data
-     * @return array|string
-     */
-    public function prepareForCart($data)
+
+    public function prepareForCart($dat)
     {
-        $bundleQuantity = parent::handleQuantity((int) $data['quantity']);
+        $bundleQuantity = parent::handleQuantity((int) $dat['quantity']);
 
-        if (empty($data['bundle_options'])) {
+        if (empty($dat['bundle_options'])) {
             return trans('product::app.checkout.cart.missing-options');
         }
 
-        $data['bundle_options'] = array_filter($this->validateBundleOptionForCart($data['bundle_options']));
+        $dat['bundle_options'] = array_filter($this->validateBundleOptionForCart($dat['bundle_options']));
 
-        if (empty($data['bundle_options'])) {
+        if (empty($dat['bundle_options'])) {
             return trans('product::app.checkout.cart.missing-options');
         }
 
-        if (! $this->haveSufficientQuantity($data['quantity'])) {
+        if (! $this->haveSufficientQuantity($dat['quantity'])) {
             return trans('product::app.checkout.cart.inventory-warning');
         }
 
-        $products = parent::prepareForCart($data);
+        $products = parent::prepareForCart($dat);
 
-        foreach ($this->getCartChildProducts($data) as $productId => $data) {
+        foreach ($this->getCartChildProducts($dat) as $productId => $dat) {
             $product = Product::find($productId);
 
             if ($product->type !== 'simple') {
@@ -248,7 +187,7 @@ class Bundle extends AbstractType
             }
 
             /* need to check each individual quantity as well if don't have then show error */
-            if (! $product->getTypeInstance()->haveSufficientQuantity($data['quantity'] * $bundleQuantity)) {
+            if (! $product->getTypeInstance()->haveSufficientQuantity($dat['quantity'] * $bundleQuantity)) {
                 return trans('product::app.checkout.cart.inventory-warning');
             }
 
@@ -256,7 +195,7 @@ class Bundle extends AbstractType
                 continue;
             }
 
-            $cartProduct = $product->getTypeInstance()->prepareForCart(array_merge($data, [
+            $cartProduct = $product->getTypeInstance()->prepareForCart(array_merge($dat, [
                 'parent_id' => $this->product->id,
             ]));
 
@@ -284,17 +223,12 @@ class Bundle extends AbstractType
         return $products;
     }
 
-    /**
-     * Add product. Returns error message if can't prepare product.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    public function getCartChildProducts($data)
+
+    public function getCartChildProducts($dat)
     {
         $products = [];
 
-        foreach ($data['bundle_options'] as $optionId => $optionProductIds) {
+        foreach ($dat['bundle_options'] as $optionId => $optionProductIds) {
             foreach ($optionProductIds as $optionProductId) {
                 if (! $optionProductId) {
                     continue;
@@ -309,7 +243,7 @@ class Bundle extends AbstractType
                     continue;
                 }
 
-                $qty = $data['bundle_option_qty'][$optionId] ?? $optionProduct->qty;
+                $qty = $dat['bundle_option_qty'][$optionId] ?? $optionProduct->qty;
 
                 if (! isset($products[$optionProduct->product_id])) {
                     $products[$optionProduct->product_id] = [
@@ -327,13 +261,7 @@ class Bundle extends AbstractType
         return $products;
     }
 
-    /**
-     * Compare options.
-     *
-     * @param  array  $options1
-     * @param  array  $options2
-     * @return bool
-     */
+
     public function compareOptions($options1, $options2)
     {
         if (
@@ -347,73 +275,63 @@ class Bundle extends AbstractType
         return false;
     }
 
-    /**
-     * Remove invalid options from add to cart request.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    public function validateBundleOptionForCart($data)
+
+    public function validateBundleOptionForCart($dat)
     {
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $data[$key] = $this->validateBundleOptionForCart($value);
-            } elseif ($value) {
-                $data[$key] = (int) $value;
+        foreach ($dat as $key => $va) {
+            if (is_array($va)) {
+                $dat[$key] = $this->validateBundleOptionForCart($va);
+            } elseif ($va) {
+                $dat[$key] = (int) $va;
             } else {
-                unset($data[$key]);
+                unset($dat[$key]);
             }
         }
 
-        return $data;
+        return $dat;
     }
 
-    /**
-     * Returns additional information for items.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    public function getAdditionalOptions($data)
+
+    public function getAdditionalOptions($dat)
     {
-        $bundleOptionQuantities = $data['bundle_option_qty'] ?? [];
+        $bundleOptionQuantities = $dat['bundle_option_qty'] ?? [];
 
         $productBundleOptions = $this->productBundleOptionRepository
-            ->whereIn('id', array_keys($data['bundle_options']))
+            ->whereIn('id', array_keys($dat['bundle_options']))
             ->orderBy('sort_order')
             ->get();
 
-        $data['attributes'] = [];
+        $dat['attributes'] = [];
 
         foreach ($productBundleOptions as $option) {
             $labels = [];
 
-            foreach ($data['bundle_options'][$option->id] as $optionProductId) {
+            foreach ($dat['bundle_options'][$option->id] as $optionProductId) {
                 if (! $optionProductId) {
                     continue;
                 }
 
                 $optionProduct = ProductBundleOptionProduct::find($optionProductId);
 
-                $qty = $data['bundle_option_qty'][$option->id] ?? $optionProduct->qty;
+                $qty = $dat['bundle_option_qty'][$option->id] ?? $optionProduct->qty;
 
-                if (! isset($data['bundle_option_qty'][$option->id])) {
+                if (! isset($dat['bundle_option_qty'][$option->id])) {
                     $bundleOptionQuantities[$option->id] = $qty;
                 }
 
                 $label = $qty.' x '.$optionProduct->product->name;
 
-                $price = $optionProduct->product->getTypeInstance()->getMinimalPrice();
+                $r = $optionProduct->product->getTypeInstance()->getMinimalPrice();
 
-                if ($price != 0) {
-                    $label .= ' '.core()->currency($price);
+                if ($r != 0) {
+                    $label .= ' '.core()->currency($r);
                 }
 
                 $labels[] = $label;
             }
 
             if (count($labels)) {
-                $data['attributes'][] = [
+                $dat['attributes'][] = [
                     'attribute_name' => $option->label,
                     'option_id'      => $option->id,
                     'option_label'   => implode(', ', $labels),
@@ -421,29 +339,24 @@ class Bundle extends AbstractType
             }
         }
 
-        $data['bundle_option_qty'] = $bundleOptionQuantities;
+        $dat['bundle_option_qty'] = $bundleOptionQuantities;
 
-        return $data;
+        return $dat;
     }
 
-    /**
-     * Returns additional information for items.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    public function getOptionQuantities($data)
+
+    public function getOptionQuantities($dat)
     {
         $optionQuantities = [];
 
-        foreach ($data['bundle_options'] as $optionId => $optionProductIds) {
+        foreach ($dat['bundle_options'] as $optionId => $optionProductIds) {
             foreach ($optionProductIds as $optionProductId) {
                 if (! $optionProductId) {
                     continue;
                 }
 
-                if (isset($data['bundle_option_qty'][$optionId])) {
-                    $optionQuantities[$optionId] = $data['bundle_option_qty'][$optionId];
+                if (isset($dat['bundle_option_qty'][$optionId])) {
+                    $optionQuantities[$optionId] = $dat['bundle_option_qty'][$optionId];
 
                     continue;
                 }
@@ -457,9 +370,7 @@ class Bundle extends AbstractType
         return $optionQuantities;
     }
 
-    /**
-     * Validate cart item product price and other things.
-     */
+
     public function validateCartItem(CartItem $item): CartItemValidationResult
     {
         $validation = new CartItemValidationResult;
@@ -501,14 +412,14 @@ class Bundle extends AbstractType
         $item->base_price = $basePrice;
         $item->base_price_incl_tax = $basePrice;
 
-        $item->price = ($price = core()->convertPrice($basePrice));
-        $item->price_incl_tax = $price;
+        $item->price = ($r = core()->convertPrice($basePrice));
+        $item->price_incl_tax = $r;
 
         $item->base_total = $basePrice * $item->quantity;
         $item->base_total_incl_tax = $basePrice * $item->quantity;
 
-        $item->total = ($total = core()->convertPrice($basePrice * $item->quantity));
-        $item->total_incl_tax = $total;
+        $item->total = ($t = core()->convertPrice($basePrice * $item->quantity));
+        $item->total_incl_tax = $t;
 
         $item->additional = $this->getAdditionalOptions($item->additional);
 
@@ -517,9 +428,7 @@ class Bundle extends AbstractType
         return $validation;
     }
 
-    /**
-     * Have sufficient quantity.
-     */
+
     public function haveSufficientQuantity(int $qty): bool
     {
         // to consider a bundle in stock we need to check that at least one product from each required group is available for the given quantity
@@ -540,27 +449,19 @@ class Bundle extends AbstractType
         return true;
     }
 
-    /**
-     * Returns price indexer class for a specific product type
-     *
-     * @return string
-     */
+
     public function getPriceIndexer()
     {
         return app(BundleIndexer::class);
     }
 
-    /**
-     * Returns validation rules.
-     *
-     * @return array
-     */
+
     public function getTypeValidationRules()
     {
         return [
             'bundle_options' => 'array',
-            'bundle_options' => function ($attribute, $value, $fail) {
-                $associatedProductIds = collect($value)
+            'bundle_options' => function ($attribute, $va, $fail) {
+                $associatedProductIds = collect($va)
                     ->pluck('products')
                     ->flatten(1)
                     ->pluck('product_id')

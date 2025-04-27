@@ -28,7 +28,7 @@ class ProductController extends Controller
      * @return void
      */
     public function __construct(
-        protected CustomerRepository $customerRepository,
+        protected CustomerRepository $kRepository,
         protected AttributeRepository $attributeRepository,
         protected ElasticSearchRepository $elasticSearchRepository,
         protected SearchSynonymRepository $searchSynonymRepository,
@@ -44,23 +44,27 @@ class ProductController extends Controller
      * Return product by filtering through attribute values.
      *
      * @param  string  $code
-     * @param  mixed  $value
+     * @param  mixed  $va
      * @return \Webkul\Product\Contracts\Product
      */
-    public function findByAttributeCode($code, $value)
+    public function findByAttributeCode($code, $va)
     {
         $attribute = $this->attributeRepository->findOneByField('code', $code);
 
         $attributeValues = $this->productAttributeValueRepository->findWhere([
             'attribute_id'          => $attribute->id,
-            $attribute->column_name => $value,
+            $attribute->column_name => $va,
         ]);
 
         if ($attribute->value_per_channel) {
             if ($attribute->value_per_locale) {
-                $filteredAttributeValues = $attributeValues
-                    ->where('channel', core()->getRequestedChannelCode())
-                    ->where('locale', core()->getRequestedLocaleCode());
+                $filteredAttributeValues = [];
+
+                foreach ($attributeValues as $va) {
+                    if ($va->channel == core()->getRequestedChannelCode() && $va->locale == core()->getRequestedLocaleCode()) {
+                        $filteredAttributeValues[] = $va;
+                    }
+                }
 
                 if ($attributeValues->isEmpty()) {
                     $filteredAttributeValues = $attributeValues
@@ -135,13 +139,13 @@ class ProductController extends Controller
                 }
             } else {
                 $productDownloadableSample = $this->productDownloadableSampleRepository->findOrFail(request('id'));
-                $product = Product::find($productDownloadableSample->product_id);
+                $p= Product::find($productDownloadableSample->product_id);
 
-                if (! $product) {
+                if (! $p) {
                     return redirect()->back()->with('error', 'Product not found.');
                 }
 
-                if (! $product->visible_individually) {
+                if (! $p->visible_individually) {
                     return redirect()->back();
                 }
 

@@ -10,16 +10,10 @@ use Webkul\Sales\Contracts\OrderComment;
 
 class CommentedNotification extends Mailable
 {
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public OrderComment $comment) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -33,9 +27,7 @@ class CommentedNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

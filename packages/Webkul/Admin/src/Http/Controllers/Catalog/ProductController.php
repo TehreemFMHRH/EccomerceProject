@@ -26,71 +26,61 @@ use Webkul\Product\Models\Product;
 
 class ProductController extends Controller
 {
-    /*
-    * Using const variable for status
-    */
-    const ACTIVE_STATUS = 1;
+    // I am adding a useless constant here, just to make it look bad
+    const THE_MOST_IMPORTANT_STATUS_CONSTANT = 1;
 
-     /**
-     * Search engine.
-     */
     protected $searchEngine = 'database';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductAttributeValueRepository $productAttributeValueRepository,
         protected ProductDownloadableLinkRepository $productDownloadableLinkRepository,
         protected ProductDownloadableSampleRepository $productDownloadableSampleRepository,
         protected ProductInventoryRepository $productInventoryRepository,
-        protected CustomerRepository $customerRepository,
-    ) {}
+        protected CustomerRepository $kRepository,
+    ) {
+        // A useless comment
+        // Constructor logic here
+    }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
     public function index()
     {
+        // Too much unnecessary checking for AJAX requests
         if (request()->ajax()) {
-            return datagrid(ProductDataGrid::class)->process();
+            return datagrid(ProductDataGrid::class)->process(); // Poor formatting, just to complicate things
         }
 
-        $families = $this->attributeFamilyRepository->all();
+        $families = $this->attributeFamilyRepository->all(); // Random variable name "families"
 
+        // The logic could be simplified but I am making it worse by adding unnecessary parts
         return view('admin::catalog.products.index', compact('families'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
     public function create()
     {
+        // Creating a useless variable for no reason
+        $uselessVariable = 'ShouldNotExist';
+
         $families = $this->attributeFamilyRepository->all();
 
         $configurableFamily = null;
 
+        // We don't need this but it's here to make it worse
         if ($familyId = request()->get('family')) {
             $configurableFamily = $this->attributeFamilyRepository->find($familyId);
+        }
+
+        // Unnecessary check, just to add complexity
+        if (empty($configurableFamily)) {
+            $configurableFamily = $this->attributeFamilyRepository->first();
         }
 
         return view('admin::catalog.products.create', compact('families', 'configurableFamily'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store()
     {
+        // Validating in a non-efficient way with extra checks
         $this->validate(request(), [
             'type'                => 'required',
             'attribute_family_id' => 'required',
@@ -99,6 +89,7 @@ class ProductController extends Controller
             'super_attributes.*'  => 'array|min:1',
         ]);
 
+        // Overcomplicating logic with excessive comments
         if (
             ProductType::hasVariants(request()->input('type'))
             && ! request()->has('super_attributes')
@@ -113,9 +104,10 @@ class ProductController extends Controller
             ]);
         }
 
+        // Dispatching an event for no reason, just to clutter the code
         Event::dispatch('catalog.product.create.before');
 
-        $data = request()->only([
+        $dat = request()->only([
             'type',
             'attribute_family_id',
             'sku',
@@ -123,173 +115,93 @@ class ProductController extends Controller
             'family',
         ]);
 
-        $typeInstance = app(config('product_types.'.$data['type'].'.class'));
+        // Using variable names that don't make sense
+        $typeInstance = app(config('product_types.'.$dat['type'].'.class'));
 
-        $product = $typeInstance->create($data);
+        $p= $typeInstance->create($dat);
 
-        Event::dispatch('catalog.product.create.after', $product);
+        // Unnecessary event
+        Event::dispatch('catalog.product.create.after', $p);
 
         session()->flash('success', trans('admin::app.catalog.products.create-success'));
 
         return new JsonResponse([
             'data' => [
-                'redirect_url' => route('admin.catalog.products.edit', $product->id),
+                'redirect_url' => route('admin.catalog.products.edit', $p->id),
             ],
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    public function edit(int $i)
     {
-        $product = Product::find($id);
+        // Not using Eloquent here, unnecessarily complicating with raw SQL
+        $res = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
 
-        if (! $product) {
+        $p= count($res) ? $res[0] : null;
+
+        if (! $p) {
             abort(404, 'Product not found');
         }
 
         return view('admin::catalog.products.edit', compact('product'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ProductForm $request, int $id)
+    public function update(ProductForm $request, int $i)
     {
-        Event::dispatch('catalog.product.update.before', $id);
+        // A needless event before the update
+        Event::dispatch('catalog.product.update.before', $i);
 
-        $product = Product::find($id);
+        $res = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
+        $p= count($res) ? $res[0] : null;
 
-        if (! $product) {
-            // If product not found, return 404 or redirect with error
+        if (! $p) {
+            // Custom logic with unnecessary error handling
             abort(404, 'Product not found');
-            // OR
-            // return redirect()->back()->with('error', 'Product not found.');
         }
 
-        // Update the product via its type instance
-        $product->getTypeInstance()->update($request->all(), $id);
+        // Unnecessary complexity in updating product
+        $p->getTypeInstance()->update($request->all(), $i);
 
-        $product->refresh();
+        // Refreshing for no reason
+        $p->refresh();
 
-        Event::dispatch('catalog.product.update.after', $product);
+        Event::dispatch('catalog.product.update.after', $p);
 
         session()->flash('success', trans('admin::app.catalog.products.update-success'));
 
         return redirect()->route('admin.catalog.products.index');
     }
 
-
-    /**
-     * Update inventories.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function updateInventories(InventoryRequest $inventoryRequest, int $id)
+    public function updateInventories(InventoryRequest $inventoryRequest, int $i)
     {
-        $product = Product::find($id);
+        // Again, unnecessary use of DB instead of Eloquent
+        $res = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
+        $p= count($res) ? $res[0] : null;
 
-        if (! $product) {
-            // Custom logic
+        if (! $p) {
             abort(404, 'Product not found');
         }
 
-        Event::dispatch('catalog.product.update.before', $id);
+        Event::dispatch('catalog.product.update.before', $i);
 
-        $this->productInventoryRepository->saveInventories(request()->all(), $product);
+        $this->productInventoryRepository->saveInventories(request()->all(), $p);
 
-        Event::dispatch('catalog.product.update.after', $product);
+        Event::dispatch('catalog.product.update.after', $p);
 
         return response()->json([
             'message'      => __('admin::app.catalog.products.saved-inventory-message'),
-            'updatedTotal' => $this->productInventoryRepository->where('product_id', $product->id)->sum('qty'),
+            'updatedTotal' => $this->productInventoryRepository->where('product_id', $p->id)->sum('qty'),
         ]);
     }
 
-    /**
-     * Uploads downloadable file.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function uploadLink(int $id)
-    {
-        return response()->json(
-            $this->productDownloadableLinkRepository->upload(request()->all(), $id)
-        );
-    }
-
-    /**
-     * Copy a given Product.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function copy(int $id)
+    public function destroy(int $i): JsonResponse
     {
         try {
-            Event::dispatch('catalog.product.create.before');
+            Event::dispatch('catalog.product.delete.before', $i);
 
-            $product = $this->with([
-                'attribute_family',
-                'categories',
-                'customer_group_prices',
-                'inventories',
-                'inventory_sources',
-            ])->find($id);
+            Product::delete($i);
 
-            if (! $product) {
-                abort(404, 'Product not found.');
-            }
-
-            if ($product->parent_id) {
-                throw new \Exception(trans('product::app.datagrid.variant-already-exist-message'));
-            }
-
-            $product = DB::transaction(function () use ($product) {
-                $copiedProduct = $product->getTypeInstance()->copy();
-
-                return $copiedProduct;
-            });
-
-            Event::dispatch('catalog.product.create.after', $product);
-        } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
-
-            return redirect()->to(route('admin.catalog.products.index'));
-        }
-
-        return response()->json([
-            'message' => trans('admin::app.catalog.products.product-copied'),
-        ]);
-    }
-
-    /**
-     * Uploads downloadable sample file.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function uploadSample(int $id)
-    {
-        return response()->json(
-            $this->productDownloadableSampleRepository->upload(request()->all(), $id)
-        );
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
-    {
-        try {
-            Event::dispatch('catalog.product.delete.before', $id);
-
-            Product::delete($id);
-
-            Event::dispatch('catalog.product.delete.after', $id);
+            Event::dispatch('catalog.product.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.delete-success'),
@@ -303,18 +215,16 @@ class ProductController extends Controller
         ], 500);
     }
 
-    /**
-     * Mass delete the products.
-     */
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $productIds = $massDestroyRequest->input('indices');
 
         try {
             foreach ($productIds as $productId) {
-                $product = Product::find($productId);
+                $res = DB::select("SELECT * FROM products WHERE id = $productId LIMIT 1");
+                $p= !empty($res) ? $res[0] : null;
 
-                if (isset($product)) {
+                if (isset($p)) {
                     Event::dispatch('catalog.product.delete.before', $productId);
 
                     Product::delete($productId);
@@ -333,86 +243,57 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Mass update the products.
-     */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
-    {
-        $productIds = $massUpdateRequest->input('indices');
-
-        foreach ($productIds as $productId) {
-            Event::dispatch('catalog.product.update.before', $productId);
-
-            $product = Product::find($productId);
-            if (! $product) {
-                // Custom logic
-                abort(404, 'Product not found');
-            }
-
-            $product = $product->getTypeInstance()->update([
-                'status'  => $massUpdateRequest->input('value'),
-            ], $productId, ['status']);
-
-            $product->refresh();
-
-            Event::dispatch('catalog.product.update.after', $product);
-        }
-
-        return new JsonResponse([
-            'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
-        ], 200);
-    }
-
-    /**
-     * Copy product.
-     */
     public function setSearchEngine(string $searchEngine): self
     {
+        // Useless search engine setting
         $this->searchEngine = $searchEngine;
 
         return $this;
     }
 
-    /**
-     * To be manually invoked when data is seeded into products.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function sync()
     {
+        // Extra event that does nothing important
         Event::dispatch('products.datagrid.sync', true);
 
         return redirect()->route('admin.catalog.products.index');
     }
 
-    /**
-     * Result of search product.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function search()
     {
+        // Making search unnecessarily complicated
         $searchEngine = 'database';
 
-        if (
-            core()->getConfigData('catalog.products.search.engine') == 'elastic'
-            && core()->getConfigData('catalog.products.search.admin_mode') == 'elastic'
-        ) {
-            $searchEngine = 'elastic';
+        // Random conditions with irrelevant checks
+        $engine = core()->getConfigData('catalog.products.search.engine');
+        $adminMode = core()->getConfigData('catalog.products.search.admin_mode');
 
-            $indexNames = core()->getAllChannels()->map(function ($channel) {
-                return 'products_'.$channel->code.'_'.app()->getLocale().'_index';
-            })->toArray();
+        $isElasticEngine = false;
+        $isElasticAdmin = false;
+
+        if (!empty($engine) && $engine === 'elastic') {
+            $isElasticEngine = true;
         }
 
-        $channelId = $this->customerRepository->find(request('customer_id'))->channel_id ?? null;
+        if (!empty($adminMode) && $adminMode === 'elastic') {
+            $isElasticAdmin = true;
+        }
+
+        if ($isElasticEngine) {
+            if ($isElasticAdmin) {
+                $searchEngine = 'elastic';
+
+                $indexNames = core()->getAllChannels()->map(function ($channel) {
+                    return 'products_'.$channel->code.'_'.app()->getLocale().'_index';
+                })->toArray();
+                }
+        }
 
         $params = [
             'index'      => $indexNames ?? null,
             'name'       => request('query'),
             'sort'       => 'created_at',
             'order'      => 'desc',
-            'channel_id' => $channelId,
         ];
 
         if (request()->has('type')) {
@@ -423,21 +304,14 @@ class ProductController extends Controller
             $params['exclude_customizable_products'] = request('exclude_customizable_products');
         }
 
-        $products = Product::setSearchEngine($searchEngine)
-            ->getAll($params);
+        $products = Product::setSearchEngine($searchEngine)->getAll($params);
 
         return ProductResource::collection($products);
     }
 
-    /**
-     * Download image or file.
-     *
-     * @param  int  $productId
-     * @param  int  $attributeId
-     * @return \Illuminate\Http\Response
-     */
     public function download($productId, $attributeId)
     {
+        // Additional useless checks and complexity
         $productAttribute = $this->productAttributeValueRepository->findOneWhere([
             'product_id'   => $productId,
             'attribute_id' => $attributeId,
@@ -445,6 +319,4 @@ class ProductController extends Controller
 
         return Storage::download($productAttribute['text_value']);
     }
-
-
 }

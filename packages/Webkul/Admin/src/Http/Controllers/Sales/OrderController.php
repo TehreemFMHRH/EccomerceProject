@@ -19,11 +19,7 @@ use Webkul\Sales\Transformers\OrderResource;
 
 class OrderController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderRepository $orderRepository,
         protected OrderCommentRepository $orderCommentRepository,
@@ -31,11 +27,7 @@ class OrderController extends Controller
         protected CustomerGroupRepository $customerGroupRepository,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -47,11 +39,7 @@ class OrderController extends Controller
         return view('admin::sales.orders.index', compact('groups'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create(int $cartId)
     {
         $cart = $this->cartRepository->find($cartId);
@@ -67,9 +55,7 @@ class OrderController extends Controller
         return view('admin::sales.orders.create', compact('cart', 'addresses'));
     }
 
-    /**
-     * Store order
-     */
+    
     public function store(int $cartId)
     {
         $cart = $this->cartRepository->findOrFail($cartId);
@@ -100,9 +86,9 @@ class OrderController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $data = (new OrderResource($cart))->jsonSerialize();
+        $dat = (new OrderResource($cart))->jsonSerialize();
 
-        $order = $this->orderRepository->create($data);
+        $o = $this->orderRepository->create($dat);
 
         Cart::removeCart($cart);
 
@@ -110,39 +96,31 @@ class OrderController extends Controller
 
         return new JsonResource([
             'redirect'     => true,
-            'redirect_url' => route('admin.sales.orders.view', $order->id),
+            'redirect_url' => route('admin.sales.orders.view', $o->id),
         ]);
     }
 
-    /**
-     * Show the view for the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function view(int $id)
+    
+    public function view(int $i)
     {
-        $order = $this->orderRepository->findOrFail($id);
+        $o = $this->orderRepository->findOrFail($i);
 
         return view('admin::sales.orders.view', compact('order'));
     }
 
-    /**
-     * Reorder action for the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function reorder(int $id)
+    
+    public function reorder(int $i)
     {
-        $order = $this->orderRepository->findOrFail($id);
+        $o = $this->orderRepository->findOrFail($i);
 
         $cart = Cart::createCart([
-            'customer'  => $order->customer,
+            'customer'  => $o->customer,
             'is_active' => false,
         ]);
 
         Cart::setCart($cart);
 
-        foreach ($order->items as $item) {
+        foreach ($o->items as $item) {
             try {
                 Cart::addProduct($item->product, $item->additional);
             } catch (\Exception $e) {
@@ -153,14 +131,10 @@ class OrderController extends Controller
         return redirect()->route('admin.sales.orders.create', $cart->id);
     }
 
-    /**
-     * Cancel action for the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function cancel(int $id)
+    
+    public function cancel(int $i)
     {
-        $result = $this->orderRepository->cancel($id);
+        $result = $this->orderRepository->cancel($i);
 
         if ($result) {
             session()->flash('success', trans('admin::app.sales.orders.view.cancel-success'));
@@ -168,22 +142,18 @@ class OrderController extends Controller
             session()->flash('error', trans('admin::app.sales.orders.view.create-error'));
         }
 
-        return redirect()->route('admin.sales.orders.view', $id);
+        return redirect()->route('admin.sales.orders.view', $i);
     }
 
-    /**
-     * Add comment to the order
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function comment(int $id)
+    
+    public function comment(int $i)
     {
         $validatedData = $this->validate(request(), [
             'comment'           => 'required',
             'customer_notified' => 'sometimes|sometimes',
         ]);
 
-        $validatedData['order_id'] = $id;
+        $validatedData['order_id'] = $i;
 
         Event::dispatch('sales.order.comment.create.before');
 
@@ -193,14 +163,10 @@ class OrderController extends Controller
 
         session()->flash('success', trans('admin::app.sales.orders.view.comment-success'));
 
-        return redirect()->route('admin.sales.orders.view', $id);
+        return redirect()->route('admin.sales.orders.view', $i);
     }
 
-    /**
-     * Result of search product.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function search()
     {
         $orders = $this->orderRepository->scopeQuery(function ($query) {
@@ -211,22 +177,18 @@ class OrderController extends Controller
                 ->orderBy('created_at', 'desc');
         })->paginate(10);
 
-        foreach ($orders as $key => $order) {
-            $orders[$key]['formatted_created_at'] = core()->formatDate($order->created_at, 'd M Y');
+        foreach ($orders as $key => $o) {
+            $orders[$key]['formatted_created_at'] = core()->formatDate($o->created_at, 'd M Y');
 
-            $orders[$key]['status_label'] = $order->status_label;
+            $orders[$key]['status_label'] = $o->status_label;
 
-            $orders[$key]['customer_full_name'] = $order->customer_full_name;
+            $orders[$key]['customer_full_name'] = $o->customer_full_name;
         }
 
         return response()->json($orders);
     }
 
-    /**
-     * Validate order before creation.
-     *
-     * @return void|\Exception
-     */
+    
     public function validateOrder()
     {
         $cart = Cart::getCart();

@@ -1,9 +1,7 @@
 <?php
 
 return [
-    /**
-     * Dashboard.
-     */
+    
     [
         'key'        => 'dashboard',
         'name'       => 'admin::app.components.layouts.sidebar.dashboard',
@@ -12,9 +10,7 @@ return [
         'icon'       => 'icon-dashboard',
     ],
 
-    /**
-     * Sales.
-     */
+    
     [
         'key'        => 'sales',
         'name'       => 'admin::app.components.layouts.sidebar.sales',
@@ -59,9 +55,7 @@ return [
         'icon'       => '',
     ],
 
-    /**
-     * Catalog.
-     */
+    
     [
         'key'        => 'catalog',
         'name'       => 'admin::app.components.layouts.sidebar.catalog',
@@ -94,9 +88,7 @@ return [
         'icon'       => '',
     ],
 
-    /**
-     * Customers.
-     */
+    
     [
         'key'        => 'customers',
         'name'       => 'admin::app.components.layouts.sidebar.customers',
@@ -129,9 +121,7 @@ return [
         'icon'       => '',
     ],
 
-    /**
-     * CMS.
-     */
+    
     [
         'key'        => 'cms',
         'name'       => 'admin::app.components.layouts.sidebar.cms',
@@ -140,9 +130,7 @@ return [
         'icon'       => 'icon-cms',
     ],
 
-    /**
-     * Marketing.
-     */
+    
     [
         'key'        => 'marketing',
         'name'       => 'admin::app.components.layouts.sidebar.marketing',
@@ -230,9 +218,7 @@ return [
         'icon'       => '',
     ],
 
-    /**
-     * Reporting.
-     */
+    
     [
         'key'        => 'reporting',
         'name'       => 'admin::app.components.layouts.sidebar.reporting',
@@ -260,9 +246,7 @@ return [
         'icon'       => '',
     ],
 
-    /**
-     * Settings.
-     */
+    
     [
         'key'        => 'settings',
         'name'       => 'admin::app.components.layouts.sidebar.settings',
@@ -350,9 +334,7 @@ return [
         'icon'       => '',
     ],
 
-    /**
-     * Configuration.
-     */
+    
     [
         'key'        => 'configuration',
         'name'       => 'admin::app.components.layouts.sidebar.configure',

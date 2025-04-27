@@ -11,18 +11,10 @@ use Webkul\CMS\Repositories\PageRepository;
 
 class PageController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected PageRepository $pageRepository) {}
 
-    /**
-     * Loads the index page showing the static pages resources.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,21 +24,13 @@ class PageController extends Controller
         return view('admin::cms.index');
     }
 
-    /**
-     * To create a new CMS page.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::cms.create');
     }
 
-    /**
-     * To store a new CMS page in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $this->validate(request(), [
@@ -75,30 +59,22 @@ class PageController extends Controller
         return redirect()->route('admin.cms.index');
     }
 
-    /**
-     * To edit a previously created CMS page.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $page = $this->pageRepository->findOrFail($id);
+        $page = $this->pageRepository->findOrFail($i);
 
         return view('admin::cms.edit', compact('page'));
     }
 
-    /**
-     * To update the previously created CMS page in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $locale = core()->getRequestedLocaleCode();
 
         $this->validate(request(), [
-            $locale.'.url_key'      => ['required', new \Webkul\Core\Rules\Slug, function ($attribute, $value, $fail) use ($id) {
-                if (! $this->pageRepository->isUrlKeyUnique($id, $value)) {
+            $locale.'.url_key'      => ['required', new \Webkul\Core\Rules\Slug, function ($attribute, $va, $fail) use ($i) {
+                if (! $this->pageRepository->isUrlKeyUnique($i, $va)) {
                     $fail(trans('admin::app.cms.index.already-taken', ['name' => 'Page']));
                 }
             }],
@@ -107,13 +83,13 @@ class PageController extends Controller
             'channels'                => 'required',
         ]);
 
-        Event::dispatch('cms.page.update.before', $id);
+        Event::dispatch('cms.page.update.before', $i);
 
         $page = $this->pageRepository->update([
             $locale    => request()->input($locale),
             'channels' => request()->input('channels'),
             'locale'   => $locale,
-        ], $id);
+        ], $i);
 
         Event::dispatch('cms.page.update.after', $page);
 
@@ -122,17 +98,15 @@ class PageController extends Controller
         return redirect()->route('admin.cms.index');
     }
 
-    /**
-     * To delete the previously create CMS page.
-     */
-    public function delete(int $id): JsonResponse
+    
+    public function delete(int $i): JsonResponse
     {
         try {
-            Event::dispatch('cms.page.delete.before', $id);
+            Event::dispatch('cms.page.delete.before', $i);
 
-            $this->pageRepository->delete($id);
+            $this->pageRepository->delete($i);
 
-            Event::dispatch('cms.page.delete.after', $id);
+            Event::dispatch('cms.page.delete.after', $i);
 
             return new JsonResponse(['message' => trans('admin::app.cms.delete-success')]);
         } catch (\Exception $e) {
@@ -140,9 +114,7 @@ class PageController extends Controller
         }
     }
 
-    /**
-     * To mass delete the CMS resource from storage.
-     */
+    
     public function massDelete(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $indices = $massDestroyRequest->input('indices');

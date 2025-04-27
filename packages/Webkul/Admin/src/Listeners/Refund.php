@@ -7,12 +7,7 @@ use Webkul\Paypal\Payment\SmartButton;
 
 class Refund extends Base
 {
-    /**
-     * After order is created
-     *
-     * @param  \Webkul\Sales\Contracts\Refund  $refund
-     * @return void
-     */
+    
     public function afterCreated($refund)
     {
         $this->refundOrder($refund);
@@ -28,22 +23,17 @@ class Refund extends Base
         }
     }
 
-    /**
-     * After Refund is created
-     *
-     * @param  \Webkul\Sales\Contracts\Refund  $refund
-     * @return void
-     */
+    
     public function refundOrder($refund)
     {
-        $order = $refund->order;
+        $o = $refund->order;
 
-        if ($order->payment->method === 'paypal_smart_button') {
+        if ($o->payment->method === 'paypal_smart_button') {
             /* getting smart button instance */
             $smartButton = new SmartButton;
 
             /* getting paypal oder id */
-            $paypalOrderID = $order->payment->additional['orderID'];
+            $paypalOrderID = $o->payment->additional['orderID'];
 
             /* getting capture id by paypal order id */
             $captureID = $smartButton->getCaptureId($paypalOrderID);

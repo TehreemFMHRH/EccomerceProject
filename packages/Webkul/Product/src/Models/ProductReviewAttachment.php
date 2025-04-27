@@ -14,18 +14,10 @@ class ProductReviewAttachment extends Model implements ProductReviewAttachmentCo
 {
     use HasFactory;
 
-    /**
-     * Timestamp false
-     *
-     * @var bool
-     */
+    
     public $timestamps = false;
 
-    /**
-     * Define fillable property
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'path',
         'review_id',
@@ -33,40 +25,28 @@ class ProductReviewAttachment extends Model implements ProductReviewAttachmentCo
         'mime_type',
     ];
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
+    
     protected $appends = ['url'];
 
-    /**
-     * Get the review that owns the image.
-     */
+    
     public function review(): BelongsTo
     {
         return $this->belongsTo(ProductReviewProxy::modelClass());
     }
 
-    /**
-     * Get image url for the review image.
-     */
+    
     public function url(): string
     {
         return Storage::url($this->path);
     }
 
-    /**
-     * Get image url for the review image.
-     */
+    
     public function getUrlAttribute(): string
     {
         return $this->url();
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductReviewAttachmentFactory::new();

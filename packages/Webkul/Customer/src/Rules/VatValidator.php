@@ -4,13 +4,7 @@ namespace Webkul\Customer\Rules;
 
 class VatValidator
 {
-    /**
-     * Regular expression patterns per country code
-     *
-     * @var array
-     *
-     * @link http://ec.europa.eu/taxation_customs/vies/faq.html?locale=en#item_11
-     */
+    
     protected static $pattern_expression = [
         'AT' => 'U[A-Z\d]{8}',
         'AE' => '\d{15}',
@@ -45,9 +39,7 @@ class VatValidator
         'JP' => '\d{12}|\d{13}',
     ];
 
-    /**
-     * Validate a VAT number format.
-     */
+    
     public function validate(string $vatNumber): bool
     {
         $vatNumber = $this->vatCleaner($vatNumber);

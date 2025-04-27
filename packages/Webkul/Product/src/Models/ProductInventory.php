@@ -23,25 +23,19 @@ class ProductInventory extends Model implements ProductInventoryContract
         'vendor_id',
     ];
 
-    /**
-     * Get the product attribute family that owns the product.
-     */
+    
     public function inventory_source(): BelongsTo
     {
         return $this->belongsTo(InventorySourceProxy::modelClass());
     }
 
-    /**
-     * Get the product that owns the product inventory.
-     */
+    
     public function product(): BelongsTo
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductInventoryFactory::new();

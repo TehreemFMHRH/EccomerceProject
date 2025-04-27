@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class CartRuleDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('cart_rules')
@@ -36,11 +32,7 @@ class CartRuleDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -67,8 +59,8 @@ class CartRuleDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($value) {
-                return $value->coupon_code ?? '-';
+            'closure'    => function ($va) {
+                return $va->coupon_code ?? '-';
             },
         ]);
 
@@ -79,8 +71,8 @@ class CartRuleDataGrid extends DataGrid
             'filterable'      => true,
             'filterable_type' => 'datetime_range',
             'sortable'        => true,
-            'closure'         => function ($value) {
-                return $value->starts_from ?? '-';
+            'closure'         => function ($va) {
+                return $va->starts_from ?? '-';
             },
         ]);
 
@@ -91,8 +83,8 @@ class CartRuleDataGrid extends DataGrid
             'filterable'      => true,
             'filterable_type' => 'datetime_range',
             'sortable'        => true,
-            'closure'         => function ($value) {
-                return $value->ends_till ?? '-';
+            'closure'         => function ($va) {
+                return $va->ends_till ?? '-';
             },
         ]);
 
@@ -113,8 +105,8 @@ class CartRuleDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status == 1) {
+            'closure'    => function ($va) {
+                if ($va->status == 1) {
                     return trans('admin::app.marketing.promotions.cart-rules.index.datagrid.active');
                 }
 
@@ -132,11 +124,7 @@ class CartRuleDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.promotions.cart_rules.edit')) {

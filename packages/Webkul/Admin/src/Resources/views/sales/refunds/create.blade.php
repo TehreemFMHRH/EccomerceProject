@@ -30,7 +30,7 @@
             <!-- refund Create Drawer -->
             <x-admin::form
                 method="POST"
-                :action="route('admin.sales.refunds.store', $order->id)"
+                :action="route('admin.sales.refunds.store', $o->id)"
                 ref="refundForm"
             >
                 <x-admin::drawer ref="refund">
@@ -71,7 +71,7 @@
                         <div class="grid p-4 !pt-0">
                             <div class="grid">
                                 <!-- Item Listing -->
-                                @foreach ($order->items as $item)
+                                @foreach ($o->items as $item)
                                     @if ($item->qty_to_refund)
                                         <div class="flex justify-between gap-2.5 py-4">
                                             <div class="flex gap-2.5">
@@ -188,7 +188,7 @@
                                                             @lang('admin::app.sales.refunds.create.tax-amount')
                                                         </p>
 
-                                                        @if ($order->base_discount_amount > 0)
+                                                        @if ($o->base_discount_amount > 0)
                                                             <p class="text-gray-600 dark:text-gray-300">
                                                                 @lang('admin::app.sales.refunds.create.discount-amount')
                                                             </p>
@@ -212,7 +212,7 @@
                                                             {{ core()->formatBasePrice($item->base_tax_amount) }}
                                                         </p>
 
-                                                        @if ($order->base_discount_amount > 0)
+                                                        @if ($o->base_discount_amount > 0)
                                                             <p class="text-gray-600 dark:text-gray-300">
                                                                 {{ core()->formatBasePrice($item->base_discount_amount) }}
                                                             </p>
@@ -244,7 +244,7 @@
                                         id="refund[shipping]"
                                         name="refund[shipping]"
                                         v-model="refund.shipping"
-                                        :rules="'required|min_value:0|max_value:' . $order->base_shipping_invoiced - $order->base_shipping_refunded"
+                                        :rules="'required|min_value:0|max_value:' . $o->base_shipping_invoiced - $o->base_shipping_refunded"
                                         :label="trans('admin::app.sales.refunds.create.refund-shipping')"
                                     />
 
@@ -342,7 +342,7 @@
                     refund: {
                         items: {},
 
-                        shipping: "{{ $order->base_shipping_invoiced - $order->base_shipping_refunded - $order->base_shipping_discount_amount }}",
+                        shipping: "{{ $o->base_shipping_invoiced - $o->base_shipping_refunded - $o->base_shipping_discount_amount }}",
 
                         adjustment_refund: 0,
 
@@ -354,8 +354,8 @@
             },
 
             mounted() {
-                @foreach ($order->items as $item)
-                    this.refund.items[{{$item->id}}] = {{ $item->qty_to_refund }};
+                @foreach ($o->items as $item)
+                    this.refund.items[{{ $item->id }}] = {{ $item->qty_to_refund }};
                 @endforeach
 
                 this.updateTotals();
@@ -365,12 +365,15 @@
                 updateTotals() {
                     var self = this;
 
-                    this.$axios.post("{{ route('admin.sales.refunds.update_totals', $order->id) }}", this.refund)
+                    this.$axios.post("{{ route('admin.sales.refunds.update_totals', $o->id) }}", this.refund)
                         .then((response) => {
                             this.totals = response.data;
                         })
                         .catch((error) => {
-                            self.$emitter.emit('add-flash', { type: 'warning', message: error.response.data.message });
+                            self.$emitter.emit('add-flash', {
+                                type: 'warning',
+                                message: error.response.data.message
+                            });
                         })
                 }
             },

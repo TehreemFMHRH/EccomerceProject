@@ -13,11 +13,7 @@ use Webkul\Sales\Repositories\OrderItemRepository;
 
 class Product extends AbstractReporting
 {
-    /**
-     * Create a helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ProductInventoryRepository $productInventoryRepository,
         protected WishlistRepository $wishlistRepository,
@@ -28,11 +24,7 @@ class Product extends AbstractReporting
         parent::__construct();
     }
 
-    /**
-     * Retrieves total sold quantities and their progress.
-     *
-     * @return array
-     */
+    
     public function getTotalSoldQuantitiesProgress()
     {
         return [
@@ -42,34 +34,19 @@ class Product extends AbstractReporting
         ];
     }
 
-    /**
-     * Returns previous sold quantities over time
-     *
-     * @param  string  $period
-     * @param  bool  $includeEmpty
-     */
+    
     public function getPreviousTotalSoldQuantitiesOverTime($period = 'auto', $includeEmpty = true): array
     {
         return $this->getTotalSoldQuantitiesOverTime($this->lastStartDate, $this->lastEndDate, $period);
     }
 
-    /**
-     * Returns current sold quantities over time
-     *
-     * @param  string  $period
-     * @param  bool  $includeEmpty
-     */
+    
     public function getCurrentTotalSoldQuantitiesOverTime($period = 'auto', $includeEmpty = true): array
     {
         return $this->getTotalSoldQuantitiesOverTime($this->startDate, $this->endDate, $period);
     }
 
-    /**
-     * Retrieves total sold quantities.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalSoldQuantities($startDate, $endDate): int
     {
         return $this->orderItemRepository
@@ -80,11 +57,7 @@ class Product extends AbstractReporting
             ->value(DB::raw('SUM(qty_invoiced - qty_refunded)')) ?? 0;
     }
 
-    /**
-     * Retrieves total products added to wishlist and their progress.
-     *
-     * @return array
-     */
+    
     public function getTotalProductsAddedToWishlistProgress()
     {
         return [
@@ -94,34 +67,19 @@ class Product extends AbstractReporting
         ];
     }
 
-    /**
-     * Returns previous products added to wishlist over time
-     *
-     * @param  string  $period
-     * @param  bool  $includeEmpty
-     */
+    
     public function getPreviousTotalProductsAddedToWishlistOverTime($period = 'auto', $includeEmpty = true): array
     {
         return $this->getTotalProductsAddedToWishlistOverTime($this->lastStartDate, $this->lastEndDate, $period);
     }
 
-    /**
-     * Returns current products added to wishlist over time
-     *
-     * @param  string  $period
-     * @param  bool  $includeEmpty
-     */
+    
     public function getCurrentTotalProductsAddedToWishlistOverTime($period = 'auto', $includeEmpty = true): array
     {
         return $this->getTotalProductsAddedToWishlistOverTime($this->startDate, $this->endDate, $period);
     }
 
-    /**
-     * Retrieves total products added to wishlist.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalProductsAddedToWishlist($startDate, $endDate): int
     {
         return $this->wishlistRepository
@@ -131,9 +89,7 @@ class Product extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Retrieves total reviews and their progress.
-     */
+    
     public function getTotalReviewsProgress(): array
     {
         return [
@@ -143,12 +99,7 @@ class Product extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total reviews by date
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalReviews($startDate, $endDate): int
     {
         return $this->reviewRepository
@@ -160,11 +111,7 @@ class Product extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Gets stock threshold.
-     *
-     * @param  int  $limit
-     */
+    
     public function getStockThresholdProducts($limit = null): EloquentCollection
     {
         return $this->productInventoryRepository
@@ -179,11 +126,7 @@ class Product extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Gets top-selling products by revenue.
-     *
-     * @param  int  $limit
-     */
+    
     public function getTopSellingProductsByRevenue($limit = null): Collection
     {
         $items = $this->orderItemRepository
@@ -215,11 +158,7 @@ class Product extends AbstractReporting
         return $items;
     }
 
-    /**
-     * Gets top-selling products by quantity.
-     *
-     * @param  int  $limit
-     */
+    
     public function getTopSellingProductsByQuantity($limit = null): Collection
     {
         $items = $this->orderItemRepository
@@ -250,11 +189,7 @@ class Product extends AbstractReporting
         return $items;
     }
 
-    /**
-     * Gets products with most orders.
-     *
-     * @param  int  $limit
-     */
+    
     public function getProductsWithMostReviews($limit = null): EloquentCollection
     {
         $tablePrefix = DB::getTablePrefix();
@@ -281,11 +216,7 @@ class Product extends AbstractReporting
         return $products;
     }
 
-    /**
-     * Gets last search terms
-     *
-     * @param  int  $limit
-     */
+    
     public function getLastSearchTerms($limit = null): EloquentCollection
     {
         return $this->searchTermRepository
@@ -297,11 +228,7 @@ class Product extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Gets top search terms
-     *
-     * @param  int  $limit
-     */
+    
     public function getTopSearchTerms($limit = null): EloquentCollection
     {
         return $this->searchTermRepository
@@ -312,13 +239,7 @@ class Product extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Returns sold quantities over time
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @param  string  $period
-     */
+    
     public function getTotalSoldQuantitiesOverTime($startDate, $endDate, $period = 'auto'): array
     {
         $tablePrefix = DB::getTablePrefix();
@@ -342,24 +263,18 @@ class Product extends AbstractReporting
         $stats = [];
 
         foreach ($config['intervals'] as $interval) {
-            $total = $results->where('date', $interval['filter'])->first();
+            $t = $results->where('date', $interval['filter'])->first();
 
             $stats[] = [
                 'label' => $interval['start'],
-                'total' => $total?->total ?? 0,
+                'total' => $t?->total ?? 0,
             ];
         }
 
         return $stats;
     }
 
-    /**
-     * Returns products added to wishlist over time
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @param  string  $period
-     */
+    
     public function getTotalProductsAddedToWishlistOverTime($startDate, $endDate, $period = 'auto'): array
     {
         $config = $this->getTimeInterval($startDate, $endDate, $period);
@@ -380,11 +295,11 @@ class Product extends AbstractReporting
         $stats = [];
 
         foreach ($config['intervals'] as $interval) {
-            $total = $results->where('date', $interval['filter'])->first();
+            $t = $results->where('date', $interval['filter'])->first();
 
             $stats[] = [
                 'label' => $interval['start'],
-                'total' => $total?->total ?? 0,
+                'total' => $t?->total ?? 0,
             ];
         }
 

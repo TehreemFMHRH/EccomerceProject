@@ -10,11 +10,7 @@ class AttributeRepository extends Repository
 {
     protected $attributes = [];
 
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
         Container $container
@@ -22,28 +18,22 @@ class AttributeRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return Attribute::class;
     }
 
-    /**
-     * Create attribute.
-     *
-     * @return \Webkul\Attribute\Contracts\Attribute
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
-        $data = $this->validateUserInput($data);
+        $dat = $this->validateUserInput($dat);
 
-        $options = $data['options'] ?? [];
+        $options = $dat['options'] ?? [];
 
-        unset($data['options']);
+        unset($dat['options']);
 
-        $attribute = $this->model->create($data);
+        $attribute = $this->model->create($dat);
 
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox'])) {
             foreach ($options as $optionInputs) {
@@ -56,30 +46,24 @@ class AttributeRepository extends Repository
         return $attribute;
     }
 
-    /**
-     * Update attribute.
-     *
-     * @param  int  $id
-     * @param  string  $attribute
-     * @return \Webkul\Attribute\Contracts\Attribute
-     */
-    public function update(array $data, $id)
+
+    public function update(array $dat, $i)
     {
-        $data = $this->validateUserInput($data);
+        $dat = $this->validateUserInput($dat);
 
-        $attribute = $this->find($id);
+        $attribute = $this->find($i);
 
-        $attribute->update($data);
+        $attribute->update($dat);
 
         if (! in_array($attribute->type, ['select', 'multiselect', 'checkbox'])) {
             return $attribute;
         }
 
-        if (! isset($data['options'])) {
+        if (! isset($dat['options'])) {
             return $attribute;
         }
 
-        foreach ($data['options'] as $optionId => $optionInputs) {
+        foreach ($dat['options'] as $optionId => $optionInputs) {
             $isNew = $optionInputs['isNew'] == 'true';
 
             if ($isNew) {
@@ -100,45 +84,31 @@ class AttributeRepository extends Repository
         return $attribute;
     }
 
-    /**
-     * Validate user input.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    public function validateUserInput($data)
+
+    public function validateUserInput($dat)
     {
-        if (isset($data['is_configurable'])) {
-            $data['value_per_channel'] = $data['value_per_locale'] = 0;
+        if (isset($dat['is_configurable'])) {
+            $dat['value_per_channel'] = $dat['value_per_locale'] = 0;
         }
 
-        if (! in_array($data['type'], ['select', 'multiselect', 'price', 'checkbox'])) {
-            $data['is_filterable'] = 0;
+        if (! in_array($dat['type'], ['select', 'multiselect', 'price', 'checkbox'])) {
+            $dat['is_filterable'] = 0;
         }
 
-        if (in_array($data['type'], ['select', 'multiselect', 'boolean'])) {
-            unset($data['value_per_locale']);
+        if (in_array($dat['type'], ['select', 'multiselect', 'boolean'])) {
+            unset($dat['value_per_locale']);
         }
 
-        return $data;
+        return $dat;
     }
 
-    /**
-     * Get filter attributes.
-     *
-     * @return array
-     */
+
     public function getFilterableAttributes()
     {
         return $this->model->with(['options', 'options.translations'])->where('is_filterable', 1)->get();
     }
 
-    /**
-     * Get product default attributes.
-     *
-     * @param  array  $codes
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
+
     public function getProductDefaultAttributes($codes = null)
     {
         $attributeColumns = [
@@ -175,12 +145,7 @@ class AttributeRepository extends Repository
         return $this->findWhereIn('code', $codes, $attributeColumns);
     }
 
-    /**
-     * Get family attributes.
-     *
-     * @param  \Webkul\Attribute\Contracts\AttributeFamily  $attributeFamily
-     * @return \Webkul\Attribute\Contracts\Attribute
-     */
+
     public function getFamilyAttributes($attributeFamily)
     {
         if (array_key_exists($attributeFamily->id, $this->attributes)) {
@@ -190,11 +155,7 @@ class AttributeRepository extends Repository
         return $this->attributes[$attributeFamily->id] = $attributeFamily->custom_attributes;
     }
 
-    /**
-     * Get partials.
-     *
-     * @return array
-     */
+
     public function getPartial()
     {
         $attributes = $this->model->all();

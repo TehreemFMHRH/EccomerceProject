@@ -32,7 +32,7 @@ it('should store the newly created currencies', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.currencies.store'), $data = [
+    postJson(route('admin.settings.currencies.store'), $dat = [
         'code'              => fake()->randomElement(['EUR', 'GBP', 'JPY', 'AUD', 'CHF', 'CAD', 'CNY', 'BRL']),
         'name'              => fake()->name(),
         'symbol'            => fake()->randomElement(['€', '£', '¥', 'A$', 'CHF', 'C$', '¥', 'R$']),
@@ -46,7 +46,7 @@ it('should store the newly created currencies', function () {
 
     $this->assertModelWise([
         Currency::class => [
-            $data,
+            $dat,
         ],
     ]);
 });
@@ -84,7 +84,7 @@ it('should update the specified currency', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.currencies.update'), $data = [
+    putJson(route('admin.settings.currencies.update'), $dat = [
         'id'   => $currency->id,
         'name' => fake()->name(),
     ])
@@ -95,7 +95,7 @@ it('should update the specified currency', function () {
         Currency::class => [
             [
                 ...Arr::except($currency->toArray(), ['updated_at', 'created_at']),
-                ...$data,
+                ...$dat,
             ],
         ],
     ]);

@@ -4,31 +4,19 @@ namespace Webkul\Core\Enums;
 
 enum CurrencyPositionEnum: string
 {
-    /**
-     * Left.
-     */
+    
     case LEFT = 'left';
 
-    /**
-     * Left with space.
-     */
+    
     case LEFT_WITH_SPACE = 'left_with_space';
 
-    /**
-     * Right.
-     */
+    
     case RIGHT = 'right';
 
-    /**
-     * Right with space.
-     */
+    
     case RIGHT_WITH_SPACE = 'right_with_space';
 
-    /**
-     * Options.
-     *
-     * @return void
-     */
+    
     public static function options()
     {
         return [

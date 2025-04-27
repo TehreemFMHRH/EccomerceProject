@@ -11,9 +11,7 @@ use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 
 class DatabaseManager
 {
-    /**
-     * Check Database Connection.
-     */
+    
     public function isInstalled()
     {
         if (! file_exists(base_path('.env'))) {
@@ -47,11 +45,7 @@ class DatabaseManager
         }
     }
 
-    /**
-     * Drop all the tables and migrate in the database
-     *
-     * @return void|string
-     */
+    
     public function migration()
     {
         try {
@@ -63,22 +57,18 @@ class DatabaseManager
         }
     }
 
-    /**
-     * Seed the database.
-     *
-     * @return void|string
-     */
-    public function seeder($data)
+    
+    public function seeder($dat)
     {
-        $data['parameter'] = [
-            'default_locale'     => $data['parameter']['default_locales'],
-            'allowed_locales'    => $data['parameter']['allowed_locales'],
-            'default_currency'   => $data['parameter']['default_currency'],
-            'allowed_currencies' => $data['parameter']['allowed_currencies'],
+        $dat['parameter'] = [
+            'default_locale'     => $dat['parameter']['default_locales'],
+            'allowed_locales'    => $dat['parameter']['allowed_locales'],
+            'default_currency'   => $dat['parameter']['default_currency'],
+            'allowed_currencies' => $dat['parameter']['allowed_currencies'],
         ];
 
         try {
-            app(BagistoDatabaseSeeder::class)->run($data['parameter']);
+            app(BagistoDatabaseSeeder::class)->run($dat['parameter']);
 
             $this->storageLink();
         } catch (Exception $e) {
@@ -86,17 +76,13 @@ class DatabaseManager
         }
     }
 
-    /**
-     * Storage Link.
-     */
+    
     private function storageLink()
     {
         Artisan::call('storage:link');
     }
 
-    /**
-     * Generate New Application Key
-     */
+    
     public function generateKey()
     {
         try {
@@ -105,11 +91,7 @@ class DatabaseManager
         }
     }
 
-    /**
-     * Generate fake product data.
-     *
-     * @return void|string
-     */
+    
     public function seedSampleProducts($parameters)
     {
         try {

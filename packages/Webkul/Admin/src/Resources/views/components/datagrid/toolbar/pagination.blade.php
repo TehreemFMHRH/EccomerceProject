@@ -103,17 +103,7 @@
             emits: ['changePage', 'changePerPageOption'],
 
             methods: {
-                /**
-                 * Change Page.
-                 *
-                 * The reason for choosing the numeric approach over the URL approach is to prevent any conflicts with our existing
-                 * URLs. If we were to use the URL approach, it would introduce additional arguments in the `get` method, necessitating
-                 * the addition of a `url` prop. Instead, by using the numeric approach, we can let Axios handle all the query parameters
-                 * using the `applied` prop. This allows for a cleaner and more straightforward implementation.
-                 *
-                 * @param {string|integer} directionOrPageNumber
-                 * @returns {void}
-                 */
+                
                 changePage(directionOrPageNumber) {
                     let newPage;
 
@@ -135,9 +125,7 @@
                         return;
                     }
 
-                    /**
-                     * Check if the `newPage` is within the valid range.
-                     */
+                    
                     if (newPage >= 1 && newPage <= this.available.meta.last_page) {
                         this.$emit('changePage', newPage);
                     } else {
@@ -145,12 +133,7 @@
                     }
                 },
 
-                /**
-                 * Change per page option.
-                 *
-                 * @param {integer} option
-                 * @returns {void}
-                 */
+                
                 changePerPageOption(option) {
                     this.$emit('changePerPageOption', option);
                 },

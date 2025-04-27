@@ -1,148 +1,134 @@
 <!DOCTYPE html>
-<html
-    lang="{{ app()->getLocale() }}"
-    dir="{{ in_array(app()->getLocale(), ['ar', 'fa', 'he']) ? 'rtl' : 'ltr' }}"
->
-    <head>
-        <title>
-            @lang('installer::app.installer.index.title')
-        </title>
+<html lang="{{ app()->getLocale() }}" dir="{{ in_array(app()->getLocale(), ['ar', 'fa', 'he']) ? 'rtl' : 'ltr' }}">
 
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="base-url" content="{{ url()->to('/') }}">
+<head>
+    <title>
+        @lang('installer::app.installer.index.title')
+    </title>
 
-        @stack('meta')
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="base-url" content="{{ url()->to('/') }}">
 
-        @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'], 'installer')
+    @stack('meta')
 
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-            rel="stylesheet"
-        />
+    @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'], 'installer')
 
-        <link
-            href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
-            rel="stylesheet"
-        />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
 
-        <link
-            type="image/x-icon"
-            href="{{ bagisto_asset('images/installer/favicon.ico', 'installer') }}"
-            rel="shortcut icon"
-            sizes="16x16"
-        />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet" />
 
-        @stack('styles')
-    </head>
+    <link type="image/x-icon" href="{{ bagisto_asset('images/installer/favicon.ico', 'installer') }}"
+        rel="shortcut icon" sizes="16x16" />
 
-    @php
-        $locales = [
-            'ar'    => 'arabic',
-            'bn'    => 'bengali',
-            'ca'    => 'canada',
-            'de'    => 'german',
-            'en'    => 'english',
-            'es'    => 'spanish',
-            'fa'    => 'persian',
-            'fr'    => 'french',
-            'he'    => 'hebrew',
-            'hi_IN' => 'hindi',
-            'it'    => 'italian',
-            'ja'    => 'japanese',
-            'nl'    => 'dutch',
-            'pl'    => 'polish',
-            'pt_BR' => 'portuguese',
-            'ru'    => 'russian',
-            'sin'   => 'sinhala',
-            'tr'    => 'turkish',
-            'uk'    => 'ukrainian',
-            'zh_CN' => 'chinese',
-        ];
+    @stack('styles')
+</head>
 
-        $currencies = [
-            'AED' => 'united-arab-emirates-dirham',
-            'ARS' => 'argentine-peso',
-            'AUD' => 'australian-dollar',
-            'BDT' => 'bangladeshi-taka',
-            'BHD' => 'bahraini-dinar',
-            'BRL' => 'brazilian-real',
-            'CAD' => 'canadian-dollar',
-            'CHF' => 'swiss-franc',
-            'CLP' => 'chilean-peso',
-            'CNY' => 'chinese-yuan',
-            'COP' => 'colombian-peso',
-            'CZK' => 'czech-koruna',
-            'DKK' => 'danish-krone',
-            'DZD' => 'algerian-dinar',
-            'EGP' => 'egyptian-pound',
-            'EUR' => 'euro',
-            'FJD' => 'fijian-dollar',
-            'GBP' => 'british-pound-sterling',
-            'HKD' => 'hong-kong-dollar',
-            'HUF' => 'hungarian-forint',
-            'IDR' => 'indonesian-rupiah',
-            'ILS' => 'israeli-new-shekel',
-            'INR' => 'indian-rupee',
-            'JOD' => 'jordanian-dinar',
-            'JPY' => 'japanese-yen',
-            'KRW' => 'south-korean-won',
-            'KWD' => 'kuwaiti-dinar',
-            'KZT' => 'kazakhstani-tenge',
-            'LBP' => 'lebanese-pound',
-            'LKR' => 'sri-lankan-rupee',
-            'LYD' => 'libyan-dinar',
-            'MAD' => 'moroccan-dirham',
-            'MUR' => 'mauritian-rupee',
-            'MXN' => 'mexican-peso',
-            'MYR' => 'malaysian-ringgit',
-            'NGN' => 'nigerian-naira',
-            'NOK' => 'norwegian-krone',
-            'NPR' => 'nepalese-rupee',
-            'NZD' => 'new-zealand-dollar',
-            'OMR' => 'omani-rial',
-            'PAB' => 'panamanian-balboa',
-            'PEN' => 'peruvian-nuevo-sol',
-            'PHP' => 'philippine-peso',
-            'PKR' => 'pakistani-rupee',
-            'PLN' => 'polish-zloty',
-            'PYG' => 'paraguayan-guarani',
-            'QAR' => 'qatari-rial',
-            'RON' => 'romanian-leu',
-            'RUB' => 'russian-ruble',
-            'SAR' => 'saudi-riyal',
-            'SEK' => 'swedish-krona',
-            'SGD' => 'singapore-dollar',
-            'THB' => 'thai-baht',
-            'TND' => 'tunisian-dinar',
-            'TRY' => 'turkish-lira',
-            'TWD' => 'new-taiwan-dollar',
-            'UAH' => 'ukrainian-hryvnia',
-            'USD' => 'united-states-dollar',
-            'UZS' => 'uzbekistani-som',
-            'VEF' => 'venezuelan-bolívar',
-            'VND' => 'vietnamese-dong',
-            'XAF' => 'cfa-franc-beac',
-            'XOF' => 'cfa-franc-bceao',
-            'ZAR' => 'south-african-rand',
-            'ZMW' => 'zambian-kwacha'
-        ];
-    @endphp
+@php
+    $locales = [
+        'ar' => 'arabic',
+        'bn' => 'bengali',
+        'ca' => 'canada',
+        'de' => 'german',
+        'en' => 'english',
+        'es' => 'spanish',
+        'fa' => 'persian',
+        'fr' => 'french',
+        'he' => 'hebrew',
+        'hi_IN' => 'hindi',
+        'it' => 'italian',
+        'ja' => 'japanese',
+        'nl' => 'dutch',
+        'pl' => 'polish',
+        'pt_BR' => 'portuguese',
+        'ru' => 'russian',
+        'sin' => 'sinhala',
+        'tr' => 'turkish',
+        'uk' => 'ukrainian',
+        'zh_CN' => 'chinese',
+    ];
 
-    <body>
-        <div
-            id="app"
-            class="container-fluide fixed w-full"
-        >
-            <div class="flex [&amp;>*]:w-[50%] gap-12 justify-center items-center">
-                <!-- Vue Component -->
-                <v-server-requirements></v-server-requirements>
-            </div>
+    $currencies = [
+        'AED' => 'united-arab-emirates-dirham',
+        'ARS' => 'argentine-peso',
+        'AUD' => 'australian-dollar',
+        'BDT' => 'bangladeshi-taka',
+        'BHD' => 'bahraini-dinar',
+        'BRL' => 'brazilian-real',
+        'CAD' => 'canadian-dollar',
+        'CHF' => 'swiss-franc',
+        'CLP' => 'chilean-peso',
+        'CNY' => 'chinese-yuan',
+        'COP' => 'colombian-peso',
+        'CZK' => 'czech-koruna',
+        'DKK' => 'danish-krone',
+        'DZD' => 'algerian-dinar',
+        'EGP' => 'egyptian-pound',
+        'EUR' => 'euro',
+        'FJD' => 'fijian-dollar',
+        'GBP' => 'british-pound-sterling',
+        'HKD' => 'hong-kong-dollar',
+        'HUF' => 'hungarian-forint',
+        'IDR' => 'indonesian-rupiah',
+        'ILS' => 'israeli-new-shekel',
+        'INR' => 'indian-rupee',
+        'JOD' => 'jordanian-dinar',
+        'JPY' => 'japanese-yen',
+        'KRW' => 'south-korean-won',
+        'KWD' => 'kuwaiti-dinar',
+        'KZT' => 'kazakhstani-tenge',
+        'LBP' => 'lebanese-pound',
+        'LKR' => 'sri-lankan-rupee',
+        'LYD' => 'libyan-dinar',
+        'MAD' => 'moroccan-dirham',
+        'MUR' => 'mauritian-rupee',
+        'MXN' => 'mexican-peso',
+        'MYR' => 'malaysian-ringgit',
+        'NGN' => 'nigerian-naira',
+        'NOK' => 'norwegian-krone',
+        'NPR' => 'nepalese-rupee',
+        'NZD' => 'new-zealand-dollar',
+        'OMR' => 'omani-rial',
+        'PAB' => 'panamanian-balboa',
+        'PEN' => 'peruvian-nuevo-sol',
+        'PHP' => 'philippine-peso',
+        'PKR' => 'pakistani-rupee',
+        'PLN' => 'polish-zloty',
+        'PYG' => 'paraguayan-guarani',
+        'QAR' => 'qatari-rial',
+        'RON' => 'romanian-leu',
+        'RUB' => 'russian-ruble',
+        'SAR' => 'saudi-riyal',
+        'SEK' => 'swedish-krona',
+        'SGD' => 'singapore-dollar',
+        'THB' => 'thai-baht',
+        'TND' => 'tunisian-dinar',
+        'TRY' => 'turkish-lira',
+        'TWD' => 'new-taiwan-dollar',
+        'UAH' => 'ukrainian-hryvnia',
+        'USD' => 'united-states-dollar',
+        'UZS' => 'uzbekistani-som',
+        'VEF' => 'venezuelan-bolívar',
+        'VND' => 'vietnamese-dong',
+        'XAF' => 'cfa-franc-beac',
+        'XOF' => 'cfa-franc-bceao',
+        'ZAR' => 'south-african-rand',
+        'ZMW' => 'zambian-kwacha',
+    ];
+@endphp
+
+<body>
+    <div id="app" class="container-fluide fixed w-full">
+        <div class="flex [&amp;>*]:w-[50%] gap-12 justify-center items-center">
+            <!-- Vue Component -->
+            <v-server-requirements></v-server-requirements>
         </div>
+    </div>
 
-        @pushOnce('scripts')
-            <script
+    @pushOnce('scripts')
+        <script
                 type="text/x-template"
                 id="v-server-requirements-template"
             >
@@ -361,8 +347,8 @@
                                                     @lang('installer::app.installer.index.start.select-locale')
                                                 </option>
 
-                                                @foreach ($locales as $value => $label)
-                                                    <option value="{{ $value }}">
+                                                @foreach ($locales as $va => $label)
+                                                    <option value="{{ $va }}">
                                                         {{ ucfirst($label) }}
                                                     </option>
                                                 @endforeach
@@ -424,8 +410,8 @@
                     @php
                         $hasRequirement = false;
 
-                        foreach ($requirements['requirements']['php'] as $value) {
-                            if (!$value) {
+                        foreach ($requirements['requirements']['php'] as $va) {
+                            if (!$va) {
                                 $hasRequirement = true;
                                 break;
                             }
@@ -818,12 +804,12 @@
                                             @lang('installer::app.installer.index.environment-configuration.select-timezone')
                                         </option>
 
-                                        @foreach($tzlist as $key => $value)
+                                        @foreach($tzlist as $key => $va)
                                             <option
-                                                value="{{ $value }}"
-                                                {{ $value === $current ? 'selected' : '' }}
+                                                value="{{ $va }}"
+                                                {{ $va === $current ? 'selected' : '' }}
                                             >
-                                                {{ $value }}
+                                                {{ $va }}
                                             </option>
                                         @endforeach
                                     </x-installer::form.control-group.control>
@@ -855,8 +841,8 @@
                                             :aria-label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                             :label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                         >
-                                            @foreach ($locales as $value => $label)
-                                                <option value="{{ $value }}">
+                                            @foreach ($locales as $va => $label)
+                                                <option value="{{ $va }}">
                                                     @lang("installer::app.installer.index.$label")
                                                 </option>
                                             @endforeach
@@ -881,8 +867,8 @@
                                         >
                                             <option value="" disabled>Select Currencies</option>
 
-                                            @foreach ($currencies as $value => $label)
-                                                <option value="{{ $value }}" @if($value == 'USD') selected @endif>
+                                            @foreach ($currencies as $va => $label)
+                                                <option value="{{ $va }}" @if($va == 'USD') selected @endif>
                                                     @lang("installer::app.installer.index.environment-configuration.$label")
                                                 </option>
                                             @endforeach
@@ -1223,280 +1209,293 @@
                 </div>
             </script>
 
-            <script type="module">
-                app.component('v-server-requirements', {
-                    template: '#v-server-requirements-template',
+        <script type="module">
+            app.component('v-server-requirements', {
+                template: '#v-server-requirements-template',
 
-                    data() {
-                        return {
-                            step: '',
+                data() {
+                    return {
+                        step: '',
 
-                            currentStep: 'start',
+                        currentStep: 'start',
 
-                            envData: {},
+                        envData: {},
 
-                            locales: {
-                                allowed: [],
+                        locales: {
+                            allowed: [],
+                        },
+
+                        currencies: {
+                            allowed: [],
+                        },
+
+                        stepStates: {
+                            start: 'active',
+                            systemRequirements: 'pending',
+                            envDatabase: 'pending',
+                            readyForInstallation: 'pending',
+                            envConfiguration: 'pending',
+                            createSampleProducts: 'pending',
+                            createAdmin: 'pending',
+                            installationCompleted: 'pending',
+                        },
+
+                        steps: [
+                            'start',
+                            'systemRequirements',
+                            'envDatabase',
+                            'readyForInstallation',
+                            'installProgress',
+                            'envConfiguration',
+                            'createSampleProducts',
+                            'createAdmin',
+                            'installationCompleted',
+                        ],
+
+                        warning: {
+                            container: 'background: #fde68a',
+
+                            message: 'color: #1F2937',
+                        },
+
+                        isLoading: false,
+                    }
+                },
+
+                mounted() {
+                    const preventUnload = (event) => {
+                        event.preventDefault();
+                    };
+
+                    window.addEventListener('beforeunload', preventUnload);
+                },
+
+                methods: {
+                    FormSubmit(params, {
+                        setErrors
+                    }) {
+                        const stepActions = {
+                            envDatabase: () => {
+                                if (params.db_connection === 'mysql') {
+                                    this.completeStep('envDatabase', 'readyForInstallation', 'active',
+                                        'complete', setErrors);
+
+                                    this.envData = {
+                                        ...this.envData,
+                                        ...params
+                                    };
+                                } else {
+                                    setErrors({
+                                        'db_connection': ["Bagisto currently supports MySQL only."]
+                                    });
+                                }
                             },
 
-                            currencies: {
-                                allowed: [],
+                            readyForInstallation: (setErrors) => {
+                                this.currentStep = 'installProgress';
+
+                                this.startMigration(setErrors);
                             },
 
-                            stepStates: {
-                                start: 'active',
-                                systemRequirements: 'pending',
-                                envDatabase: 'pending',
-                                readyForInstallation: 'pending',
-                                envConfiguration: 'pending',
-                                createSampleProducts: 'pending',
-                                createAdmin: 'pending',
-                                installationCompleted: 'pending',
+                            createSampleProducts: (setErrors) => {
+                                this.createSampleProducts(params, setErrors);
                             },
 
-                            steps: [
-                                'start',
-                                'systemRequirements',
-                                'envDatabase',
-                                'readyForInstallation',
-                                'installProgress',
-                                'envConfiguration',
-                                'createSampleProducts',
-                                'createAdmin',
-                                'installationCompleted',
-                            ],
+                            createAdmin: (setErrors) => {
+                                this.isLoading = true;
 
-                            warning: {
-                                container: 'background: #fde68a',
-
-                                message: 'color: #1F2937',
+                                this.saveAdmin(params, setErrors);
                             },
+                        };
 
-                            isLoading: false,
+                        const index = this.steps.find(step => step === this.currentStep);
+
+                        if (stepActions[index]) {
+                            stepActions[index]();
                         }
                     },
 
-                    mounted() {
-                        const preventUnload = (event) => {
-                            event.preventDefault();
+                    nextForm(params) {
+                        const stepActions = {
+                            start: () => {
+                                this.completeStep('start', 'systemRequirements', 'active', 'complete');
+                            },
+
+                            systemRequirements: () => {
+                                this.completeStep('systemRequirements', 'envDatabase', 'active', 'complete');
+
+                                this.currentStep = 'envDatabase';
+                            },
+
+                            envConfiguration: () => {
+                                this.envData = {
+                                    ...params
+                                };
+
+                                let data = {
+                                    allowed_locales: this.locales.allowed,
+                                    allowed_currencies: this.currencies.allowed,
+                                };
+
+                                this.startSeeding(data, this.envData);
+                            },
+
                         };
 
-                        window.addEventListener('beforeunload', preventUnload);
+                        const index = this.steps.find(step => step === this.currentStep);
+
+                        if (stepActions[index]) {
+                            stepActions[index]();
+                        }
                     },
 
-                    methods: {
-                        FormSubmit(params, { setErrors }) {
-                            const stepActions = {
-                                envDatabase: () => {
-                                    if (params.db_connection === 'mysql') {
-                                        this.completeStep('envDatabase', 'readyForInstallation', 'active', 'complete', setErrors);
+                    pushAllowedCurrency() {
+                        const currencyName = event.target.name;
 
-                                        this.envData = { ...this.envData, ...params };
-                                    } else {
-                                        setErrors({ 'db_connection': ["Bagisto currently supports MySQL only."] });
-                                    }
-                                },
+                        const index = this.currencies.allowed.indexOf(currencyName);
 
-                                readyForInstallation: (setErrors) => {
-                                    this.currentStep = 'installProgress';
+                        if (index === -1) {
+                            this.currencies.allowed.push(currencyName);
+                        } else {
+                            this.currencies.allowed.splice(index, 1);
+                        }
+                    },
 
-                                    this.startMigration(setErrors);
-                                },
+                    pushAllowedLocales() {
+                        const localeName = event.target.name;
 
-                                createSampleProducts: (setErrors) => {
-                                    this.createSampleProducts(params, setErrors);
-                                },
-
-                                createAdmin: (setErrors) => {
-                                    this.isLoading = true;
-
-                                    this.saveAdmin(params, setErrors);
-                                },
-                            };
-
-                            const index = this.steps.find(step => step === this.currentStep);
-
-                            if (stepActions[index]) {
-                                stepActions[index]();
-                            }
-                        },
-
-                        nextForm(params) {
-                            const stepActions = {
-                                start: () => {
-                                    this.completeStep('start', 'systemRequirements', 'active', 'complete');
-                                },
-
-                                systemRequirements: () => {
-                                    this.completeStep('systemRequirements', 'envDatabase', 'active', 'complete');
-
-                                    this.currentStep = 'envDatabase';
-                                },
-
-                                envConfiguration: () => {
-                                    this.envData = { ...params };
-
-                                    let data = {
-                                        allowed_locales: this.locales.allowed,
-                                        allowed_currencies: this.currencies.allowed,
-                                    };
-
-                                    this.startSeeding(data, this.envData);
-                                },
-
-                            };
-
-                            const index = this.steps.find(step => step === this.currentStep);
-
-                            if (stepActions[index]) {
-                                stepActions[index]();
-                            }
-                        },
-
-                        pushAllowedCurrency() {
-                            const currencyName = event.target.name;
-
-                            const index = this.currencies.allowed.indexOf(currencyName);
-
-                            if (index === -1) {
-                                this.currencies.allowed.push(currencyName);
-                            } else {
-                                this.currencies.allowed.splice(index, 1);
-                            }
-                        },
-
-                        pushAllowedLocales() {
-                            const localeName = event.target.name;
-
-                            if (! Array.isArray(this.locales.allowed)) {
+                        if (!Array.isArray(this.locales.allowed)) {
                             this.locales.allowed = [];
-                            }
+                        }
 
-                            const index = this.locales.allowed.indexOf(localeName);
+                        const index = this.locales.allowed.indexOf(localeName);
 
-                            if (index === -1) {
-                                this.locales.allowed.push(localeName);
-                            } else {
-                                this.locales.allowed.splice(index, 1);
-                            }
-                        },
+                        if (index === -1) {
+                            this.locales.allowed.push(localeName);
+                        } else {
+                            this.locales.allowed.splice(index, 1);
+                        }
+                    },
 
-                        completeStep(fromStep, toStep, toState, nextState, setErrors) {
-                            this.stepStates[fromStep] = nextState;
+                    completeStep(fromStep, toStep, toState, nextState, setErrors) {
+                        this.stepStates[fromStep] = nextState;
 
-                            this.currentStep = toStep;
+                        this.currentStep = toStep;
 
-                            this.stepStates[toStep] = toState;
-                        },
+                        this.stepStates[toStep] = toState;
+                    },
 
-                        startMigration(setErrors) {
-                            this.currentStep = 'installProgress';
+                    startMigration(setErrors) {
+                        this.currentStep = 'installProgress';
 
-                            this.$axios.post("{{ route('installer.env_file_setup') }}", this.envData)
-                                .then((response) => {
-                                    this.runMigartion(setErrors);
+                        this.$axios.post("{{ route('installer.env_file_setup') }}", this.envData)
+                            .then((response) => {
+                                this.runMigartion(setErrors);
                             })
                             .catch(error => {
                                 setErrors(error.response.data.errors);
                             });
-                        },
+                    },
 
-                        runMigartion(setErrors) {
-                            this.$axios.post("{{ route('installer.run_migration') }}")
-                                .then((response) => {
-                                    this.completeStep('readyForInstallation', 'envConfiguration', 'active', 'complete');
+                    runMigartion(setErrors) {
+                        this.$axios.post("{{ route('installer.run_migration') }}")
+                            .then((response) => {
+                                this.completeStep('readyForInstallation', 'envConfiguration', 'active', 'complete');
 
-                                    this.currentStep = 'envConfiguration';
-                                })
-                                .catch(error => {
-                                    alert(error.response.data.error);
+                                this.currentStep = 'envConfiguration';
+                            })
+                            .catch(error => {
+                                alert(error.response.data.error);
 
-                                    this.currentStep = 'envDatabase';
-                                });
-                        },
+                                this.currentStep = 'envDatabase';
+                            });
+                    },
 
-                        startSeeding(selectedParams, allParameters) {
-                            this.$axios.post("{{ route('installer.run_seeder') }}", {
+                    startSeeding(selectedParams, allParameters) {
+                        this.$axios.post("{{ route('installer.run_seeder') }}", {
                                 'allParameters': allParameters,
                                 'selectedParameters': selectedParams
                             })
-                                .then((response) => {
-                                    this.completeStep('readyForInstallation', 'createSampleProducts', 'active', 'complete');
+                            .then((response) => {
+                                this.completeStep('readyForInstallation', 'createSampleProducts', 'active',
+                                    'complete');
 
-                                    this.currentStep = 'createSampleProducts';
+                                this.currentStep = 'createSampleProducts';
                             })
-                                .catch(error => {
-                                    setErrors(error.response.data.errors);
-                                });
-                        },
+                            .catch(error => {
+                                setErrors(error.response.data.errors);
+                            });
+                    },
 
-                        createSampleProducts(params, setErrors) {
-                            if (params.sample_products == 1){
-                                this.isLoading = true;
+                    createSampleProducts(params, setErrors) {
+                        if (params.sample_products == 1) {
+                            this.isLoading = true;
 
-                                this.$axios.post("{{ route('installer.sample_products_setup') }}",{
+                            this.$axios.post("{{ route('installer.sample_products_setup') }}", {
                                     'selectedLocales': this.locales.allowed,
                                     'selectedCurrencies': this.currencies.allowed,
                                 })
-                                    .then((response) => {
-                                        this.isLoading = false;
-
-                                        this.completeStep('createSampleProducts', 'createAdmin', 'active', 'complete');
-
-                                        this.currentStep = 'createAdmin';
-                                    })
-                                    .catch(error => {
-                                        setErrors(error.response.data.errors);
-                                    });
-                            } else {
-                                this.completeStep('createSampleProducts', 'createAdmin', 'active', 'complete');
-
-                                this.currentStep = 'createAdmin';
-                            }
-                        },
-
-                        saveAdmin(params, setErrors) {
-                            this.$axios.post("{{ route('installer.admin_config_setup') }}", params)
                                 .then((response) => {
                                     this.isLoading = false;
 
-                                    this.currentStep = 'installationCompleted';
+                                    this.completeStep('createSampleProducts', 'createAdmin', 'active', 'complete');
 
-                                    if (response.data) {
-                                        this.completeStep('createAdmin', 'installationCompleted', 'active', 'complete', setErrors);
-                                    }
+                                    this.currentStep = 'createAdmin';
                                 })
                                 .catch(error => {
                                     setErrors(error.response.data.errors);
                                 });
-                        },
+                        } else {
+                            this.completeStep('createSampleProducts', 'createAdmin', 'active', 'complete');
 
-                        setLocale(params) {
-                            const newLocale = params.locale;
-                            const url = new URL(window.location.href);
-
-                            if (! url.searchParams.has('locale')) {
-                                url.searchParams.set('locale', newLocale);
-                                window.location.href = url.toString();
-                            }
-                        },
-
-                        back() {
-                            if (this.$refs[this.currentStep] && this.$refs[this.currentStep].setValues) {
-                                this.$refs[this.currentStep].setValues(this.envData);
-                            }
-
-                            let index = this.steps.indexOf(this.currentStep);
-
-                            if (index > 0) {
-                                this.currentStep = this.steps[index - 1];
-                            }
+                            this.currentStep = 'createAdmin';
                         }
                     },
-                });
-            </script>
-        @endPushOnce
 
-        @stack('scripts')
-    </body>
+                    saveAdmin(params, setErrors) {
+                        this.$axios.post("{{ route('installer.admin_config_setup') }}", params)
+                            .then((response) => {
+                                this.isLoading = false;
+
+                                this.currentStep = 'installationCompleted';
+
+                                if (response.data) {
+                                    this.completeStep('createAdmin', 'installationCompleted', 'active', 'complete',
+                                        setErrors);
+                                }
+                            })
+                            .catch(error => {
+                                setErrors(error.response.data.errors);
+                            });
+                    },
+
+                    setLocale(params) {
+                        const newLocale = params.locale;
+                        const url = new URL(window.location.href);
+
+                        if (!url.searchParams.has('locale')) {
+                            url.searchParams.set('locale', newLocale);
+                            window.location.href = url.toString();
+                        }
+                    },
+
+                    back() {
+                        if (this.$refs[this.currentStep] && this.$refs[this.currentStep].setValues) {
+                            this.$refs[this.currentStep].setValues(this.envData);
+                        }
+
+                        let index = this.steps.indexOf(this.currentStep);
+
+                        if (index > 0) {
+                            this.currentStep = this.steps[index - 1];
+                        }
+                    }
+                },
+            });
+        </script>
+    @endPushOnce
+
+    @stack('scripts')
+</body>
+
 </html>

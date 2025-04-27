@@ -10,16 +10,10 @@ use Webkul\Inventory\Models\InventorySource;
 
 class ChannelFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Channel::class;
 
-    /**
-     * Configure the model factory.
-     */
+    
     public function configure(): static
     {
         return $this->hasAttached(Currency::inRandomOrder()->limit(1)->get())
@@ -28,11 +22,7 @@ class ChannelFactory extends Factory
             ->hasTranslations();
     }
 
-    /**
-     * Define the model's default state.
-     *
-     * @throws \JsonException
-     */
+    
     public function definition(): array
     {
         return [

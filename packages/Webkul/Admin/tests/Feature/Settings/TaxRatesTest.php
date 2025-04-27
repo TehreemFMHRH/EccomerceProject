@@ -42,7 +42,7 @@ it('should store the newly created tax rates', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.taxes.rates.store'), $data = [
+    postJson(route('admin.settings.taxes.rates.store'), $dat = [
         'identifier' => strtolower(fake()->name()),
         'country'    => fake()->country(),
         'tax_rate'   => rand(1, 50),
@@ -53,9 +53,9 @@ it('should store the newly created tax rates', function () {
     $this->assertModelWise([
         TaxRate::class => [
             [
-                'identifier' => $data['identifier'],
-                'country'    => $data['country'],
-                'tax_rate'   => $data['tax_rate'],
+                'identifier' => $dat['identifier'],
+                'country'    => $dat['country'],
+                'tax_rate'   => $dat['tax_rate'],
             ],
         ],
     ]);
@@ -95,7 +95,7 @@ it('should update the tax rate', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.taxes.rates.update', $taxRate->id), $data = [
+    putJson(route('admin.settings.taxes.rates.update', $taxRate->id), $dat = [
         'identifier' => fake()->name(),
         'country'    => fake()->country(),
         'tax_rate'   => $taxRate->tax_rate,
@@ -106,8 +106,8 @@ it('should update the tax rate', function () {
     $this->assertModelWise([
         TaxRate::class => [
             [
-                'identifier' => $data['identifier'],
-                'country'    => $data['country'],
+                'identifier' => $dat['identifier'],
+                'country'    => $dat['country'],
                 'tax_rate'   => $taxRate->tax_rate,
             ],
         ],

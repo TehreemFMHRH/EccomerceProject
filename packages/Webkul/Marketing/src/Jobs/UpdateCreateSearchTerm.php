@@ -14,31 +14,22 @@ class UpdateCreateSearchTerm implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  array  $data
-     * @return void
-     */
-    public function __construct(protected $data)
+
+    public function __construct(protected $dat)
     {
-        $this->data = $data;
+        $this->dat = $dat;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+
     public function handle()
     {
         app(SearchTermRepository::class)->updateOrCreate([
-            'term'       => $this->data['term'],
-            'channel_id' => $this->data['channel_id'],
-            'locale'     => $this->data['locale'],
+            'term'       => $this->dat['term'],
+            'channel_id' => $this->dat['channel_id'],
+            'locale'     => $this->dat['locale'],
         ], [
             'uses'    => DB::raw('uses + 1'),
-            'results' => $this->data['results'],
+            'results' => $this->dat['results'],
         ]);
     }
 }

@@ -6,18 +6,10 @@ use Exception;
 
 class EnvironmentManager
 {
-    /**
-     * Create a helper instance.
-     *
-     * @return void
-     */
+
     public function __construct(protected DatabaseManager $databaseManager) {}
 
-    /**
-     * Generate ENV File and Installation.
-     *
-     * @param [object] $request
-     */
+
     public function generateEnv($request)
     {
         $envExamplePath = base_path('.env.example');
@@ -33,28 +25,22 @@ class EnvironmentManager
         }
 
         try {
-            $response = $this->setEnvConfiguration($request->all());
+            $resp = $this->setEnvConfiguration($request->all());
 
             $this->databaseManager->generateKey();
 
-            return $response;
+            return $resp;
         } catch (Exception $e) {
             return $e;
         }
     }
 
-    /**
-     * Set the ENV file configuration.
-     *
-     * @return string
-     */
+
     public function setEnvConfiguration($request)
     {
         $envDBParams = [];
 
-        /**
-         * Update params with form-data
-         */
+
         if (isset($request['db_hostname'])) {
             $envDBParams['DB_HOST'] = $request['db_hostname'];
             $envDBParams['DB_DATABASE'] = $request['db_name'];
@@ -73,18 +59,18 @@ class EnvironmentManager
             $envDBParams['APP_TIMEZONE'] = $request['app_timezone'];
         }
 
-        $data = file_get_contents(base_path('.env'));
+        $dat = file_get_contents(base_path('.env'));
 
-        foreach ($envDBParams as $key => $value) {
-            if (preg_match('/\s/', $value)) {
-                $value = '"'.$value.'"';
+        foreach ($envDBParams as $key => $va) {
+            if (preg_match('/\s/', $va)) {
+                $va = '"'.$va.'"';
             }
 
-            $data = preg_replace("/$key=(.*)/", "$key=$value", $data);
+            $dat = preg_replace("/$key=(.*)/", "$key=$va", $dat);
         }
 
         try {
-            file_put_contents(base_path('.env'), $data);
+            file_put_contents(base_path('.env'), $dat);
         } catch (Exception $e) {
             return false;
         }

@@ -6,12 +6,7 @@ use Webkul\Product\Jobs\UpdateCreateInventoryIndex as UpdateCreateInventoryIndex
 
 class Refund
 {
-    /**
-     * After refund is created
-     *
-     * @param  \Webkul\Sale\Contracts\Refund  $refund
-     * @return void
-     */
+    
     public function afterCreate($refund)
     {
         $productIds = $refund->items

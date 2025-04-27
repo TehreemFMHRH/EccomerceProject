@@ -7,12 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class RolesTableSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('admins')->delete();

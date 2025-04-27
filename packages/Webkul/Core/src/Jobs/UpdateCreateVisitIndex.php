@@ -14,23 +14,13 @@ class UpdateCreateVisitIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  array  $log
-     * @return void
-     */
+    
     public function __construct(
         protected $model,
         protected $log
     ) {}
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         $visitRepository = app(VisitRepository::class);

@@ -3,32 +3,21 @@
 <!-- Desktop Filters Navigation -->
 <div v-if="! isMobile">
     <!-- Filters Vue Component -->
-    <v-filters
-        @filter-applied="setFilters('filter', $event)"
-        @filter-clear="clearFilters('filter', $event)"
-    >
+    <v-filters @filter-applied="setFilters('filter', $event)" @filter-clear="clearFilters('filter', $event)">
         <!-- Category Filter Shimmer Effect -->
         <x-shop::shimmer.categories.filters />
     </v-filters>
 </div>
 
 <!-- Mobile Filters Navigation -->
-<div
-    class="fixed bottom-0 z-10 grid w-full max-w-full grid-cols-[1fr_auto_1fr] items-center justify-items-center border-t border-zinc-200 bg-white px-5 ltr:left-0 rtl:right-0"
-    v-if="isMobile"
->
+<div class="fixed bottom-0 z-10 grid w-full max-w-full grid-cols-[1fr_auto_1fr] items-center justify-items-center border-t border-zinc-200 bg-white px-5 ltr:left-0 rtl:right-0"
+    v-if="isMobile">
     <!-- Filter Drawer -->
-    <x-shop::drawer
-        position="left"
-        width="100%"
-        ::is-active="isDrawerActive.filter"
-    >
+    <x-shop::drawer position="left" width="100%" ::is-active="isDrawerActive.filter">
         <!-- Drawer Toggler -->
         <x-slot:toggle>
-            <div
-                class="flex cursor-pointer items-center gap-x-2.5 px-2.5 py-3.5 text-base font-medium uppercase max-md:py-3"
-                @click="isDrawerActive.filter = true"
-            >
+            <div class="flex cursor-pointer items-center gap-x-2.5 px-2.5 py-3.5 text-base font-medium uppercase max-md:py-3"
+                @click="isDrawerActive.filter = true">
                 <span class="icon-filter-1 text-2xl"></span>
 
                 @lang('shop::app.categories.filters.filter')
@@ -42,10 +31,8 @@
                     @lang('shop::app.categories.filters.filters')
                 </p>
 
-                <p
-                    class="cursor-pointer text-sm font-medium ltr:mr-[50px] rtl:ml-[50px]"
-                    @click="clearFilters('filter', '')"
-                >
+                <p class="cursor-pointer text-sm font-medium ltr:mr-[50px] rtl:ml-[50px]"
+                    @click="clearFilters('filter', '')">
                     @lang('shop::app.categories.filters.clear-all')
                 </p>
             </div>
@@ -54,10 +41,7 @@
         <!-- Drawer Content -->
         <x-slot:content>
             <!-- Filters Vue Component -->
-            <v-filters
-                @filter-applied="setFilters('filter', $event)"
-                @filter-clear="clearFilters('filter', $event)"
-            >
+            <v-filters @filter-applied="setFilters('filter', $event)" @filter-clear="clearFilters('filter', $event)">
                 <!-- Category Filter Shimmer Effect -->
                 <x-shop::shimmer.categories.filters />
             </v-filters>
@@ -68,17 +52,11 @@
     <span class="h-5 w-0.5 bg-zinc-200"></span>
 
     <!-- Sort Drawer -->
-    <x-shop::drawer
-        position="bottom"
-        width="100%"
-        ::is-active="isDrawerActive.toolbar"
-    >
+    <x-shop::drawer position="bottom" width="100%" ::is-active="isDrawerActive.toolbar">
         <!-- Drawer Toggler -->
         <x-slot:toggle>
-            <div
-                class="flex cursor-pointer items-center gap-x-2.5 px-2.5 py-3.5 text-base font-medium uppercase max-md:py-3"
-                @click="isDrawerActive.toolbar = true"
-            >
+            <div class="flex cursor-pointer items-center gap-x-2.5 px-2.5 py-3.5 text-base font-medium uppercase max-md:py-3"
+                @click="isDrawerActive.toolbar = true">
                 <span class="icon-sort-1 text-2xl"></span>
 
                 @lang('shop::app.categories.filters.sort')
@@ -266,9 +244,9 @@
 
             methods: {
                 getFilters() {
-                    this.$axios.get('{{ route("shop.api.categories.attributes") }}', {
-                            params: { 
-                                category_id: "{{ isset($category) ? $category->id : ''  }}",
+                    this.$axios.get('{{ route('shop.api.categories.attributes') }}', {
+                            params: {
+                                category_id: "{{ isset($a) ? $a->id : '' }}",
                             }
                         })
                         .then((response) => {
@@ -285,10 +263,8 @@
                     let queryParams = new URLSearchParams(window.location.search);
 
                     queryParams.forEach((value, filter) => {
-                        /**
-                         * Removed all toolbar filters in order to prevent key duplication.
-                         */
-                        if (! ['sort', 'limit', 'mode'].includes(filter)) {
+
+                        if (!['sort', 'limit', 'mode'].includes(filter)) {
                             this.filters.applied[filter] = value.split(',');
                         }
                     });
@@ -307,19 +283,15 @@
                 },
 
                 clear() {
-                    /**
-                     * Clearing parent component.
-                     */
+
                     this.filters.applied = {};
 
-                    /**
-                     * Clearing child components. Improvisation needed here.
-                     */
+
                     this.$refs.filterItemComponent.forEach((filterItem) => {
                         if (filterItem.filter.code === 'price') {
-                            filterItem.$data.appliedValues = null;
+                            filterItem.$dat.appliedValues = null;
                         } else {
-                            filterItem.$data.appliedValues = [];
+                            filterItem.$dat.appliedValues = [];
                         }
                     });
 
@@ -345,7 +317,7 @@
 
             watch: {
                 appliedValues() {
-                    if (this.filter.code === 'price' && ! this.appliedValues) {
+                    if (this.filter.code === 'price' && !this.appliedValues) {
                         ++this.refreshKey;
                     }
                 },
@@ -353,20 +325,16 @@
 
             mounted() {
                 if (this.filter.code === 'price') {
-                    /**
-                     * Improvisation needed here for `this.$parent.$data`.
-                     */
-                    this.appliedValues = this.$parent.$data.filters.applied[this.filter.code]?.join(',');
+
+                    this.appliedValues = this.$parent.$dat.filters.applied[this.filter.code]?.join(',');
 
                     ++this.refreshKey;
 
                     return;
                 }
 
-                /**
-                 * Improvisation needed here for `this.$parent.$data`.
-                 */
-                this.appliedValues = this.$parent.$data.filters.applied[this.filter.code] ?? [];
+
+                this.appliedValues = this.$parent.$dat.filters.applied[this.filter.code] ?? [];
             },
 
             methods: {
@@ -421,18 +389,16 @@
 
             methods: {
                 getMaxPrice() {
-                    this.$axios.get('{{ route("shop.api.categories.max_price", $category->id ?? '') }}')
+                    this.$axios.get('{{ route('shop.api.categories.max_price', $a->id ?? '') }}')
                         .then((response) => {
                             this.isLoading = false;
 
-                            /**
-                             * If data is zero, then default price will be displayed.
-                             */
+
                             if (response.data.data.max_price) {
                                 this.allowedMaxPrice = response.data.data.max_price;
                             }
 
-                            if (! this.defaultPriceRange) {
+                            if (!this.defaultPriceRange) {
                                 this.priceRange = [0, this.allowedMaxPrice].join(',');
                             }
 

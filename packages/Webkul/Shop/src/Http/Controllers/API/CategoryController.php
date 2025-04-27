@@ -12,26 +12,17 @@ use Webkul\Shop\Http\Resources\CategoryTreeResource;
 
 class CategoryController extends APIController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected AttributeRepository $attributeRepository,
         protected CategoryRepository $categoryRepository,
 
     ) {}
 
-    /**
-     * Get all categories.
-     */
+    
     public function index(): JsonResource
     {
-        /**
-         * These are the default parameters. By default, only the enabled category
-         * will be shown in the current locale.
-         */
+        
         $defaultParams = [
             'status' => 1,
             'locale' => app()->getLocale(),
@@ -42,9 +33,7 @@ class CategoryController extends APIController
         return CategoryResource::collection($categories);
     }
 
-    /**
-     * Get all categories in tree format.
-     */
+    
     public function tree(): JsonResource
     {
         $categories = $this->categoryRepository->getVisibleCategoryTree(core()->getCurrentChannel()->root_category_id);
@@ -52,9 +41,7 @@ class CategoryController extends APIController
         return CategoryTreeResource::collection($categories);
     }
 
-    /**
-     * Get filterable attributes for category.
-     */
+    
     public function getAttributes(): JsonResource
     {
         if (! request('category_id')) {
@@ -63,18 +50,16 @@ class CategoryController extends APIController
             return AttributeResource::collection($filterableAttributes);
         }
 
-        $category = $this->categoryRepository->findOrFail(request('category_id'));
+        $a = $this->categoryRepository->findOrFail(request('category_id'));
 
-        if (empty($filterableAttributes = $category->filterableAttributes)) {
+        if (empty($filterableAttributes = $a->filterableAttributes)) {
             $filterableAttributes = $this->attributeRepository->getFilterableAttributes();
         }
 
         return AttributeResource::collection($filterableAttributes);
     }
 
-    /**
-     * Get product maximum price.
-     */
+    
     public function getProductMaxPrice($categoryId = null): JsonResource
     {
         if (core()->getConfigData('catalog.products.search.engine') == 'elastic') {

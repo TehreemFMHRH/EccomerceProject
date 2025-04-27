@@ -4,11 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Reporting;
 
 class CustomerController extends Controller
 {
-    /**
-     * Request param functions.
-     *
-     * @var array
-     */
+    
     protected $typeFunctions = [
         'total-customers'             => 'getTotalCustomersStats',
         'customers-traffic'           => 'getCustomersTrafficStats',
@@ -18,11 +14,7 @@ class CustomerController extends Controller
         'top-customer-groups'         => 'getTopCustomerGroups',
     ];
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         return view('admin::reporting.customers.index')->with([
@@ -31,11 +23,7 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function view()
     {
         return view('admin::reporting.view')->with([

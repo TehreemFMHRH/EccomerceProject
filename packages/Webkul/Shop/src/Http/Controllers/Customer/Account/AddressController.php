@@ -9,45 +9,29 @@ use Webkul\Shop\Http\Requests\Customer\AddressRequest;
 
 class AddressController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerAddressRepository $customerAddressRepository) {}
 
-    /**
-     * Address route index page.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         return view('shop::customers.account.addresses.index')->with('addresses', auth()->guard('customer')->user()->addresses);
     }
 
-    /**
-     * Show the address create form.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('shop::customers.account.addresses.create');
     }
 
-    /**
-     * Create a new address for customer.
-     *
-     * @return view
-     */
+    
     public function store(AddressRequest $request)
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         Event::dispatch('customer.addresses.create.before');
 
-        $data = array_merge(request()->only([
+        $dat = array_merge(request()->only([
             'company_name',
             'first_name',
             'last_name',
@@ -61,11 +45,11 @@ class AddressController extends Controller
             'email',
             'default_address',
         ]), [
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
             'address'     => implode(PHP_EOL, array_filter($request->input('address'))),
         ]);
 
-        $customerAddress = $this->customerAddressRepository->create($data);
+        $customerAddress = $this->customerAddressRepository->create($dat);
 
         Event::dispatch('customer.addresses.create.after', $customerAddress);
 
@@ -74,43 +58,35 @@ class AddressController extends Controller
         return redirect()->route('shop.customers.account.addresses.index');
     }
 
-    /**
-     * For editing the existing addresses of current logged in customer.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $address = $this->customerAddressRepository->findOneWhere([
-            'id'          => $id,
+        $addr = $this->customerAddressRepository->findOneWhere([
+            'id'          => $i,
             'customer_id' => auth()->guard('customer')->id(),
         ]);
 
-        if (! $address) {
+        if (! $addr) {
             abort(404);
         }
 
-        return view('shop::customers.account.addresses.edit')->with('address', $address);
+        return view('shop::customers.account.addresses.edit')->with('address', $addr);
     }
 
-    /**
-     * Edit's the pre-made resource of customer called Address.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(int $id, AddressRequest $request)
+    
+    public function update(int $i, AddressRequest $request)
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
-        if (! $customer->addresses()->find($id)) {
+        if (! $k->addresses()->find($i)) {
             session()->flash('warning', trans('shop::app.customers.account.addresses.index.security-warning'));
 
             return redirect()->route('shop.customers.account.addresses.index');
         }
 
-        Event::dispatch('customer.addresses.update.before', $id);
+        Event::dispatch('customer.addresses.update.before', $i);
 
-        $data = array_merge(request()->only([
+        $dat = array_merge(request()->only([
             'company_name',
             'first_name',
             'last_name',
@@ -123,11 +99,11 @@ class AddressController extends Controller
             'phone',
             'email',
         ]), [
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
             'address'     => implode(PHP_EOL, array_filter($request->input('address'))),
         ]);
 
-        $customerAddress = $this->customerAddressRepository->update($data, $id);
+        $customerAddress = $this->customerAddressRepository->update($dat, $i);
 
         Event::dispatch('customer.addresses.update.after', $customerAddress);
 
@@ -136,21 +112,16 @@ class AddressController extends Controller
         return redirect()->route('shop.customers.account.addresses.index');
     }
 
-    /**
-     * To change the default address or make the default address,
-     * by default when first address is created will be the default address.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function makeDefault(int $id)
+    
+    public function makeDefault(int $i)
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
-        $defaultAddress = $customer->addresses()->where('default_address', 1)->first();
+        $defaultAddress = $k->addresses()->where('default_address', 1)->first();
 
-        $addressToSetDefault = $customer->addresses()->find($id);
+        $addressToSetDefault = $k->addresses()->find($i);
 
-        if ($defaultAddress && $defaultAddress->id !== $id) {
+        if ($defaultAddress && $defaultAddress->id !== $i) {
             $defaultAddress->update(['default_address' => 0]);
         }
 
@@ -163,27 +134,23 @@ class AddressController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Delete address of the current customer.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(int $id)
+    
+    public function destroy(int $i)
     {
-        $address = $this->customerAddressRepository->findOneWhere([
-            'id'          => $id,
+        $addr = $this->customerAddressRepository->findOneWhere([
+            'id'          => $i,
             'customer_id' => auth()->guard('customer')->user()->id,
         ]);
 
-        if (! $address) {
+        if (! $addr) {
             abort(404);
         }
 
-        Event::dispatch('customer.addresses.delete.before', $id);
+        Event::dispatch('customer.addresses.delete.before', $i);
 
-        $this->customerAddressRepository->delete($id);
+        $this->customerAddressRepository->delete($i);
 
-        Event::dispatch('customer.addresses.delete.after', $id);
+        Event::dispatch('customer.addresses.delete.after', $i);
 
         session()->flash('success', trans('shop::app.customers.account.addresses.index.delete-success'));
 

@@ -8,12 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class ConfigTableSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('core_config')->delete();

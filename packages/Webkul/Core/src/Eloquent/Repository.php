@@ -10,32 +10,16 @@ abstract class Repository extends BaseRepository implements CacheableInterface
 {
     use CacheableRepository;
 
-    /**
-     * Cache only enabled.
-     *
-     * @var array
-     */
+
     protected $cacheOnly;
 
-    /**
-     * Cache except enabled.
-     *
-     * @var array
-     */
+
     protected $cacheExcept;
 
-    /**
-     * Clean enabled.
-     *
-     * @var bool
-     */
+
     protected $cleanEnabled;
 
-    /**
-     * Allowed clean.
-     *
-     * @return bool
-     */
+
     public function allowedClean()
     {
         if (! isset($this->cleanEnabled)) {
@@ -45,12 +29,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return $this->cleanEnabled;
     }
 
-    /**
-     * Allowed cache.
-     *
-     * @return bool
-     */
-    protected function allowedCache($method)
+
+    protected function allowedCache($x)
     {
         $className = get_class($this);
 
@@ -65,11 +45,11 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         $cacheExcept = isset($this->cacheExcept) ? $this->cacheExcept : config("repository.cache.repositories.{$className}.allowed.except", config('repository.cache.allowed.only', null));
 
         if (is_array($cacheOnly)) {
-            return in_array($method, $cacheOnly);
+            return in_array($x, $cacheOnly);
         }
 
         if (is_array($cacheExcept)) {
-            return ! in_array($method, $cacheExcept);
+            return ! in_array($x, $cacheExcept);
         }
 
         if (is_null($cacheOnly) && is_null($cacheExcept)) {
@@ -79,11 +59,7 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return false;
     }
 
-    /**
-     * Reset model.
-     *
-     * @throws RepositoryException
-     */
+
     public function resetModel()
     {
         $this->makeModel();
@@ -91,29 +67,15 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return $this;
     }
 
-    /**
-     * Find data by field and value.
-     *
-     * @param  string  $field
-     * @param  string  $value
-     * @param  array  $columns
-     * @return mixed
-     */
-    public function findOneByField($field, $value = null, $columns = ['*'])
+
+    public function findOneByField($field, $va = null, $columns = ['*'])
     {
-        $model = $this->findByField($field, $value, $columns);
+        $model = $this->findByField($field, $va, $columns);
 
         return $model->first();
     }
 
-    /**
-     * Find data by field and value.
-     *
-     * @param  string  $field
-     * @param  string  $value
-     * @param  array  $columns
-     * @return mixed
-     */
+
     public function findOneWhere(array $where, $columns = ['*'])
     {
         $model = $this->findWhere($where, $columns);
@@ -121,46 +83,29 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return $model->first();
     }
 
-    /**
-     * Find data by id.
-     *
-     * @param  int  $id
-     * @param  array  $columns
-     * @return mixed
-     */
-    public function find($id, $columns = ['*'])
+
+    public function find($i, $columns = ['*'])
     {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->find($id, $columns);
+        $model = $this->model->find($i, $columns);
         $this->resetModel();
 
         return $this->parserResult($model);
     }
 
-    /**
-     * Find data by id.
-     *
-     * @param  int  $id
-     * @param  array  $columns
-     * @return mixed
-     */
-    public function Fail($id, $columns = ['*'])
+
+    public function Fail($i, $columns = ['*'])
     {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->findOrFail($id, $columns);
+        $model = $this->model->findOrFail($i, $columns);
         $this->resetModel();
 
         return $this->parserResult($model);
     }
 
-    /**
-     * Count results of repository.
-     *
-     * @param  string  $columns
-     * @return int
-     */
+
     public function count(array $where = [], $columns = '*')
     {
         $this->applyCriteria();
@@ -170,19 +115,14 @@ abstract class Repository extends BaseRepository implements CacheableInterface
             $this->applyConditions($where);
         }
 
-        $result = $this->model->count($columns);
+        $res = $this->model->count($columns);
         $this->resetModel();
         $this->resetScope();
 
-        return $result;
+        return $res;
     }
 
-    /**
-     * Sum.
-     *
-     * @param  string  $columns
-     * @return mixed
-     */
+
     public function sum($columns)
     {
         $this->applyCriteria();
@@ -194,12 +134,7 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return $sum;
     }
 
-    /**
-     * Avg.
-     *
-     * @param  string  $columns
-     * @return mixed
-     */
+
     public function avg($columns)
     {
         $this->applyCriteria();
@@ -211,11 +146,7 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return $avg;
     }
 
-    /**
-     * Get model.
-     *
-     * @return mixed
-     */
+
     public function getModel()
     {
         return $this->model;

@@ -9,16 +9,11 @@ use Webkul\Theme\Facades\Themes;
 
 class ThemeViewFinder extends FileViewFinder
 {
-    /**
-     * Override findNamespacedView() to add "resources/themes/theme_name/views/..." paths
-     *
-     * @param  string  $name
-     * @return string
-     */
-    protected function findNamespacedView($name)
+    
+    protected function findNamespacedView($na)
     {
         // Extract the $view and the $namespace parts
-        [$namespace, $view] = $this->parseNamespaceSegments($name);
+        [$namespace, $view] = $this->parseNamespaceSegments($na);
 
         if (! Str::contains(request()->url(), config('app.admin_url').'/')) {
             $paths = $this->addThemeNamespacePaths($namespace);
@@ -55,10 +50,7 @@ class ThemeViewFinder extends FileViewFinder
         }
     }
 
-    /**
-     * @param  string  $namespace
-     * @return array
-     */
+    
     public function addThemeNamespacePaths($namespace)
     {
         if (! isset($this->hints[$namespace])) {
@@ -78,13 +70,7 @@ class ThemeViewFinder extends FileViewFinder
         return $paths;
     }
 
-    /**
-     * Override replaceNamespace() to add path for custom error pages "resources/themes/theme_name/views/errors/..."
-     *
-     * @param  string  $namespace
-     * @param  string|array  $hints
-     * @return void
-     */
+    
     public function replaceNamespace($namespace, $hints)
     {
         $this->hints[$namespace] = (array) $hints;
@@ -104,12 +90,7 @@ class ThemeViewFinder extends FileViewFinder
         }
     }
 
-    /**
-     * Set the array of paths where the views are being searched.
-     *
-     * @param  array  $paths
-     * @return void
-     */
+    
     public function setPaths($paths)
     {
         $this->paths = $paths;

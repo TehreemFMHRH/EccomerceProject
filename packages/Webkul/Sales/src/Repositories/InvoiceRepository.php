@@ -10,11 +10,7 @@ use Webkul\Sales\Generators\InvoiceSequencer;
 
 class InvoiceRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected OrderRepository $orderRepository,
         protected OrderItemRepository $orderItemRepository,
@@ -25,31 +21,23 @@ class InvoiceRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return 'Webkul\Sales\Contracts\Invoice';
     }
 
-    /**
-     * Create invoice.
-     *
-     * @param  string  $invoiceState
-     * @param  string  $orderState
-     * @return \Webkul\Sales\Models\Invoice
-     */
-    public function create(array $data, $invoiceState = null, $orderState = null)
+
+    public function create(array $dat, $invoiceState = null, $orderState = null)
     {
         DB::beginTransaction();
 
         try {
-            Event::dispatch('sales.invoice.save.before', $data);
+            Event::dispatch('sales.invoice.save.before', $dat);
 
-            $order = $this->orderRepository->find($data['order_id']);
+            $o = $this->orderRepository->find($dat['order_id']);
 
-            $totalQty = array_sum($data['invoice']['items']);
+            $totalQty = array_sum($dat['invoice']['items']);
 
             if (isset($invoiceState)) {
                 $state = $invoiceState;
@@ -59,16 +47,16 @@ class InvoiceRepository extends Repository
 
             $invoice = $this->model->create([
                 'increment_id'          => $this->generateIncrementId(),
-                'order_id'              => $order->id,
+                'order_id'              => $o->id,
                 'total_qty'             => $totalQty,
                 'state'                 => $state,
-                'base_currency_code'    => $order->base_currency_code,
-                'channel_currency_code' => $order->channel_currency_code,
-                'order_currency_code'   => $order->order_currency_code,
-                'order_address_id'      => $order->billing_address->id,
+                'base_currency_code'    => $o->base_currency_code,
+                'channel_currency_code' => $o->channel_currency_code,
+                'order_currency_code'   => $o->order_currency_code,
+                'order_address_id'      => $o->billing_address->id,
             ]);
 
-            foreach ($data['invoice']['items'] as $itemId => $qty) {
+            foreach ($dat['invoice']['items'] as $itemId => $qty) {
                 if (! $qty) {
                     continue;
                 }
@@ -141,7 +129,7 @@ class InvoiceRepository extends Repository
                                 'invoice'   => $invoice,
                                 'product'   => $childOrderItem->product,
                                 'qty'       => $finalQty,
-                                'vendor_id' => $data['vendor_id'] ?? 0,
+                                'vendor_id' => $dat['vendor_id'] ?? 0,
                             ]);
                         }
 
@@ -156,7 +144,7 @@ class InvoiceRepository extends Repository
                         'invoice'   => $invoice,
                         'product'   => $orderItem->product,
                         'qty'       => $qty,
-                        'vendor_id' => $data['vendor_id'] ?? 0,
+                        'vendor_id' => $dat['vendor_id'] ?? 0,
                     ]);
                 }
 
@@ -167,17 +155,15 @@ class InvoiceRepository extends Repository
 
             $this->collectTotals($invoice);
 
-            $this->orderRepository->collectTotals($order);
+            $this->orderRepository->collectTotals($o);
 
             if (isset($orderState)) {
-                $this->orderRepository->updateOrderStatus($order, $orderState);
+                $this->orderRepository->updateOrderStatus($o, $orderState);
             } else {
-                $this->orderRepository->updateOrderStatus($order);
+                $this->orderRepository->updateOrderStatus($o);
             }
 
-            /**
-             * Temporary property has been used to avoid request helper usage in listener.
-             */
+
             $invoice->can_create_transaction = request()->has('can_create_transaction') && request()->input('can_create_transaction') == '1';
 
             Event::dispatch('sales.invoice.save.after', $invoice);
@@ -192,12 +178,10 @@ class InvoiceRepository extends Repository
         return $invoice;
     }
 
-    /**
-     * Have product to invoice.
-     */
-    public function haveProductToInvoice(array $data): bool
+
+    public function haveProductToInvoice(array $dat): bool
     {
-        foreach ($data['invoice']['items'] as $qty) {
+        foreach ($dat['invoice']['items'] as $qty) {
             if ((int) $qty) {
                 return true;
             }
@@ -206,12 +190,10 @@ class InvoiceRepository extends Repository
         return false;
     }
 
-    /**
-     * Is valid quantity.
-     */
-    public function isValidQuantity(array $data): bool
+
+    public function isValidQuantity(array $dat): bool
     {
-        foreach ($data['invoice']['items'] as $itemId => $qty) {
+        foreach ($dat['invoice']['items'] as $itemId => $qty) {
             $orderItem = $this->orderItemRepository->find($itemId);
 
             if ($qty > $orderItem->qty_to_invoice) {
@@ -222,22 +204,13 @@ class InvoiceRepository extends Repository
         return true;
     }
 
-    /**
-     * Generate increment id.
-     *
-     * @return int
-     */
+
     public function generateIncrementId()
     {
         return app(InvoiceSequencer::class)->resolveGeneratorClass();
     }
 
-    /**
-     * Collect totals.
-     *
-     * @param  \Webkul\Sales\Models\Invoice  $invoice
-     * @return \Webkul\Sales\Models\Invoice
-     */
+
     public function collectTotals($invoice)
     {
         $invoice->sub_total = $invoice->base_sub_total = 0;
@@ -311,23 +284,16 @@ class InvoiceRepository extends Repository
         return $invoice;
     }
 
-    /**
-     * Update state.
-     *
-     * @param  \Webkul\Sales\Models\Invoice  $invoice
-     * @return bool
-     */
-    public function updateState($invoice, $status)
+
+    public function updateState($invoice, $st)
     {
-        $invoice->state = $status;
+        $invoice->state = $st;
         $invoice->save();
 
         return true;
     }
 
-    /**
-     * Get total amount of pending invoices.
-     */
+
     public function getTotalPendingInvoicesAmount(): float
     {
         return $this->where('state', 'pending')->sum('grand_total');

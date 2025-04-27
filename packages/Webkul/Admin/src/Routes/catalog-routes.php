@@ -12,13 +12,9 @@ use Webkul\Admin\Http\Controllers\Catalog\Product\SimpleController;
 use Webkul\Admin\Http\Controllers\Catalog\Product\VirtualController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 
-/**
- * Catalog routes.
- */
+
 Route::prefix('catalog')->group(function () {
-    /**
-     * Attributes routes.
-     */
+    
     Route::controller(AttributeController::class)->prefix('attributes')->group(function () {
         Route::get('', 'index')->name('admin.catalog.attributes.index');
 
@@ -37,9 +33,7 @@ Route::prefix('catalog')->group(function () {
         Route::post('mass-delete', 'massDestroy')->name('admin.catalog.attributes.mass_delete');
     });
 
-    /**
-     * Attribute families routes.
-     */
+    
     Route::controller(AttributeFamilyController::class)->prefix('families')->group(function () {
         Route::get('', 'index')->name('admin.catalog.families.index');
 
@@ -54,9 +48,7 @@ Route::prefix('catalog')->group(function () {
         Route::delete('edit/{id}', 'destroy')->name('admin.catalog.families.delete');
     });
 
-    /**
-     * Categories routes.
-     */
+    
     Route::controller(CategoryController::class)->prefix('categories')->group(function () {
         Route::get('', 'index')->name('admin.catalog.categories.index');
 
@@ -79,14 +71,10 @@ Route::prefix('catalog')->group(function () {
         Route::get('tree', 'tree')->name('admin.catalog.categories.tree');
     });
 
-    /**
-     * Sync route.
-     */
+    
     Route::get('/sync', [ProductController::class, 'sync']);
 
-    /**
-     * Products routes.
-     */
+    
     Route::controller(ProductController::class)->prefix('products')->group(function () {
         Route::get('', 'index')->name('admin.catalog.products.index');
 

@@ -11,24 +11,20 @@ use Webkul\Customer\Repositories\CustomerRepository;
 
 class CartController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected CartItemRepository $cartItemRepository
     ) {}
 
-    /**
-     * Create cart
-     */
-    public function store(int $id)
+    
+    public function store(int $i)
     {
-        $customer = $this->customerRepository->findOrFail($id);
+        $k = $this->customerRepository->findOrFail($i);
 
         try {
             $cart = Cart::createCart([
-                'customer'  => $customer,
+                'customer'  => $k,
                 'is_active' => false,
             ]);
 
@@ -40,27 +36,23 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Returns the compare items of the customer.
-     */
-    public function items(int $id): JsonResource
+    
+    public function items(int $i): JsonResource
     {
         $cartItems = $this->cartItemRepository
             ->with('product')
             ->select('cart_items.*')
             ->leftJoin('cart', 'cart_items.cart_id', 'cart.id')
             ->whereNull('cart_items.parent_id')
-            ->where('cart.customer_id', $id)
+            ->where('cart.customer_id', $i)
             ->where('cart.is_active', 1)
             ->get();
 
         return CartItemResource::collection($cartItems);
     }
 
-    /**
-     * Removes the item from the cart if it exists.
-     */
-    public function destroy(int $id): JsonResource
+    
+    public function destroy(int $i): JsonResource
     {
         $this->validate(request(), [
             'item_id' => 'required|exists:cart_items,id',

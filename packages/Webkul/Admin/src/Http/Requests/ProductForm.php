@@ -12,25 +12,13 @@ use Webkul\Product\Models\Product;
 
 class ProductForm extends FormRequest
 {
-    /**
-     * Rules.
-     *
-     * @var array
-     */
+    
     protected $rules;
 
-    /**
-     * Max video upload size.
-     *
-     * @var int
-     */
+    
     protected $maxVideoFileSize;
 
-    /**
-     * Create a new form request instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
 
         protected ProductAttributeValueRepository $productAttributeValueRepository
@@ -38,21 +26,13 @@ class ProductForm extends FormRequest
         $this->maxVideoFileSize = core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?: '2048';
     }
 
-    /**
-     * Determine if the product is authorized to make this request.
-     *
-     * @return bool
-     */
+    
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
+    
     public function rules()
     {
         $product = Product::find($this->id);
@@ -118,7 +98,7 @@ class ProductForm extends FormRequest
             }
 
             if ($attribute->is_unique) {
-                array_push($validations, function ($field, $value, $fail) use ($attribute) {
+                array_push($validations, function ($field, $va, $fail) use ($attribute) {
                     if (
                         ! $this->productAttributeValueRepository->isValueUnique(
                             $this->id,
@@ -138,11 +118,7 @@ class ProductForm extends FormRequest
         return $this->rules;
     }
 
-    /**
-     * Custom message for validation.
-     *
-     * @return array
-     */
+    
     public function messages()
     {
         return [
@@ -151,11 +127,7 @@ class ProductForm extends FormRequest
         ];
     }
 
-    /**
-     * Attributes.
-     *
-     * @return array
-     */
+    
     public function attributes()
     {
         return [

@@ -10,33 +10,25 @@ use Webkul\Shop\Http\Resources\AddressResource;
 
 class AddressController extends APIController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerAddressRepository $customerAddressRepository) {}
 
-    /**
-     * Customer addresses.
-     */
+    
     public function index(): JsonResource
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
-        return AddressResource::collection($customer->addresses);
+        return AddressResource::collection($k->addresses);
     }
 
-    /**
-     * Create a new address for customer.
-     */
+    
     public function store(AddressRequest $request): JsonResource
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         Event::dispatch('customer.addresses.create.before');
 
-        $data = array_merge($request->only([
+        $dat = array_merge($request->only([
             'company_name',
             'first_name',
             'last_name',
@@ -50,11 +42,11 @@ class AddressController extends APIController
             'default_address',
             'email',
         ]), [
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
             'address'     => implode(PHP_EOL, array_filter($request->input('address'))),
         ]);
 
-        $customerAddress = $this->customerAddressRepository->create($data);
+        $customerAddress = $this->customerAddressRepository->create($dat);
 
         Event::dispatch('customer.addresses.create.after', $customerAddress);
 
@@ -64,12 +56,10 @@ class AddressController extends APIController
         ]);
     }
 
-    /**
-     * Update address for customer.
-     */
+    
     public function update(AddressRequest $request): JsonResource
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         Event::dispatch('customer.addresses.update.before');
 
@@ -87,7 +77,7 @@ class AddressController extends APIController
             'default_address',
             'email',
         ]), [
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
             'address'     => implode(PHP_EOL, array_filter(request()->input('address'))),
         ]), request('id'));
 

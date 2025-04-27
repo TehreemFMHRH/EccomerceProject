@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class RolesDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('roles')
@@ -22,11 +18,7 @@ class RolesDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -67,11 +59,7 @@ class RolesDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('settings.roles.edit')) {

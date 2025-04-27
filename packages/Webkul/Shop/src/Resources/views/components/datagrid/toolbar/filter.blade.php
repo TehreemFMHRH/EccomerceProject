@@ -610,25 +610,14 @@
             },
 
             methods: {
-                /**
-                 * Apply all added filters.
-                 *
-                 * @returns {void}
-                 */
+                
                 applyFilters() {
                     this.$emit('applyFilters', this.filters);
 
                     this.$refs.filterDrawer.close();
                 },
 
-                /**
-                 * Add filter.
-                 *
-                 * @param {Event} $event
-                 * @param {object} column
-                 * @param {object} additional
-                 * @returns {void}
-                 */
+                
                 addFilter($event, column = null, additional = {}) {
                     let quickFilter = additional?.quickFilter;
 
@@ -646,10 +635,7 @@
                                 break;
                         }
                     } else {
-                        /**
-                         * Here, either a real event will come or a string value. If a string value is present, then
-                         * we create a similar event-like structure to avoid any breakage and make it easy to use.
-                         */
+                        
                         if ($event?.target?.value === undefined) {
                             $event = {
                                 target: {
@@ -666,14 +652,7 @@
                     }
                 },
 
-                /**
-                 * Apply column values.
-                 *
-                 * @param {object} column
-                 * @param {string} requestedValue
-                 * @param {object} additional
-                 * @returns {void}
-                 */
+                
                 applyColumnValues(column, requestedValue, additional = {}) {
                     let appliedColumn = this.findAppliedColumn(column?.index);
 
@@ -764,12 +743,7 @@
                     this.isFilterDirty = true;
                 },
 
-                /**
-                 * Get formatted dates.
-                 *
-                 * @param {object} appliedColumn
-                 * @returns {string}
-                 */
+                
                 getFormattedDates(appliedColumn)
                 {
                     if (! appliedColumn) {
@@ -795,12 +769,7 @@
                     return appliedColumn.value[0].join(' to ');
                 },
 
-                /**
-                 * Check if any values are applied for the specified column.
-                 *
-                 * @param {object} column
-                 * @returns {boolean}
-                 */
+                
                 hasAnyValue(column) {
                     if (column.allow_multiple_values) {
                         return column.value.length > 0;
@@ -809,22 +778,12 @@
                     return column.value !== '';
                 },
 
-                /**
-                 * Find applied column.
-                 *
-                 * @param {string} columnIndex
-                 * @returns {object}
-                 */
+                
                 findAppliedColumn(columnIndex) {
                     return this.filters.columns.find(column => column.index === columnIndex);
                 },
 
-                /**
-                 * Check if any values are applied for the specified column.
-                 *
-                 * @param {string} columnIndex
-                 * @returns {boolean}
-                 */
+                
                 hasAnyAppliedColumnValues(columnIndex) {
                     let appliedColumn = this.findAppliedColumn(columnIndex);
 
@@ -835,12 +794,7 @@
                     return this.hasAnyValue(appliedColumn)
                 },
 
-                /**
-                 * Get applied values for the specified column.
-                 *
-                 * @param {string} columnIndex
-                 * @returns {Array}
-                 */
+                
                 getAppliedColumnValues(columnIndex) {
                     let appliedColumn = this.findAppliedColumn(columnIndex);
 
@@ -851,13 +805,7 @@
                     return appliedColumn?.value ?? '';
                 },
 
-                /**
-                 * Remove a specific value from the applied values of the specified column.
-                 *
-                 * @param {string} columnIndex
-                 * @param {any} appliedColumnValue
-                 * @returns {void}
-                 */
+                
                 removeAppliedColumnValue(columnIndex, appliedColumnValue) {
                     let appliedColumn = this.findAppliedColumn(columnIndex);
 
@@ -871,9 +819,7 @@
                         }
                     }
 
-                    /**
-                     * Clean up is done here. If there are no applied values present, there is no point in including the applied column as well.
-                     */
+                    
                     if (! appliedColumn.value.length) {
                         this.filters.columns = this.filters.columns.filter(column => column.index !== columnIndex);
                     }
@@ -881,12 +827,7 @@
                     this.isFilterDirty = true;
                 },
 
-                /**
-                 * Remove all values from the applied values of the specified column.
-                 *
-                 * @param {string} columnIndex
-                 * @returns {void}
-                 */
+                
                 removeAppliedColumnAllValues(columnIndex) {
                     this.filters.columns = this.filters.columns.filter(column => column.index !== columnIndex);
 

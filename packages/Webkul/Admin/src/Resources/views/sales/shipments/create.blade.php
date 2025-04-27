@@ -1,8 +1,6 @@
 <!-- Shipment Vue Components -->
 <v-create-shipment>
-    <div
-        class="transparent-button px-1 py-1.5 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
-    >
+    <div class="transparent-button px-1 py-1.5 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800">
         <span class="icon-ship text-2xl"></span>
 
         @lang('admin::app.sales.orders.view.ship')
@@ -32,7 +30,7 @@
             <!-- Shipment Create Drawer -->
             <x-admin::form
                 method="POST"
-                :action="route('admin.sales.shipments.store', $order->id)"
+                :action="route('admin.sales.shipments.store', $o->id)"
             >
                 <x-admin::drawer ref="shipment">
                     <!-- Drawer Header -->
@@ -110,7 +108,7 @@
                                     :placeholder="trans('admin::app.sales.shipments.create.source')"
                                     @change="onSourceChange"
                                 >
-                                    @foreach ($order->channel->inventory_sources as $inventorySource)
+                                    @foreach ($o->channel->inventory_sources as $inventorySource)
                                         <option value="{{ $inventorySource->id }}">
                                             {{ $inventorySource->name }}
                                         </option>
@@ -122,7 +120,7 @@
 
                             <div class="grid">
                                 <!-- Item Listing -->
-                                @foreach ($order->items as $item)
+                                @foreach ($o->items as $item)
                                     @if (
                                         $item->qty_to_ship > 0
                                         && $item->product
@@ -205,7 +203,7 @@
                                         </div>
 
                                         <!-- Information -->
-                                        @foreach ($order->channel->inventory_sources as $inventorySource)
+                                        @foreach ($o->channel->inventory_sources as $inventorySource)
                                             <div class="grid grid-cols-2 gap-2.5 border-b border-slate-300 py-2.5 dark:border-gray-800">
                                                 <div class="grid gap-1">
                                                     <!--Inventory Source -->
@@ -267,42 +265,42 @@
     </script>
 
     <script type="module">
-    app.component('v-create-shipment', {
-        template: '#v-create-shipment-template',
+        app.component('v-create-shipment', {
+            template: '#v-create-shipment-template',
 
-        data() {
-            return {
-                source: "",
-            };
-        },
-
-        methods: {
-            onSourceChange() {
-                this.setOriginalQuantityToAllShipmentInputElements();
+            data() {
+                return {
+                    source: "",
+                };
             },
 
-            getAllShipmentInputElements() {
-                let allRefs = this.$refs;
+            methods: {
+                onSourceChange() {
+                    this.setOriginalQuantityToAllShipmentInputElements();
+                },
 
-                let allInputElements = [];
+                getAllShipmentInputElements() {
+                    let allRefs = this.$refs;
 
-                Object.keys(allRefs).forEach((key) => {
-                    if (key.startsWith('shipment')) {
-                        allInputElements.push(allRefs[key]);
-                    }
-                });
+                    let allInputElements = [];
 
-                return allInputElements;
+                    Object.keys(allRefs).forEach((key) => {
+                        if (key.startsWith('shipment')) {
+                            allInputElements.push(allRefs[key]);
+                        }
+                    });
+
+                    return allInputElements;
+                },
+
+                setOriginalQuantityToAllShipmentInputElements() {
+                    this.getAllShipmentInputElements().forEach((element) => {
+                        let data = Object.assign({}, element.dataset);
+
+                        element.value = data.originalQuantity;
+                    });
+                }
             },
-
-            setOriginalQuantityToAllShipmentInputElements() {
-                this.getAllShipmentInputElements().forEach((element) => {
-                    let data = Object.assign({}, element.dataset);
-
-                    element.value = data.originalQuantity;
-                });
-            }
-        },
-    });
+        });
     </script>
 @endPushOnce

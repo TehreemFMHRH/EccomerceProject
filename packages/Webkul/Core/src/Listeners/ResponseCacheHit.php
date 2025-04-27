@@ -8,10 +8,7 @@ use Webkul\Core\Jobs\UpdateCreateVisitIndex;
 
 class ResponseCacheHit
 {
-    /**
-     * @param  \Spatie\ResponseCache\Events\ResponseCacheHit  $request
-     * @return void
-     */
+    
     public function handle(ResponseCacheHitEvent $event)
     {
         $log = visitor()->getLog();

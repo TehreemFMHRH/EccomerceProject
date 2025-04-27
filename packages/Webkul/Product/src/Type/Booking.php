@@ -20,11 +20,7 @@ use Webkul\Product\Repositories\ProductVideoRepository;
 
 class Booking extends AbstractType
 {
-    /**
-     * Skip attribute for downloadable product type.
-     *
-     * @var array
-     */
+
     protected $skipAttributes = [
         'length',
         'width',
@@ -35,25 +31,13 @@ class Booking extends AbstractType
         'guest_checkout',
     ];
 
-    /**
-     * Is a composite product type.
-     *
-     * @var bool
-     */
+
     protected $isComposite = true;
 
-    /**
-     * Is a stockable product type.
-     *
-     * @var bool
-     */
+
     protected $isStockable = false;
 
-    /**
-     * Create a new product type instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected AttributeRepository $attributeRepository,
@@ -62,37 +46,28 @@ class Booking extends AbstractType
         protected ProductInventoryRepository $productInventoryRepository,
         protected ProductImageRepository $productImageRepository,
         protected ProductVideoRepository $productVideoRepository,
-        protected ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
         protected BookingHelper $bookingHelper
     ) {}
 
-    /**
-     * @param  int  $id
-     * @param  string  $attribute
-     * @return \Webkul\Product\Contracts\Product
-     */
-    public function update(array $data, $id, $attribute = 'id')
+
+    public function update(array $dat, $i, $attribute = 'id')
     {
-        $product = parent::update($data, $id, $attribute);
+        $product = parent::update($dat, $i, $attribute);
 
         if (request()->route()->getName() != 'admin.catalog.products.mass_update') {
-            $bookingProduct = BookingProduct::findOneByField('product_id', $id);
+            $bookingProduct = BookingProduct::findOneByField('product_id', $i);
 
             $bookingProduct
-                ? BookingProduct::update($data['booking'], $bookingProduct->id)
-                : BookingProduct::create(array_merge($data['booking'], [
-                    'product_id' => $id,
+                ? BookingProduct::update($dat['booking'], $bookingProduct->id)
+                : BookingProduct::create(array_merge($dat['booking'], [
+                    'product_id' => $i,
                 ]));
         }
 
         return $product;
     }
 
-    /**
-     * Returns additional views
-     *
-     * @return mixed
-     */
+
     public function getBookingProduct(int $productId)
     {
         $bookingProducts = [];
@@ -104,9 +79,7 @@ class Booking extends AbstractType
         return $bookingProducts[$productId] = BookingProduct::findOneByField('product_id', $productId);
     }
 
-    /**
-     * Return true if this product can have inventory
-     */
+
     public function showQuantityBox(): bool
     {
         $bookingProduct = $this->getBookingProduct($this->product->id);
@@ -114,9 +87,7 @@ class Booking extends AbstractType
         return in_array($bookingProduct->type, ['default', 'rental', 'table']);
     }
 
-    /**
-     * @param  \Webkul\Checkout\Contracts\CartItem  $cartItem
-     */
+
     public function isItemHaveQuantity($cartItem): bool
     {
         $bookingProduct = $this->getBookingProduct($this->product->id);
@@ -129,35 +100,26 @@ class Booking extends AbstractType
         return true;
     }
 
-    /**
-     * Return true if this product can be composite.
-     *
-     * @return bool
-     */
+
     public function isComposite()
     {
         return $this->isComposite;
     }
 
-    /**
-     * Add product. Returns error message if can't prepare product.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    public function prepareForCart($data)
+
+    public function prepareForCart($dat)
     {
-        if (empty($data['booking'])) {
+        if (empty($dat['booking'])) {
             return trans('shop::app.products.booking.cart.integrity.missing_options');
         }
 
         $products = [];
 
-        $bookingProduct = $this->getBookingProduct($data['product_id']);
+        $bookingProduct = $this->getBookingProduct($dat['product_id']);
 
         if ($bookingProduct->type == 'rental') {
-            if (isset($data['booking']['slot']['from'])) {
-                $time = $data['booking']['slot']['to'] - $data['booking']['slot']['from'];
+            if (isset($dat['booking']['slot']['from'])) {
+                $time = $dat['booking']['slot']['to'] - $dat['booking']['slot']['from'];
 
                 $hours = floor($time / 60) / 60;
 
@@ -166,7 +128,7 @@ class Booking extends AbstractType
                 }
             }
 
-            $products = parent::prepareForCart($data);
+            $products = parent::prepareForCart($dat);
         } elseif ($bookingProduct->type == 'event') {
             if (
                 Carbon::now() > $bookingProduct->available_from
@@ -175,7 +137,7 @@ class Booking extends AbstractType
                 return trans('shop::app.products.booking.cart.integrity.event.expired');
             }
 
-            $filtered = Arr::where($data['booking']['qty'], function ($qty, $key) {
+            $filtered = Arr::where($dat['booking']['qty'], function ($qty, $key) {
                 return $qty != 0;
             });
 
@@ -185,15 +147,15 @@ class Booking extends AbstractType
 
             $cartProductsList = [];
 
-            foreach ($data['booking']['qty'] as $ticketId => $qty) {
+            foreach ($dat['booking']['qty'] as $ticketId => $qty) {
                 if (! $qty) {
                     continue;
                 }
 
-                $data['quantity'] = $qty;
-                $data['booking']['ticket_id'] = $ticketId;
-                $data['booking']['slot'] = implode('-', [$bookingProduct->available_from->timestamp, $bookingProduct->available_to->timestamp]);
-                $cartProducts = parent::prepareForCart($data);
+                $dat['quantity'] = $qty;
+                $dat['booking']['ticket_id'] = $ticketId;
+                $dat['booking']['slot'] = implode('-', [$bookingProduct->available_from->timestamp, $bookingProduct->available_to->timestamp]);
+                $cartProducts = parent::prepareForCart($dat);
 
                 if (is_string($cartProducts)) {
                     return $cartProducts;
@@ -204,7 +166,7 @@ class Booking extends AbstractType
 
             $products = array_merge(...$cartProductsList);
         } else {
-            $products = parent::prepareForCart($data);
+            $products = parent::prepareForCart($dat);
         }
 
         $typeHelper = app($this->bookingHelper->getTypeHelper($bookingProduct->type));
@@ -218,10 +180,7 @@ class Booking extends AbstractType
         return $products;
     }
 
-    /**
-     * @param  array  $options1
-     * @param  array  $options2
-     */
+
     public function compareOptions($options1, $options2): bool
     {
         if ($this->product->id !== (int) $options2['product_id']) {
@@ -239,19 +198,13 @@ class Booking extends AbstractType
         return false;
     }
 
-    /**
-     * Returns additional information for items
-     *
-     * @param  array  $data
-     */
-    public function getAdditionalOptions($data): array
+
+    public function getAdditionalOptions($dat): array
     {
-        return $this->bookingHelper->getCartItemOptions($data);
+        return $this->bookingHelper->getCartItemOptions($dat);
     }
 
-    /**
-     * Validate cart item product price
-     */
+
     public function validateCartItem(CartItem $item): CartItemValidationResult
     {
         $result = new CartItemValidationResult;
@@ -271,11 +224,7 @@ class Booking extends AbstractType
         return app($this->bookingHelper->getTypeHelper($bookingProduct->type))->validateCartItem($item);
     }
 
-    /**
-     * Returns price indexer class for a specific product type
-     *
-     * @return string
-     */
+
     public function getPriceIndexer()
     {
         return app(VirtualIndexer::class);

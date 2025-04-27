@@ -4,9 +4,7 @@ use Illuminate\Support\Collection;
 use Webkul\Core\Menu;
 use Webkul\Core\Menu\MenuItem;
 
-/**
- * Create config for menu items.
- */
+
 beforeEach(function () {
     config()->set('menu.admin', [
         [

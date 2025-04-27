@@ -11,9 +11,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Str;
 use Konekt\Concord\Facades\Concord;
 
-/**
- * Collector for Bagisto's Module Collector
- */
+
 class ModuleCollector extends DataCollector implements AssetProvider, DataCollectorInterface, Renderable
 {
     public $models = [];
@@ -24,9 +22,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
 
     public $count = 0;
 
-    /**
-     * @return void
-     */
+
     public function __construct(
         Dispatcher $events,
         PDOCollector $pdoCollector
@@ -41,8 +37,8 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
             }
         });
 
-        $events->listen('composing:*', function ($view, $data = []) {
-            $view = $data ? $data[0] : $view;
+        $events->listen('composing:*', function ($view, $dat = []) {
+            $view = $dat ? $dat[0] : $view;
 
             $this->views[] = $this->trimViewName($view->getName(), $view->getPath());
         });
@@ -59,10 +55,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         );
     }
 
-    /**
-     * @param  \Illuminate\Database\Events\QueryExecuted  $query
-     * @return string
-     */
+
     public function addQueryBindings($query)
     {
         $sql = $query->sql;
@@ -89,12 +82,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $sql;
     }
 
-    /**
-     * Check bindings for illegal (non UTF-8) strings, like Binary data.
-     *
-     * @param  array  $bindings
-     * @return mixed
-     */
+
     public function checkBindings($bindings)
     {
         foreach ($bindings as &$binding) {
@@ -109,23 +97,17 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $bindings;
     }
 
-    /**
-     * @param  string  $name
-     * @param  string  $path
-     * @return string
-     */
-    public function trimViewName($name, $path)
+
+    public function trimViewName($na, $path)
     {
         if ($path) {
             $path = ltrim(str_replace(base_path(), '', realpath($path)), '/');
         }
 
-        return $path ? sprintf('%s (%s)', $name, $path) : $name;
+        return $path ? sprintf('%s (%s)', $na, $path) : $na;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function collect()
     {
         $modules = [];
@@ -151,18 +133,15 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
             }
         }
 
-        $data = [
+        $dat = [
             'count'   => count($modules),
             'modules' => $modules,
         ];
 
-        return $data;
+        return $dat;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
+
     public function getModels($classNamespace)
     {
         $models = [];
@@ -176,10 +155,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $models;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
+
     public function getTemplates($classNamespace)
     {
         $viewNamespace = Str::lower(class_basename($classNamespace));
@@ -203,10 +179,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $views;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
+
     public function getQueries($classNamespace)
     {
         $moduleTables = $this->getDatabaseTables($classNamespace);
@@ -226,10 +199,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $queries;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
+
     public function getDatabaseTables($classNamespace)
     {
         $tables = [];
@@ -243,17 +213,13 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $tables;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getName()
     {
         return 'modules';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getWidgets()
     {
         return [
@@ -271,9 +237,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         ];
     }
 
-    /**
-     * @return array
-     */
+
     public function getAssets()
     {
         return [

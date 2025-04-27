@@ -7,26 +7,16 @@ use Webkul\DataGrid\DataGrid;
 
 class DownloadableProductDataGrid extends DataGrid
 {
-    /**
-     * Downloadable Product status Expired.
-     */
+    
     const STATUS_EXPIRED = 'expired';
 
-    /**
-     * Downloadable Product status Pending.
-     */
+    
     const STATUS_PENDING = 'pending';
 
-    /**
-     * Downloadable Product status Available
-     */
+    
     const STATUS_AVAILABLE = 'available';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return void
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('downloadable_link_purchased')
@@ -44,11 +34,7 @@ class DownloadableProductDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([

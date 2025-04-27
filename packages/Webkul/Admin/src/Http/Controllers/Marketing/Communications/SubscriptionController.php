@@ -9,18 +9,10 @@ use Webkul\Core\Repositories\SubscribersListRepository;
 
 class SubscriptionController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected SubscribersListRepository $subscribersListRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -30,23 +22,17 @@ class SubscriptionController extends Controller
         return view('admin::marketing.communications.subscribers.index');
     }
 
-    /**
-     * Subscriber Details
-     */
-    public function edit(int $id): JsonResponse
+    
+    public function edit(int $i): JsonResponse
     {
-        $subscriber = $this->subscribersListRepository->findOrFail($id);
+        $subscriber = $this->subscribersListRepository->findOrFail($i);
 
         return new JsonResponse([
             'data'  => $subscriber,
         ]);
     }
 
-    /**
-     * To unsubscribe the user without deleting the resource of the subscribed
-     *
-     * @return void
-     */
+    
     public function update()
     {
         $validatedData = $this->validate(request(), [
@@ -56,12 +42,12 @@ class SubscriptionController extends Controller
 
         $subscriber = $this->subscribersListRepository->findOrFail($validatedData['id']);
 
-        $customer = $subscriber->customer;
+        $k = $subscriber->customer;
 
-        if ($customer) {
-            $customer->subscribed_to_news_letter = $validatedData['is_subscribed'];
+        if ($k) {
+            $k->subscribed_to_news_letter = $validatedData['is_subscribed'];
 
-            $customer->save();
+            $k->save();
         }
 
         $result = $subscriber->update(['is_subscribed' => $validatedData['is_subscribed']]);
@@ -77,15 +63,11 @@ class SubscriptionController extends Controller
         ], 500);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return void
-     */
-    public function destroy(int $id)
+    
+    public function destroy(int $i)
     {
         try {
-            $this->subscribersListRepository->delete($id);
+            $this->subscribersListRepository->delete($i);
 
             return response()->json([
                 'message' => trans('admin::app.marketing.communications.subscribers.delete-success'),

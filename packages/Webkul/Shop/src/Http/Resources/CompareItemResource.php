@@ -7,19 +7,10 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 
 class CompareItemResource extends JsonResource
 {
-    /**
-     * Contains comparable attributes.
-     *
-     * @var array
-     */
+    
     protected static $comparableAttributes = [];
 
-    /**
-     * Create a new anonymous resource collection.
-     *
-     * @param  mixed  $resource
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
+    
     public static function collection($resource)
     {
         self::$comparableAttributes = app(AttributeFamilyRepository::class)->getComparableAttributesBelongsToFamily();
@@ -27,15 +18,10 @@ class CompareItemResource extends JsonResource
         return parent::collection($resource);
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
+    
     public function toArray($request)
     {
-        $data = (new ProductResource($this->resource))
+        $dat = (new ProductResource($this->resource))
             ->toArray($this->resource);
 
         foreach (self::$comparableAttributes as $attribute) {
@@ -54,16 +40,16 @@ class CompareItemResource extends JsonResource
                     }
                 }
 
-                $data[$attribute->code] = implode(', ', $labels);
+                $dat[$attribute->code] = implode(', ', $labels);
             } else {
                 if ($attribute->enable_wysiwyg) {
-                    $data[$attribute->code] = $this->{$attribute->code};
+                    $dat[$attribute->code] = $this->{$attribute->code};
                 } else {
-                    $data[$attribute->code] = strip_tags($this->{$attribute->code});
+                    $dat[$attribute->code] = strip_tags($this->{$attribute->code});
                 }
             }
         }
 
-        return $data;
+        return $dat;
     }
 }

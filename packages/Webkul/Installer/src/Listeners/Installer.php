@@ -7,25 +7,13 @@ use Webkul\User\Repositories\AdminRepository;
 
 class Installer
 {
-    /**
-     * Api endpoint
-     *
-     * @var string
-     */
+    
     protected const API_ENDPOINT = 'https://updates.bagisto.com/api/updates';
 
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected AdminRepository $adminRepository) {}
 
-    /**
-     * After Bagisto is successfully installed
-     *
-     * @return void
-     */
+    
     public function installed()
     {
         $admin = $this->adminRepository->first();
@@ -45,9 +33,7 @@ class Installer
                 ],
             ]);
         } catch (\Exception $e) {
-            /**
-             * Skip the error
-             */
+            
         }
     }
 }

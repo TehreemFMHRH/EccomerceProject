@@ -6,28 +6,16 @@ use Webkul\Notification\Repositories\NotificationRepository;
 
 class NotificationController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected NotificationRepository $notificationRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         return view('admin::notifications.index');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return array
-     */
+    
     public function getNotifications()
     {
         $params = request()->except('page');
@@ -47,12 +35,7 @@ class NotificationController extends Controller
         ];
     }
 
-    /**
-     * Update the notification is reade or not.
-     *
-     * @param  int  $orderId
-     * @return \Illuminate\View\View
-     */
+    
     public function viewedNotifications($orderId)
     {
         if ($notification = $this->notificationRepository->where('order_id', $orderId)->first()) {
@@ -66,11 +49,7 @@ class NotificationController extends Controller
         abort(404);
     }
 
-    /**
-     * Update the notification is reade or not.
-     *
-     * @return array
-     */
+    
     public function readAllNotifications()
     {
         $this->notificationRepository->where('read', 0)->update(['read' => 1]);

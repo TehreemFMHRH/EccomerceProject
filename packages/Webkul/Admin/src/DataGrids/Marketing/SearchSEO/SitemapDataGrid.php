@@ -8,11 +8,7 @@ use Webkul\DataGrid\DataGrid;
 
 class SitemapDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('sitemaps')
@@ -24,11 +20,7 @@ class SitemapDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -66,11 +58,7 @@ class SitemapDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.sitemaps.edit')) {

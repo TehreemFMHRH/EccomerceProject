@@ -12,27 +12,17 @@ class OrderTransaction extends Model implements OrderTransactionContract
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
+    
     protected $table = 'order_transactions';
 
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
+    
     protected $guarded = [
         'id',
         'created_at',
         'updated_at',
     ];
 
-    /**
-     * Get payment method title
-     */
+    
     public function getPaymentTitleAttribute()
     {
         if (! $this->payment_method) {
@@ -42,9 +32,7 @@ class OrderTransaction extends Model implements OrderTransactionContract
         return config('payment_methods')[$this->payment_method]['title'];
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return OrderTransactionFactory::new();

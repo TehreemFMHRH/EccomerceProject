@@ -31,9 +31,7 @@ class CartItem extends Model implements CartItemContract
 
     protected $typeInstance;
 
-    /**
-     * Retrieve type instance
-     */
+    
     public function getTypeInstance(): AbstractType
     {
         if ($this->typeInstance) {
@@ -59,33 +57,25 @@ class CartItem extends Model implements CartItemContract
         return $this->hasOne(CartProxy::modelClass(), 'id', 'cart_id');
     }
 
-    /**
-     * Get the child item.
-     */
+    
     public function child(): BelongsTo
     {
         return $this->belongsTo(static::class, 'id', 'parent_id');
     }
 
-    /**
-     * Get the parent item record associated with the cart item.
-     */
+    
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    /**
-     * Get the children items.
-     */
+    
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return CartItemFactory::new();

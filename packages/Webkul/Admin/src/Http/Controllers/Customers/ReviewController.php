@@ -12,18 +12,10 @@ use Webkul\Product\Repositories\ProductReviewRepository;
 
 class ReviewController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected ProductReviewRepository $productReviewRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -33,12 +25,10 @@ class ReviewController extends Controller
         return view('admin::customers.reviews.index');
     }
 
-    /**
-     * Review Details
-     */
-    public function edit(int $id): JsonResponse
+    
+    public function edit(int $i): JsonResponse
     {
-        $review = $this->productReviewRepository->with(['images', 'product'])->findOrFail($id);
+        $review = $this->productReviewRepository->with(['images', 'product'])->findOrFail($i);
 
         $review->date = $review->created_at->format('Y-m-d');
 
@@ -47,22 +37,18 @@ class ReviewController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $this->validate(request(), [
             'status' => 'required|in:approved,disapproved,pending',
         ]);
 
-        Event::dispatch('customer.review.update.before', $id);
+        Event::dispatch('customer.review.update.before', $i);
 
         $review = $this->productReviewRepository->update([
             'status' => request()->input('status'),
-        ], $id);
+        ], $i);
 
         Event::dispatch('customer.review.update.after', $review);
 
@@ -71,17 +57,15 @@ class ReviewController extends Controller
         ]);
     }
 
-    /**
-     * Delete the review of the current product
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            Event::dispatch('customer.review.delete.before', $id);
+            Event::dispatch('customer.review.delete.before', $i);
 
-            $this->productReviewRepository->delete($id);
+            $this->productReviewRepository->delete($i);
 
-            Event::dispatch('customer.review.delete.after', $id);
+            Event::dispatch('customer.review.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.customers.reviews.index.datagrid.delete-success', ['name' => 'Review']),
@@ -93,9 +77,7 @@ class ReviewController extends Controller
         }
     }
 
-    /**
-     * Mass delete the reviews on the products.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $indices = $massDestroyRequest->input('indices');
@@ -119,19 +101,17 @@ class ReviewController extends Controller
         }
     }
 
-    /**
-     * Mass approve the reviews on the products.
-     */
+    
     public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
     {
         $indices = $massUpdateRequest->input('indices');
 
-        foreach ($indices as $id) {
-            Event::dispatch('customer.review.update.before', $id);
+        foreach ($indices as $i) {
+            Event::dispatch('customer.review.update.before', $i);
 
             $review = $this->productReviewRepository->update([
                 'status' => $massUpdateRequest->input('value'),
-            ], $id);
+            ], $i);
 
             Event::dispatch('customer.review.update.after', $review);
         }

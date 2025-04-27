@@ -7,16 +7,10 @@ use Webkul\Marketing\Models\URLRewrite;
 
 class UrlRewriteFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = URLRewrite::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition()
     {
         $entityTypes = ['product', 'category', 'cms_page'];

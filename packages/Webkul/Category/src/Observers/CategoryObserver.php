@@ -7,26 +7,16 @@ use Webkul\Category\Models\Category;
 
 class CategoryObserver
 {
-    /**
-     * Handle the Category "deleted" event.
-     *
-     * @param  \Webkul\Category\Contracts\Category  $category
-     * @return void
-     */
-    public function deleted($category)
+    
+    public function deleted($a)
     {
-        Storage::deleteDirectory('category/'.$category->id);
+        Storage::deleteDirectory('category/'.$a->id);
     }
 
-    /**
-     * Handle the Category "saved" event.
-     *
-     * @param  \Webkul\Category\Contracts\Category  $category
-     * @return void
-     */
-    public function saved($category)
+    
+    public function saved($a)
     {
-        foreach ($category->children as $child) {
+        foreach ($a->children as $child) {
             $child->touch();
         }
     }

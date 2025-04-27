@@ -6,17 +6,13 @@ use Webkul\Core\Eloquent\Repository;
 
 class TaxCategoryRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return 'Webkul\Tax\Contracts\TaxCategory';
     }
 
-    /**
-     * Get the configuration options.
-     */
+    
     public function getConfigOptions(): array
     {
         $options = [

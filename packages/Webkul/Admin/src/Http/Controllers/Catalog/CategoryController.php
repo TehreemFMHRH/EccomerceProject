@@ -17,22 +17,14 @@ use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ChannelRepository $channelRepository,
         protected CategoryRepository $categoryRepository,
         protected AttributeRepository $attributeRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -42,11 +34,7 @@ class CategoryController extends Controller
         return view('admin::catalog.categories.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         $categories = $this->categoryRepository->getCategoryTree();
@@ -56,16 +44,12 @@ class CategoryController extends Controller
         return view('admin::catalog.categories.create', compact('categories', 'attributes'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(CategoryRequest $categoryRequest)
     {
         Event::dispatch('catalog.category.create.before');
 
-        $category = $this->categoryRepository->create($categoryRequest->only([
+        $a = $this->categoryRepository->create($categoryRequest->only([
             'locale',
             'name',
             'parent_id',
@@ -82,39 +66,31 @@ class CategoryController extends Controller
             'banner_path',
         ]));
 
-        Event::dispatch('catalog.category.create.after', $category);
+        Event::dispatch('catalog.category.create.after', $a);
 
         session()->flash('success', trans('admin::app.catalog.categories.create-success'));
 
         return redirect()->route('admin.catalog.categories.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $category = $this->categoryRepository->findOrFail($id);
+        $a = $this->categoryRepository->findOrFail($i);
 
-        $categories = $this->categoryRepository->getCategoryTreeWithoutDescendant($id);
+        $categories = $this->categoryRepository->getCategoryTreeWithoutDescendant($i);
 
         $attributes = $this->attributeRepository->findWhere(['is_filterable' => 1]);
 
         return view('admin::catalog.categories.edit', compact('category', 'categories', 'attributes'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CategoryRequest $categoryRequest, int $id)
+    
+    public function update(CategoryRequest $categoryRequest, int $i)
     {
-        Event::dispatch('catalog.category.update.before', $id);
+        Event::dispatch('catalog.category.update.before', $i);
 
-        $category = $this->categoryRepository->update($categoryRequest->only(
+        $a = $this->categoryRepository->update($categoryRequest->only(
             'locale',
             'parent_id',
             'logo_path',
@@ -124,34 +100,32 @@ class CategoryController extends Controller
             'status',
             'attributes',
             $categoryRequest->input('locale')
-        ), $id);
+        ), $i);
 
-        Event::dispatch('catalog.category.update.after', $category);
+        Event::dispatch('catalog.category.update.after', $a);
 
         session()->flash('success', trans('admin::app.catalog.categories.update-success'));
 
         return redirect()->route('admin.catalog.categories.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $category = $this->categoryRepository->findOrFail($id);
+        $a = $this->categoryRepository->findOrFail($i);
 
-        if (! $this->isCategoryDeletable($category)) {
+        if (! $this->isCategoryDeletable($a)) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.categories.delete-category-root'),
             ], 400);
         }
 
         try {
-            Event::dispatch('catalog.category.delete.before', $id);
+            Event::dispatch('catalog.category.delete.before', $i);
 
-            $category->delete($id);
+            $a->delete($i);
 
-            Event::dispatch('catalog.category.delete.after', $id);
+            Event::dispatch('catalog.category.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.categories.delete-success'),
@@ -163,9 +137,7 @@ class CategoryController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resources from database.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $suppressFlash = true;
@@ -173,10 +145,10 @@ class CategoryController extends Controller
         $categoryIds = $massDestroyRequest->input('indices');
 
         foreach ($categoryIds as $categoryId) {
-            $category = $this->categoryRepository->find($categoryId);
+            $a = $this->categoryRepository->find($categoryId);
 
-            if (isset($category)) {
-                if (! $this->isCategoryDeletable($category)) {
+            if (isset($a)) {
+                if (! $this->isCategoryDeletable($a)) {
                     $suppressFlash = false;
 
                     return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-root')], 400);
@@ -210,11 +182,7 @@ class CategoryController extends Controller
         return redirect()->route('admin.catalog.categories.index');
     }
 
-    /**
-     * Mass update Category.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function massUpdate(MassUpdateRequest $massUpdateRequest)
     {
         try {
@@ -223,13 +191,13 @@ class CategoryController extends Controller
             foreach ($categoryIds as $categoryId) {
                 Event::dispatch('catalog.categories.mass-update.before', $categoryId);
 
-                $category = $this->categoryRepository->find($categoryId);
+                $a = $this->categoryRepository->find($categoryId);
 
-                $category->status = $massUpdateRequest->input('value');
+                $a->status = $massUpdateRequest->input('value');
 
-                $category->save();
+                $a->save();
 
-                Event::dispatch('catalog.categories.mass-update.after', $category);
+                Event::dispatch('catalog.categories.mass-update.after', $a);
             }
 
             return new JsonResponse([
@@ -242,27 +210,17 @@ class CategoryController extends Controller
         }
     }
 
-    /**
-     * Check whether the current category is deletable or not.
-     *
-     * This method will fetch all root category ids from the channel. If `id` is present,
-     * then it is not deletable.
-     *
-     * @param  \Webkul\Category\Contracts\Category  $category
-     * @return bool
-     */
-    private function isCategoryDeletable($category)
+    
+    private function isCategoryDeletable($a)
     {
-        if ($category->id === 1) {
+        if ($a->id === 1) {
             return false;
         }
 
-        return ! $this->channelRepository->pluck('root_category_id')->contains($category->id);
+        return ! $this->channelRepository->pluck('root_category_id')->contains($a->id);
     }
 
-    /**
-     * Get all categories in tree format.
-     */
+    
     public function tree(): JsonResource
     {
         $categories = $this->categoryRepository->getVisibleCategoryTree(core()->getRequestedChannel()->root_category_id);
@@ -270,11 +228,7 @@ class CategoryController extends Controller
         return CategoryTreeResource::collection($categories);
     }
 
-    /**
-     * Get all the searched categories.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function search()
     {
         $categories = $this->categoryRepository->getAll([

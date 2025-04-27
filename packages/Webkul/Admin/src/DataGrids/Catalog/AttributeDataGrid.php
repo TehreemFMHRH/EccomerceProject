@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class AttributeDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('attributes')
@@ -28,11 +24,7 @@ class AttributeDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -193,11 +185,7 @@ class AttributeDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('catalog.attributes.edit')) {
@@ -223,11 +211,7 @@ class AttributeDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('catalog.attributes.delete')) {

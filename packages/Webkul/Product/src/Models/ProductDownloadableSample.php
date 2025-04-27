@@ -21,33 +21,25 @@ class ProductDownloadableSample extends TranslatableModel implements ProductDown
 
     protected $with = ['translations'];
 
-    /**
-     * Get the product that owns the image.
-     */
+    
     public function product()
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Get image url for the file.
-     */
+    
     public function file_url()
     {
         return Storage::url($this->file);
     }
 
-    /**
-     * Get image url for the file.
-     */
+    
     public function getFileUrlAttribute()
     {
         return $this->file_url();
     }
 
-    /**
-     * @return array
-     */
+    
     public function toArray()
     {
         $array = parent::toArray();

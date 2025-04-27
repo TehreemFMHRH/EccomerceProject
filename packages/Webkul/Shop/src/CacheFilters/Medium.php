@@ -8,16 +8,10 @@ use Intervention\Image\Image;
 
 class Medium implements FilterInterface
 {
-    /**
-     * Apply filter.
-     *
-     * @return \Intervention\Image\Image
-     */
+    
     public function applyFilter(Image $image)
     {
-        /**
-         * If the current url is product image
-         */
+        
         if (Str::contains(url()->current(), '/product')) {
             $width = core()->getConfigData('catalog.products.cache_medium_image.width') != ''
                 ? core()->getConfigData('catalog.products.cache_medium_image.width')
@@ -34,9 +28,7 @@ class Medium implements FilterInterface
             return $image->fit(210, 210);
         }
 
-        /**
-         * Slider image dimensions
-         */
+        
         return $image->fit(1024, 372);
     }
 }

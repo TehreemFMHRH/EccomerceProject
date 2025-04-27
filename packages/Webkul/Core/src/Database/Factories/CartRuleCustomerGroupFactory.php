@@ -8,16 +8,10 @@ use Webkul\CartRule\Models\CartRuleCustomer;
 
 class CartRuleCustomerGroupFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = CartRuleCustomer::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [

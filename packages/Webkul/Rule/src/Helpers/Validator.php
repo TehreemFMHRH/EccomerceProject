@@ -7,13 +7,7 @@ use Webkul\Checkout\Facades\Cart;
 
 class Validator
 {
-    /**
-     * Validate cart rule for condition
-     *
-     * @param  \Webkul\CartRule\Contracts\CartRule|\Webkul\CatalogRule\Contracts\CatalogRule  $rule
-     * @param  \Webkul\Checkout\Contracts\Cart|\Webkul\Checkout\Contracts\CartItem|\Webkul\Product\Contracts\Product  $entity
-     * @return bool
-     */
+    
     public function validate($rule, $entity)
     {
         if (! $rule->conditions) {
@@ -55,13 +49,7 @@ class Validator
         return $validConditionCount == $totalConditionCount;
     }
 
-    /**
-     * Return value for the attribute
-     *
-     * @param  array  $condition
-     * @param  \Webkul\Checkout\Contracts\CartItem|\Webkul\Product\Contracts\Product  $entity
-     * @return bool
-     */
+    
     public function getAttributeValue($condition, $entity)
     {
         $chunks = explode('|', $condition['attribute']);
@@ -103,32 +91,26 @@ class Validator
 
             case 'product':
                 if ($attributeCode == 'category_ids') {
-                    $value = $entity->product
+                    $va = $entity->product
                         ? $entity->product->categories()->pluck('id')->toArray()
                         : $entity->categories()->pluck('id')->toArray();
 
-                    return $value;
+                    return $va;
                 } else {
-                    $value = $entity->product
+                    $va = $entity->product
                         ? $entity->product->{$attributeCode}
                         : $entity->{$attributeCode};
 
                     if (! in_array($condition['attribute_type'], ['multiselect', 'checkbox'])) {
-                        return $value;
+                        return $va;
                     }
 
-                    return $value ? explode(',', $value) : [];
+                    return $va ? explode(',', $va) : [];
                 }
         }
     }
 
-    /**
-     * Validate object
-     *
-     * @param  array  $condition
-     * @param  \Webkul\Checkout\Contracts\CartItem  $entity
-     * @return bool
-     */
+    
     private function validateObject($condition, $entity)
     {
         $validated = false;
@@ -144,13 +126,7 @@ class Validator
         return $validated;
     }
 
-    /**
-     * Return all cart items
-     *
-     * @param  string  $attributeScope
-     * @param  \Webkul\Checkout\Contracts\Cart|\Webkul\Checkout\Contracts\CartItem|\Webkul\Product\Contracts\Product  $item
-     * @return array
-     */
+    
     private function getAllItems($attributeScope, $item)
     {
         if ($attributeScope === 'parent') {
@@ -166,12 +142,7 @@ class Validator
         return $items;
     }
 
-    /**
-     * Validate object
-     *
-     * @param  array  $condition
-     * @return string
-     */
+    
     private function getAttributeScope($condition)
     {
         $chunks = explode('|', $condition['attribute']);
@@ -181,13 +152,7 @@ class Validator
         return count($attributeNameChunks) == 2 ? $attributeNameChunks[0] : null;
     }
 
-    /**
-     * Validate attribute value for condition
-     *
-     * @param  array  $condition
-     * @param  mixed  $attributeValue
-     * @return bool
-     */
+    
     public function validateAttribute($condition, $attributeValue)
     {
         switch ($condition['operator']) {
@@ -262,9 +227,7 @@ class Validator
         return $result;
     }
 
-    /**
-     * Validate the condition value against a multi dimensional array recursively
-     */
+    
     private static function validateArrayValues(array $attributeValue, string $conditionValue): bool
     {
         if (in_array($conditionValue, $attributeValue, true) === true) {

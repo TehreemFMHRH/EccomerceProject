@@ -44,13 +44,13 @@ it('should fails validation errors when password length not valid', function () 
 
 it('successfully logins a customer', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create([
+    $k = (new CustomerFaker)->factory()->create([
         'password' => Hash::make($password = 'admin123'),
     ]);
 
     // Act and Assert.
     post(route('shop.customer.session.create'), [
-        'email'    => $customer->email,
+        'email'    => $k->email,
         'password' => $password,
     ])
         ->assertRedirectToRoute('shop.home.index')
@@ -76,11 +76,11 @@ it('fails to log in a customer if the email is invalid', function () {
 
 it('fails to log in a customer if the password is invalid', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     // Act and Assert.
     post(route('shop.customer.session.create'), [
-        'email'    => $customer->email,
+        'email'    => $k->email,
         'password' => 'WRONG_PASSWORD',
     ])
         ->assertRedirectToRoute('shop.home.index')

@@ -49,7 +49,7 @@ it('should store the newly created admin', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.users.store'), $data = [
+    postJson(route('admin.settings.users.store'), $dat = [
         'name'                  => fake()->name(),
         'role_id'               => 1,
         'email'                 => fake()->email,
@@ -65,8 +65,8 @@ it('should store the newly created admin', function () {
     $this->assertModelWise([
         Admin::class => [
             [
-                'name'    => $data['name'],
-                'email'   => $data['email'],
+                'name'    => $dat['name'],
+                'email'   => $dat['email'],
                 'role_id' => 1,
             ],
         ],
@@ -131,7 +131,7 @@ it('should update the existing admin', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.settings.users.update'), $data = [
+    putJson(route('admin.settings.users.update'), $dat = [
         'id'                    => $admin->id,
         'name'                  => $admin->name,
         'image'                 => [
@@ -147,7 +147,7 @@ it('should update the existing admin', function () {
 
     $this->assertModelWise([
         Admin::class => [
-            Arr::except($data, ['image', 'password_confirmation', 'password']),
+            Arr::except($dat, ['image', 'password_confirmation', 'password']),
         ],
     ]);
 });

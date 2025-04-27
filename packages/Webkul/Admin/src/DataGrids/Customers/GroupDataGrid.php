@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class GroupDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('customer_groups')
@@ -22,11 +18,7 @@ class GroupDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Prepare columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -55,11 +47,7 @@ class GroupDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('customers.groups.edit')) {

@@ -11,14 +11,10 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls as XLSWriter;
 
 class XLS extends AbstractSource
 {
-    /**
-     * Current row number.
-     */
+    
     protected int $currentRowNumber = 1;
 
-    /**
-     * Initialize.
-     */
+    
     public function initialize(): void
     {
         $factory = IOFactory::load(Storage::disk('private')->path($this->filePath));
@@ -30,9 +26,7 @@ class XLS extends AbstractSource
         $this->columnNames = $this->getNextRow();
     }
 
-    /**
-     * Read next line from excel.
-     */
+    
     protected function getNextRow(): array|bool
     {
         for ($column = 1; $column <= $this->totalColumns; $column++) {
@@ -48,9 +42,7 @@ class XLS extends AbstractSource
         return $rowData;
     }
 
-    /**
-     * Rewind the iterator to the first row.
-     */
+    
     public function rewind(): void
     {
         $this->currentRowNumber = 1;
@@ -58,9 +50,7 @@ class XLS extends AbstractSource
         $this->next();
     }
 
-    /**
-     * Generate error report.
-     */
+    
     public function generateErrorReport(array $errors): string
     {
         $this->rewind();
@@ -69,9 +59,7 @@ class XLS extends AbstractSource
 
         $sheet = $spreadsheet->getActiveSheet();
 
-        /**
-         * Add headers with extra error column.
-         */
+        
         $sheet->fromArray(
             [array_merge($this->getColumnNames(), [
                 'errors',

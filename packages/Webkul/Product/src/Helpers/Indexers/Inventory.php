@@ -8,37 +8,19 @@ use Webkul\Product\Models\Product;
 
 class Inventory extends AbstractIndexer
 {
-    /**
-     * @var int
-     */
+    
     private $batchSize;
 
-    /**
-     * Product instance.
-     *
-     * @var \Webkul\Product\Contracts\Product
-     */
+    
     protected $product;
 
-    /**
-     * Channel instance.
-     *
-     * @var \Webkul\Core\Contracts\Channel
-     */
+    
     protected $channel;
 
-    /**
-     * Channels
-     *
-     * @var array
-     */
+    
     protected $channels;
 
-    /**
-     * Create a new indexer instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ChannelRepository $channelRepository,
 
@@ -47,12 +29,7 @@ class Inventory extends AbstractIndexer
         $this->batchSize = self::BATCH_SIZE;
     }
 
-    /**
-     * Set current product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Helpers\Indexers\Inventory\Product
-     */
+    
     public function setProduct($product)
     {
         $this->product = $product;
@@ -60,12 +37,7 @@ class Inventory extends AbstractIndexer
         return $this;
     }
 
-    /**
-     * Set channel
-     *
-     * @param  \Webkul\Core\Contracts\Channel  $channel
-     * @return \Webkul\Product\Helpers\Indexers\Inventory\Product
-     */
+    
     public function setChannel($channel)
     {
         $this->channel = $channel;
@@ -73,11 +45,7 @@ class Inventory extends AbstractIndexer
         return $this;
     }
 
-    /**
-     * Reindex all products
-     *
-     * @return void
-     */
+    
     public function reindexFull()
     {
         while (true) {
@@ -102,11 +70,7 @@ class Inventory extends AbstractIndexer
         request()->query->remove('cursor');
     }
 
-    /**
-     * Reindex products by batch size
-     *
-     * @return void
-     */
+    
     public function reindexBatch($products)
     {
         $newIndices = [];
@@ -146,21 +110,13 @@ class Inventory extends AbstractIndexer
         $this->productInventoryIndexRepository->insert($newIndices);
     }
 
-    /**
-     * Check if index value changed
-     *
-     * @return bool
-     */
+    
     public function isIndexChanged($oldIndex, $newIndex)
     {
         return (bool) count(array_diff_assoc($oldIndex, $newIndex));
     }
 
-    /**
-     * Returns product specific indices
-     *
-     * @return array
-     */
+    
     public function getIndices()
     {
         return [
@@ -170,11 +126,7 @@ class Inventory extends AbstractIndexer
         ];
     }
 
-    /**
-     * Returns product remaining quantity
-     *
-     * @return int
-     */
+    
     public function getQuantity()
     {
         $channelInventorySourceIds = $this->channel->inventory_sources->where('status', 1)->pluck('id');
@@ -197,11 +149,7 @@ class Inventory extends AbstractIndexer
         return $qty;
     }
 
-    /**
-     * Returns all channels
-     *
-     * @return Collection
-     */
+    
     public function getChannels()
     {
         if ($this->channels) {

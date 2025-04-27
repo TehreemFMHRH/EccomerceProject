@@ -6,9 +6,7 @@ use OpenAI\Laravel\Facades\OpenAI as BaseOpenAI;
 
 class OpenAI
 {
-    /**
-     * New service instance.
-     */
+    
     public function __construct(
         protected string $model,
         protected string $prompt,
@@ -18,9 +16,7 @@ class OpenAI
         $this->setConfig();
     }
 
-    /**
-     * Sets OpenAI credentials.
-     */
+    
     public function setConfig(): void
     {
         config([
@@ -29,12 +25,10 @@ class OpenAI
         ]);
     }
 
-    /**
-     * Set LLM prompt text.
-     */
+    
     public function ask(): string
     {
-        $result = BaseOpenAI::chat()->create([
+        res = BaseOpenAI::chat()->create([
             'model'       => $this->model,
             'temperature' => $this->temperature,
             'messages'    => [
@@ -45,15 +39,13 @@ class OpenAI
             ],
         ]);
 
-        return $result->choices[0]->message->content;
+        return res->choices[0]->message->content;
     }
 
-    /**
-     * Generate image.
-     */
+    
     public function images(array $options): array
     {
-        $result = BaseOpenAI::images()->create([
+        res = BaseOpenAI::images()->create([
             'model'           => $this->model,
             'prompt'          => $this->prompt,
             'n'               => intval($options['n'] ?? 1),
@@ -64,7 +56,7 @@ class OpenAI
 
         $images = [];
 
-        foreach ($result->data as $image) {
+        foreach (res->data as $image) {
             $images[]['url'] = 'data:image/png;base64,'.$image->b64_json;
         }
 

@@ -1,21 +1,16 @@
 @props([
-    'name'             => 'images',
-    'allowMultiple'    => false,
+    'name' => 'images',
+    'allowMultiple' => false,
     'showPlaceholders' => false,
-    'uploadedImages'   => [],
-    'width'            => '120px',
-    'height'           => '120px'
+    'uploadedImages' => [],
+    'width' => '120px',
+    'height' => '120px',
 ])
 
-<v-media-images
-    name="{{ $name }}"
-    v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
+<v-media-images name="{{ $na }}" v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
-    :uploaded-images='{{ json_encode($uploadedImages) }}'
-    width="{{ $width }}"
-    height="{{ $height }}"
-    :errors="errors"
->
+    :uploaded-images='{{ json_encode($uploadedImages) }}' width="{{ $width }}" height="{{ $height }}"
+    :errors="errors">
     <x-admin::shimmer.image class="h-[110px] w-[110px] rounded" />
 </v-media-images>
 
@@ -393,7 +388,7 @@
 
             props: {
                 name: {
-                    type: String, 
+                    type: String,
                     default: 'images',
                 },
 
@@ -432,32 +427,32 @@
                 return {
                     images: [],
 
-                    placeholders: [
-                        {
-                            label: "@lang('admin::app.components.media.images.placeholders.front')",
-                            image: "{{ bagisto_asset('images/product-placeholders/front.svg') }}"
-                        }, {
-                            label: "@lang('admin::app.components.media.images.placeholders.next')",
-                            image: "{{ bagisto_asset('images/product-placeholders/next-1.svg') }}"
-                        }, {
-                            label: "@lang('admin::app.components.media.images.placeholders.next')",
-                            image: "{{ bagisto_asset('images/product-placeholders/next-2.svg') }}"
-                        }, {
-                            label: "@lang('admin::app.components.media.images.placeholders.zoom')",
-                            image: "{{ bagisto_asset('images/product-placeholders/zoom.svg') }}"
-                        }, {
-                            label: "@lang('admin::app.components.media.images.placeholders.use-cases')",
-                            image: "{{ bagisto_asset('images/product-placeholders/use-cases.svg') }}"
-                        }, {
-                            label: "@lang('admin::app.components.media.images.placeholders.size')",
-                            image: "{{ bagisto_asset('images/product-placeholders/size.svg') }}"
-                        }
-                    ],
+                    placeholders: [{
+                        label: "@lang('admin::app.components.media.images.placeholders.front')",
+                        image: "{{ bagisto_asset('images/product-placeholders/front.svg') }}"
+                    }, {
+                        label: "@lang('admin::app.components.media.images.placeholders.next')",
+                        image: "{{ bagisto_asset('images/product-placeholders/next-1.svg') }}"
+                    }, {
+                        label: "@lang('admin::app.components.media.images.placeholders.next')",
+                        image: "{{ bagisto_asset('images/product-placeholders/next-2.svg') }}"
+                    }, {
+                        label: "@lang('admin::app.components.media.images.placeholders.zoom')",
+                        image: "{{ bagisto_asset('images/product-placeholders/zoom.svg') }}"
+                    }, {
+                        label: "@lang('admin::app.components.media.images.placeholders.use-cases')",
+                        image: "{{ bagisto_asset('images/product-placeholders/use-cases.svg') }}"
+                    }, {
+                        label: "@lang('admin::app.components.media.images.placeholders.size')",
+                        image: "{{ bagisto_asset('images/product-placeholders/size.svg') }}"
+                    }],
 
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: Boolean(
+                            "{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"
+                            ),
 
                         prompt: null,
 
@@ -494,7 +489,7 @@
 
                     const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/'));
 
-                    if (! validFiles) {
+                    if (!validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
                             message: "@lang('admin::app.components.media.images.not-allowed-error')"
@@ -518,7 +513,9 @@
                     this.images.splice(index, 1);
                 },
 
-                generate(params, { setErrors }) {
+                generate(params, {
+                    setErrors
+                }) {
                     this.isLoading = true;
 
                     let self = this;
@@ -535,7 +532,10 @@
                             if (error.response.status == 422) {
                                 setErrors(error.response.data.errors);
                             } else {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data.message
+                                });
                             }
                         });
                 },
@@ -555,20 +555,24 @@
                 getBase64ToFile(base64, filename) {
                     var arr = base64.split(','),
                         mime = arr[0].match(/:(.*?);/)[1],
-                        bstr = atob(arr[arr.length - 1]), 
-                        n = bstr.length, 
+                        bstr = atob(arr[arr.length - 1]),
+                        n = bstr.length,
                         u8arr = new Uint8Array(n);
 
                     while (n--) {
                         u8arr[n] = bstr.charCodeAt(n);
                     }
 
-                    return new File([u8arr], filename, {type:mime});
+                    return new File([u8arr], filename, {
+                        type: mime
+                    });
                 },
 
                 resetAIModal() {
                     this.ai = {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: Boolean(
+                            "{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"
+                            ),
 
                         prompt: null,
 
@@ -609,7 +613,7 @@
 
                     const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/'));
 
-                    if (! validFiles) {
+                    if (!validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
                             message: "@lang('admin::app.components.media.images.not-allowed-error')"

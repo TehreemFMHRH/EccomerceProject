@@ -9,12 +9,7 @@ use Webkul\Product\Models\Product;
 
 class FPCProductListener
 {
-    /**
-     * Update or create product page cache
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function afterUpdate($product)
     {
         $urls = $this->getForgettableUrls($product);
@@ -22,12 +17,7 @@ class FPCProductListener
         ResponseCache::forget($urls);
     }
 
-    /**
-     * Delete product page c
-     *
-     * @param  int  $productId
-     * @return void
-     */
+    
     public function beforeDelete($productId)
     {
         $product = Product::find($productId);
@@ -37,12 +27,7 @@ class FPCProductListener
         ResponseCache::forget($urls);
     }
 
-    /**
-     * Returns product urls
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getForgettableUrls($product)
     {
         $urls = [];
@@ -56,12 +41,7 @@ class FPCProductListener
         return $urls;
     }
 
-    /**
-     * Returns parents bundle products associated with simple product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getAllRelatedProducts($product)
     {
         $products = [$product];
@@ -79,9 +59,7 @@ class FPCProductListener
         } elseif ($product->type == 'configurable') {
             $products = [];
 
-            /**
-             * Fetching fresh variants.
-             */
+            
             foreach ($product->variants()->get() as $variant) {
                 $products[] = $variant;
             }
@@ -92,12 +70,7 @@ class FPCProductListener
         return $products;
     }
 
-    /**
-     * Returns parents bundle products associated with simple product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getParentBundleProducts($product)
     {
         $bundleOptionProducts = ProductBundleOptionProduct::where([
@@ -113,12 +86,7 @@ class FPCProductListener
         return $products;
     }
 
-    /**
-     * Returns parents group products associated with simple product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getParentGroupProducts($product)
     {
         $groupedOptionProducts = ProductGroupedProduct::where([

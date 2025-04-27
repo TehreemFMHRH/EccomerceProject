@@ -12,18 +12,10 @@ class SearchTerm extends Model implements SearchTermContract
 {
     use HasFactory;
 
-    /**
-     * Define the table name for the model.
-     *
-     * @var string
-     */
+    
     protected $table = 'search_terms';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'term',
         'results',
@@ -34,9 +26,7 @@ class SearchTerm extends Model implements SearchTermContract
         'channel_id',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return SearchTermsFactory::new();

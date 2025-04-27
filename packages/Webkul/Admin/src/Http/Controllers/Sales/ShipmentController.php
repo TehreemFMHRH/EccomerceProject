@@ -10,22 +10,14 @@ use Webkul\Sales\Repositories\ShipmentRepository;
 
 class ShipmentController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderRepository $orderRepository,
         protected OrderItemRepository $orderItemRepository,
         protected ShipmentRepository $shipmentRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -35,16 +27,12 @@ class ShipmentController extends Controller
         return view('admin::sales.shipments.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create(int $orderId)
     {
-        $order = $this->orderRepository->findOrFail($orderId);
+        $o = $this->orderRepository->findOrFail($orderId);
 
-        if (! $order->channel || ! $order->canShip()) {
+        if (! $o->channel || ! $o->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.create.creation-error'));
 
             return redirect()->back();
@@ -53,16 +41,12 @@ class ShipmentController extends Controller
         return view('admin::sales.shipments.create', compact('order'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(int $orderId)
     {
-        $order = $this->orderRepository->findOrFail($orderId);
+        $o = $this->orderRepository->findOrFail($orderId);
 
-        if (! $order->canShip()) {
+        if (! $o->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.create.order-error'));
 
             return redirect()->back();
@@ -73,15 +57,15 @@ class ShipmentController extends Controller
             'shipment.items.*.*' => 'required|numeric|min:0',
         ]);
 
-        $data = request()->only(['shipment', 'carrier_name']);
+        $dat = request()->only(['shipment', 'carrier_name']);
 
-        if (! $this->isInventoryValidate($data)) {
+        if (! $this->isInventoryValidate($dat)) {
             session()->flash('error', trans('admin::app.sales.shipments.create.quantity-invalid'));
 
             return redirect()->back();
         }
 
-        $this->shipmentRepository->create(array_merge($data, [
+        $this->shipmentRepository->create(array_merge($dat, [
             'order_id' => $orderId,
         ]));
 
@@ -90,23 +74,18 @@ class ShipmentController extends Controller
         return redirect()->route('admin.sales.orders.view', $orderId);
     }
 
-    /**
-     * Checks if requested quantity available or not.
-     *
-     * @param  array  $data
-     * @return bool
-     */
-    public function isInventoryValidate(&$data)
+    
+    public function isInventoryValidate(&$dat)
     {
-        if (! isset($data['shipment']['items'])) {
+        if (! isset($dat['shipment']['items'])) {
             return;
         }
 
         $valid = false;
 
-        $inventorySourceId = $data['shipment']['source'];
+        $inventorySourceId = $dat['shipment']['source'];
 
-        foreach ($data['shipment']['items'] as $itemId => $inventorySource) {
+        foreach ($dat['shipment']['items'] as $itemId => $inventorySource) {
             $qty = $inventorySource[$inventorySourceId];
 
             if ((int) $qty) {
@@ -150,21 +129,17 @@ class ShipmentController extends Controller
 
                 $valid = true;
             } else {
-                unset($data['shipment']['items'][$itemId]);
+                unset($dat['shipment']['items'][$itemId]);
             }
         }
 
         return $valid;
     }
 
-    /**
-     * Show the view for the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function view(int $id)
+    
+    public function view(int $i)
     {
-        $shipment = $this->shipmentRepository->findOrFail($id);
+        $shipment = $this->shipmentRepository->findOrFail($i);
 
         return view('admin::sales.shipments.view', compact('shipment'));
     }

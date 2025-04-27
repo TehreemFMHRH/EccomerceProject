@@ -46,8 +46,8 @@ it('should store the newly created catalog rule', function () {
     $this->loginAsAdmin();
 
     postJson(route('admin.marketing.promotions.catalog_rules.store', [
-        'name'        => $name = fake()->name(),
-        'description' => $description = substr(fake()->paragraph(), 0, 50),
+        'name'        => $na = fake()->name(),
+        'description' => $de = substr(fake()->paragraph(), 0, 50),
         'channels'    => [
             1,
         ],
@@ -71,9 +71,9 @@ it('should store the newly created catalog rule', function () {
         CatalogRule::class => [
             [
                 'action_type'     => 'by_percent',
-                'description'     => $description,
+                'description'     => $de,
                 'discount_amount' => 0,
-                'name'            => $name,
+                'name'            => $na,
                 'status'          => 1,
             ],
         ],

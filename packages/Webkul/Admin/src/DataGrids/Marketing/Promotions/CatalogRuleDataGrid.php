@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class CatalogRuleDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('catalog_rules')
@@ -29,11 +25,7 @@ class CatalogRuleDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -60,8 +52,8 @@ class CatalogRuleDataGrid extends DataGrid
             'filterable'      => true,
             'filterable_type' => 'datetime_range',
             'sortable'        => true,
-            'closure'         => function ($value) {
-                return $value->starts_from ?? '-';
+            'closure'         => function ($va) {
+                return $va->starts_from ?? '-';
             },
         ]);
 
@@ -72,8 +64,8 @@ class CatalogRuleDataGrid extends DataGrid
             'filterable'      => true,
             'filterable_type' => 'datetime_range',
             'sortable'        => true,
-            'closure'         => function ($value) {
-                return $value->ends_till ?? '-';
+            'closure'         => function ($va) {
+                return $va->ends_till ?? '-';
             },
         ]);
 
@@ -94,8 +86,8 @@ class CatalogRuleDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status) {
+            'closure'    => function ($va) {
+                if ($va->status) {
                     return trans('admin::app.marketing.promotions.catalog-rules.index.datagrid.active');
                 }
 
@@ -113,11 +105,7 @@ class CatalogRuleDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.promotions.catalog_rules.edit')) {

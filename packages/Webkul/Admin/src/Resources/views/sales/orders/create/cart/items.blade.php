@@ -1,13 +1,9 @@
 {!! view_render_event('bagisto.admin.sales.order.create.cart.items.before') !!}
 
 <!-- Vue JS Component -->
-<v-cart-items
-    :cart="cart"
-    :is-adding-to-cart="isAddingToCart"
-    @add-to-cart="configureAddToCart($event); stepReset()"
-    @remove-from-cart="setCart($event); stepReset()"
-    @cart-item-updated="setCart($event); stepReset()"
->
+<v-cart-items :cart="cart" :is-adding-to-cart="isAddingToCart"
+    @add-to-cart="configureAddToCart($event); stepReset()" @remove-from-cart="setCart($event); stepReset()"
+    @cart-item-updated="setCart($event); stepReset()">
     <!-- Cart Items Shimmer Effect -->
     <x-admin::shimmer.sales.orders.create.cart.items />
 </v-cart-items>
@@ -417,7 +413,7 @@
                     this.isSearching = true;
 
                     let self = this;
-                    
+
                     this.$axios.get("{{ route('admin.catalog.products.search') }}", {
                             params: {
                                 query: this.searchTerm,
@@ -429,11 +425,10 @@
 
                             self.searchedProducts = response.data.data;
                         })
-                        .catch(function (error) {
-                        });
+                        .catch(function(error) {});
                 },
 
-                addToCart(params) {
+                f3(params) {
                     this.$emit('add-to-cart', {
                         product: this.searchedProducts.find(product => product.id == params.product_id),
                         qty: params.qty
@@ -445,13 +440,14 @@
                 removeItem(item) {
                     this.$emitter.emit('open-confirm-modal', {
                         agree: () => {
-                            this.$axios.delete("{{ route('admin.sales.cart.items.destroy', $cart->id) }}", {
-                                data: {
-                                    cart_item_id: item.id
-                                }
-                            })
+                            this.$axios.delete(
+                                    "{{ route('admin.sales.cart.items.destroy', $cart->id) }}", {
+                                        data: {
+                                            cart_item_id: item.id
+                                        }
+                                    })
                                 .then(response => {
-                                    if (! response.data.data) {
+                                    if (!response.data.data) {
                                         window.location.reload();
 
                                         return;
@@ -459,7 +455,10 @@
 
                                     this.$emit('remove-from-cart', response.data.data);
 
-                                    this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message
+                                    });
                                 })
                                 .catch(error => {});
                         }
@@ -479,7 +478,10 @@
                         .then(response => {
                             this.$emit('cart-item-updated', response.data.data);
 
-                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                            this.$emitter.emit('add-flash', {
+                                type: 'success',
+                                message: response.data.message
+                            });
 
                             this.isUpdating = false;
 
@@ -492,7 +494,7 @@
                 availbleQty(product) {
                     let qty = 0;
 
-                    product.inventories.forEach(function (inventory) {
+                    product.inventories.forEach(function(inventory) {
                         qty += inventory.qty;
                     });
 

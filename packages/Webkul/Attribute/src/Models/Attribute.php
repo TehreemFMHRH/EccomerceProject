@@ -37,11 +37,7 @@ class Attribute extends TranslatableModel implements AttributeContract
         'is_comparable',
     ];
 
-    /**
-     * Attribute type fields.
-     *
-     * @var array
-     */
+    
     public $attributeTypeFields = [
         'text'        => 'text_value',
         'textarea'    => 'text_value',
@@ -56,17 +52,13 @@ class Attribute extends TranslatableModel implements AttributeContract
         'checkbox'    => 'text_value',
     ];
 
-    /**
-     * Get the options.
-     */
+    
     public function options(): HasMany
     {
         return $this->hasMany(AttributeOptionProxy::modelClass());
     }
 
-    /**
-     * Scope a query to only include popular users.
-     */
+    
     public function scopeFilterableAttributes(Builder $query): Builder
     {
         return $query->where('is_filterable', 1)
@@ -74,21 +66,13 @@ class Attribute extends TranslatableModel implements AttributeContract
             ->orderBy('position');
     }
 
-    /**
-     * Returns attribute value table column based attribute type
-     *
-     * @return string
-     */
+    
     protected function getColumnNameAttribute()
     {
         return $this->attributeTypeFields[$this->type];
     }
 
-    /**
-     * Returns attribute validation rules
-     *
-     * @return string
-     */
+    
     protected function getValidationsAttribute()
     {
         $validations = [];
@@ -128,9 +112,7 @@ class Attribute extends TranslatableModel implements AttributeContract
         return $validations;
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return AttributeFactory::new();

@@ -10,9 +10,7 @@ use Webkul\Sales\Exceptions\InvalidRefundQuantityException;
 
 class RefundRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     */
+
     public function __construct(
         protected OrderRepository $orderRepository,
         protected OrderItemRepository $orderItemRepository,
@@ -23,46 +21,40 @@ class RefundRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return 'Webkul\Sales\Contracts\Refund';
     }
 
-    /**
-     * Create refund.
-     *
-     * @return \Webkul\Sales\Contracts\Refund
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
         DB::beginTransaction();
 
         try {
-            Event::dispatch('sales.refund.save.before', $data);
+            Event::dispatch('sales.refund.save.before', $dat);
 
-            $order = $this->orderRepository->find($data['order_id']);
+            $o = $this->orderRepository->find($dat['order_id']);
 
-            $totalQty = array_sum($data['refund']['items'] ?? []) ?? 0;
+            $totalQty = array_sum($dat['refund']['items'] ?? []) ?? 0;
 
             $refund = parent::create([
-                'order_id'               => $order->id,
+                'order_id'               => $o->id,
                 'total_qty'              => $totalQty,
                 'state'                  => 'refunded',
-                'base_currency_code'     => $order->base_currency_code,
-                'channel_currency_code'  => $order->channel_currency_code,
-                'order_currency_code'    => $order->order_currency_code,
-                'adjustment_refund'      => core()->convertPrice($data['refund']['adjustment_refund'], $order->order_currency_code),
-                'base_adjustment_refund' => $data['refund']['adjustment_refund'],
-                'adjustment_fee'         => core()->convertPrice($data['refund']['adjustment_fee'], $order->order_currency_code),
-                'base_adjustment_fee'    => $data['refund']['adjustment_fee'],
-                'shipping_amount'        => core()->convertPrice($data['refund']['shipping'], $order->order_currency_code),
-                'base_shipping_amount'   => $data['refund']['shipping'],
+                'base_currency_code'     => $o->base_currency_code,
+                'channel_currency_code'  => $o->channel_currency_code,
+                'order_currency_code'    => $o->order_currency_code,
+                'adjustment_refund'      => core()->convertPrice($dat['refund']['adjustment_refund'], $o->order_currency_code),
+                'base_adjustment_refund' => $dat['refund']['adjustment_refund'],
+                'adjustment_fee'         => core()->convertPrice($dat['refund']['adjustment_fee'], $o->order_currency_code),
+                'base_adjustment_fee'    => $dat['refund']['adjustment_fee'],
+                'shipping_amount'        => core()->convertPrice($dat['refund']['shipping'], $o->order_currency_code),
+                'base_shipping_amount'   => $dat['refund']['shipping'],
             ]);
 
-            foreach ($data['refund']['items'] ?? [] as $itemId => $qty) {
+            foreach ($dat['refund']['items'] ?? [] as $itemId => $qty) {
                 if (! $qty) {
                     continue;
                 }
@@ -154,9 +146,9 @@ class RefundRepository extends Repository
 
             $this->collectTotals($refund);
 
-            $this->orderRepository->collectTotals($order);
+            $this->orderRepository->collectTotals($o);
 
-            $this->orderRepository->updateOrderStatus($order);
+            $this->orderRepository->updateOrderStatus($o);
 
             Event::dispatch('sales.refund.save.after', $refund);
 
@@ -170,12 +162,7 @@ class RefundRepository extends Repository
         return $refund;
     }
 
-    /**
-     * Collect totals.
-     *
-     * @param  \Webkul\Sales\Contracts\Refund  $refund
-     * @return \Webkul\Sales\Contracts\Refund
-     */
+
     public function collectTotals($refund)
     {
         $refund->sub_total = $refund->base_sub_total = 0;
@@ -217,16 +204,10 @@ class RefundRepository extends Repository
         return $refund;
     }
 
-    /**
-     * Get order items refund summary.
-     *
-     * @param  array  $data
-     * @param  int  $orderId
-     * @return array|\Exception
-     */
-    public function getOrderItemsRefundSummary($data, $orderId)
+
+    public function getOrderItemsRefundSummary($dat, $orderId)
     {
-        $order = $this->orderRepository->find($orderId);
+        $o = $this->orderRepository->find($orderId);
 
         $totals = [
             'subtotal'    => ['price' => 0],
@@ -236,7 +217,7 @@ class RefundRepository extends Repository
             'grand_total' => ['price' => 0],
         ];
 
-        foreach ($data['items'] ?? [] as $orderItemId => $qty) {
+        foreach ($dat['items'] ?? [] as $orderItemId => $qty) {
             if (! $qty) {
                 continue;
             }
@@ -254,13 +235,13 @@ class RefundRepository extends Repository
             $totals['tax']['price'] += ($orderItem->base_tax_amount / $orderItem->qty_ordered) * $qty;
         }
 
-        if ((float) $order->base_shipping_invoiced) {
-            $totals['tax']['price'] += ($order->base_shipping_tax_amount / $order->base_shipping_invoiced) * $data['shipping'];
+        if ((float) $o->base_shipping_invoiced) {
+            $totals['tax']['price'] += ($o->base_shipping_tax_amount / $o->base_shipping_invoiced) * $dat['shipping'];
         }
 
-        $totals['shipping']['price'] += $data['shipping'];
+        $totals['shipping']['price'] += $dat['shipping'];
 
-        $totals['grand_total']['price'] += $totals['subtotal']['price'] + $totals['tax']['price'] + $totals['shipping']['price'] + $data['adjustment_refund'] - $data['adjustment_fee'] - $totals['discount']['price'];
+        $totals['grand_total']['price'] += $totals['subtotal']['price'] + $totals['tax']['price'] + $totals['shipping']['price'] + $dat['adjustment_refund'] - $dat['adjustment_fee'] - $totals['discount']['price'];
 
         $totals = array_map(function ($item) {
             $item['formatted_price'] = core()->formatBasePrice($item['price']);

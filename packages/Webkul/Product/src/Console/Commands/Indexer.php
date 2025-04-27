@@ -17,25 +17,13 @@ class Indexer extends Command
         'elastic'   => ElasticSearch::class,
     ];
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    
     protected $signature = 'indexer:index {--type=*} {--mode=*}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Automatically updates product price and inventory indices';
+    
+    protected $de = 'Automatically updates product price and inventory indices';
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         $start = microtime(true);

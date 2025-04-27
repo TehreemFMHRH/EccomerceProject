@@ -6,33 +6,28 @@ use Webkul\Attribute\Repositories\AttributeOptionRepository;
 
 class View
 {
-    /**
-     * Returns the visible custom attributes
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void|array
-     */
+
     public function getAdditionalData($product)
     {
-        $data = [];
+        $dat = [];
 
         $attributes = $product->attribute_family->custom_attributes()->where('attributes.is_visible_on_front', 1)->get();
 
         $attributeOptionRepository = app(AttributeOptionRepository::class);
 
         foreach ($attributes as $attribute) {
-            $value = $product->{$attribute->code};
+            $va = $product->{$attribute->code};
 
             if ($attribute->type == 'boolean') {
-                $value = $value ? 'Yes' : 'No';
-            } elseif ($value) {
+                $va = $va ? 'Yes' : 'No';
+            } elseif ($va) {
                 if ($attribute->type == 'select') {
-                    $attributeOption = $attributeOptionRepository->find($value);
+                    $attributeOption = $attributeOptionRepository->find($va);
 
                     if ($attributeOption) {
-                        $value = $attributeOption->label ?? null;
+                        $va = $attributeOption->label ?? null;
 
-                        if (! $value) {
+                        if (! $va) {
                             continue;
                         }
                     }
@@ -42,7 +37,7 @@ class View
                 ) {
                     $labels = [];
 
-                    $attributeOptions = $attributeOptionRepository->findWhereIn('id', explode(',', $value));
+                    $attributeOptions = $attributeOptionRepository->findWhereIn('id', explode(',', $va));
 
                     foreach ($attributeOptions as $attributeOption) {
                         if ($label = $attributeOption->label) {
@@ -50,20 +45,20 @@ class View
                         }
                     }
 
-                    $value = implode(', ', $labels);
+                    $va = implode(', ', $labels);
                 }
             }
 
-            $data[] = [
+            $dat[] = [
                 'id'         => $attribute->id,
                 'code'       => $attribute->code,
                 'label'      => $attribute->name,
-                'value'      => $value,
+                'value'      => $va,
                 'admin_name' => $attribute->admin_name,
                 'type'       => $attribute->type,
             ];
         }
 
-        return $data;
+        return $dat;
     }
 }

@@ -5,7 +5,7 @@
     </x-slot>
 
     <!-- Breadcrumbs -->
-    @if ((core()->getConfigData('general.general.breadcrumbs.shop')))
+    @if (core()->getConfigData('general.general.breadcrumbs.shop'))
         @section('breadcrumbs')
             <x-shop::breadcrumbs name="profile" />
         @endSection
@@ -19,24 +19,20 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center">
                 <!-- Back Button -->
-                <a
-                    class="grid md:hidden"
-                    href="{{ route('shop.customers.account.index') }}"
-                >
+                <a class="grid md:hidden" href="{{ route('shop.customers.account.index') }}">
                     <span class="icon-arrow-left rtl:icon-arrow-right text-2xl"></span>
                 </a>
 
-                <h2 class="text-2xl font-medium max-md:text-xl max-sm:text-base ltr:ml-2.5 md:ltr:ml-0 rtl:mr-2.5 md:rtl:mr-0">
+                <h2
+                    class="text-2xl font-medium max-md:text-xl max-sm:text-base ltr:ml-2.5 md:ltr:ml-0 rtl:mr-2.5 md:rtl:mr-0">
                     @lang('shop::app.customers.account.profile.index.title')
                 </h2>
             </div>
 
             {!! view_render_event('bagisto.shop.customers.account.profile.edit_button.before') !!}
 
-            <a
-                href="{{ route('shop.customers.account.profile.edit') }}"
-                class="secondary-button border-zinc-200 px-5 py-3 font-normal max-md:rounded-lg max-md:py-2 max-sm:py-1.5 max-sm:text-sm"
-            >
+            <a href="{{ route('shop.customers.account.profile.edit') }}"
+                class="secondary-button border-zinc-200 px-5 py-3 font-normal max-md:rounded-lg max-md:py-2 max-sm:py-1.5 max-sm:text-sm">
                 @lang('shop::app.customers.account.profile.index.edit')
             </a>
 
@@ -53,7 +49,7 @@
                 </p>
 
                 <p class="text-sm font-medium text-zinc-500">
-                    {{ $customer->first_name }}
+                    {{ $k->first_name }}
                 </p>
             </div>
 
@@ -67,7 +63,7 @@
                 </p>
 
                 <p class="text-sm font-medium text-zinc-500">
-                    {{ $customer->last_name }}
+                    {{ $k->last_name }}
                 </p>
             </div>
 
@@ -81,7 +77,7 @@
                 </p>
 
                 <p class="text-sm font-medium text-zinc-500">
-                    {{ $customer->gender ?? '-'}}
+                    {{ $k->gender ?? '-' }}
                 </p>
             </div>
 
@@ -95,7 +91,7 @@
                 </p>
 
                 <p class="text-sm font-medium text-zinc-500">
-                    {{ $customer->date_of_birth ?? '-' }}
+                    {{ $k->date_of_birth ?? '-' }}
                 </p>
             </div>
 
@@ -109,10 +105,10 @@
                 </p>
 
                 <p class="text-sm font-medium text-zinc-500 no-underline">
-                    {{ $customer->email }}
+                    {{ $k->email }}
                 </p>
             </div>
-            
+
             {!! view_render_event('bagisto.shop.customers.account.profile.email.after') !!}
 
             {!! view_render_event('bagisto.shop.customers.account.profile.delete.before') !!}
@@ -125,7 +121,8 @@
                             @lang('shop::app.customers.account.profile.index.delete-profile')
                         </div>
 
-                        <div class="rounded-2xl py-3 text-center font-medium text-red-500 max-md:w-full max-md:max-w-full max-md:py-1.5 md:hidden">
+                        <div
+                            class="rounded-2xl py-3 text-center font-medium text-red-500 max-md:w-full max-md:max-w-full max-md:py-1.5 md:hidden">
                             @lang('shop::app.customers.account.profile.index.delete-profile')
                         </div>
                     </x-slot>
@@ -138,27 +135,17 @@
 
                     <x-slot:content>
                         <x-shop::form.control-group class="!mb-0">
-                            <x-shop::form.control-group.control
-                                type="password"
-                                name="password"
-                                class="px-6 py-4"
-                                rules="required"
-                                placeholder="Enter your password"
-                            />
+                            <x-shop::form.control-group.control type="password" name="password" class="px-6 py-4"
+                                rules="required" placeholder="Enter your password" />
 
-                            <x-shop::form.control-group.error
-                                class="text-left"
-                                control-name="password"
-                            />
+                            <x-shop::form.control-group.error class="text-left" control-name="password" />
                         </x-shop::form.control-group>
                     </x-slot>
 
                     <!-- Modal Footer -->
                     <x-slot:footer>
-                        <button
-                            type="submit"
-                            class="primary-button flex rounded-2xl px-11 py-3 max-md:rounded-lg max-md:px-6 max-md:text-sm"
-                        >
+                        <button type="submit"
+                            class="primary-button flex rounded-2xl px-11 py-3 max-md:rounded-lg max-md:px-6 max-md:text-sm">
                             @lang('shop::app.customers.account.profile.index.delete')
                         </button>
                     </x-slot>

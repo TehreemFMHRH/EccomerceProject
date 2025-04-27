@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class ThemeDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $whereInLocales = core()->getRequestedLocaleCode() === 'all'
@@ -50,11 +46,7 @@ class ThemeDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $themes = config('themes.shop');
@@ -132,8 +124,8 @@ class ThemeDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status) {
+            'closure'    => function ($va) {
+                if ($va->status) {
                     return '<p class="label-active">'.trans('admin::app.settings.themes.index.datagrid.active').'</p>';
                 }
 
@@ -167,11 +159,7 @@ class ThemeDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('settings.themes.edit')) {

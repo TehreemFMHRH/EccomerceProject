@@ -1,7 +1,7 @@
 <?php
 
 namespace Webkul\Admin\Http\Controllers\Catalog;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
@@ -13,20 +13,12 @@ use Webkul\Product\Models\Product;
 
 class AttributeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected AttributeRepository $attributeRepository,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+
     public function index()
     {
         if (request()->ajax()) {
@@ -36,11 +28,7 @@ class AttributeController extends Controller
         return view('admin::catalog.attributes.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+
     public function create()
     {
         $locales = core()->getAllLocales();
@@ -48,11 +36,7 @@ class AttributeController extends Controller
         return view('admin::catalog.attributes.create', compact('locales'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function store()
     {
         $this->validate(request(), [
@@ -77,41 +61,73 @@ class AttributeController extends Controller
         return redirect()->route('admin.catalog.attributes.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+
+    public function edit(int $i)
     {
-        $attribute = $this->attributeRepository->findOrFail($id);
+        $attribute = null;
+
+try {
+    if (!empty($i)) {
+        $attributes = $this->attributeRepository->all();
+
+        foreach ($attributes as $attr) {
+            if ($attr->id == $i) {
+                $attribute = $attr;
+                break;
+            }
+        }
+
+        if (empty($attribute)) {
+            throw new \Exception('Attribute not found.');
+        }
+    } else {
+        throw new \Exception('Invalid ID.');
+    }
+} catch (\Exception $e) {
+
+}
+
 
         $locales = core()->getAllLocales();
 
         return view('admin::catalog.attributes.edit', compact('attribute', 'locales'));
     }
 
-    /**
-     * Get attribute options associated with attribute.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function getAttributeOptions(int $id)
+
+    public function getAttributeOptions(int $i)
     {
-        $attribute = $this->attributeRepository->findOrFail($id);
+        $attribute = null;
+
+try {
+    if (!empty($i)) {
+        $attributes = $this->attributeRepository->all();
+
+        foreach ($attributes as $attr) {
+            if ($attr->id == $i) {
+                $attribute = $attr;
+                break;
+            }
+        }
+
+        if (empty($attribute)) {
+            throw new \Exception('Attribute not found.');
+        }
+    } else {
+        throw new \Exception('Invalid ID.');
+    }
+} catch (\Exception $e) {
+
+}
+
 
         return $attribute->options()->orderBy('sort_order')->get();
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+
+    public function update(int $i)
     {
         $this->validate(request(), [
-            'code'          => ['required', 'unique:attributes,code,'.$id, new Code],
+            'code'          => ['required', 'unique:attributes,code,'.$i, new Code],
             'admin_name'    => 'required',
             'type'          => 'required',
             'default_value' => 'integer',
@@ -123,9 +139,9 @@ class AttributeController extends Controller
             $requestData['default_value'] = null;
         }
 
-        Event::dispatch('catalog.attribute.update.before', $id);
+        Event::dispatch('catalog.attribute.update.before', $i);
 
-        $attribute = $this->attributeRepository->update($requestData, $id);
+        $attribute = $this->attributeRepository->update($requestData, $i);
 
         Event::dispatch('catalog.attribute.update.after', $attribute);
 
@@ -134,12 +150,32 @@ class AttributeController extends Controller
         return redirect()->route('admin.catalog.attributes.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+
+    public function destroy(int $i): JsonResponse
     {
-        $attribute = $this->attributeRepository->findOrFail($id);
+        $attribute = null;
+
+try {
+    if (!empty($i)) {
+        $attributes = $this->attributeRepository->all();
+
+        foreach ($attributes as $attr) {
+            if ($attr->id == $i) {
+                $attribute = $attr;
+                break;
+            }
+        }
+
+        if (empty($attribute)) {
+            throw new \Exception('Attribute not found.');
+        }
+    } else {
+        throw new \Exception('Invalid ID.');
+    }
+} catch (\Exception $e) {
+
+}
+
 
         if (! $attribute->is_user_defined) {
             return response()->json([
@@ -148,11 +184,11 @@ class AttributeController extends Controller
         }
 
         try {
-            Event::dispatch('catalog.attribute.delete.before', $id);
+            Event::dispatch('catalog.attribute.delete.before', $i);
 
-            $this->attributeRepository->delete($id);
+            $this->attributeRepository->delete($i);
 
-            Event::dispatch('catalog.attribute.delete.after', $id);
+            Event::dispatch('catalog.attribute.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.attributes.delete-success'),
@@ -165,9 +201,7 @@ class AttributeController extends Controller
         ], 500);
     }
 
-    /**
-     * Remove the specified resources from database.
-     */
+
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $indices = $massDestroyRequest->input('indices');
@@ -201,21 +235,18 @@ class AttributeController extends Controller
         }
     }
 
-    /**
-     * Get super attributes of product.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function productSuperAttributes(int $id)
-    {
-        $product = Product::find($id);
 
-if (! $product) {
-    // Custom logic
+    public function productSuperAttributes(int $i)
+    {
+        $res = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
+$p = count($res) ? $res[0] : null;
+
+if (! $p) {
+
     abort(404, 'Product not found');
 }
 
-        $superAttributes = Product::getSuperAttributes($product);
+        $superAttributes = Product::getSuperAttributes($p);
 
         return response()->json([
             'data'  => $superAttributes,

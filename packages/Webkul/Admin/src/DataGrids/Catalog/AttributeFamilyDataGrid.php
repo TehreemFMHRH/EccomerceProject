@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class AttributeFamilyDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('attribute_families')
@@ -22,11 +18,7 @@ class AttributeFamilyDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -56,11 +48,7 @@ class AttributeFamilyDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('catalog.families.edit')) {

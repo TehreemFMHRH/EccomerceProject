@@ -8,11 +8,7 @@ use Webkul\Core\Eloquent\Repository;
 
 class AttributeFamilyRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected AttributeRepository $attributeRepository,
         protected AttributeGroupRepository $attributeGroupRepository,
@@ -21,24 +17,20 @@ class AttributeFamilyRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify Model class name
-     */
+
     public function model(): string
     {
         return 'Webkul\Attribute\Contracts\AttributeFamily';
     }
 
-    /**
-     * @return \Webkul\Attribute\Contracts\AttributeFamily
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
-        $attributeGroups = $data['attribute_groups'] ?? [];
+        $attributeGroups = $dat['attribute_groups'] ?? [];
 
-        unset($data['attribute_groups']);
+        unset($dat['attribute_groups']);
 
-        $family = parent::create($data);
+        $family = parent::create($dat);
 
         foreach ($attributeGroups as $group) {
             $customAttributes = $group['custom_attributes'] ?? [];
@@ -59,17 +51,14 @@ class AttributeFamilyRepository extends Repository
         return $family;
     }
 
-    /**
-     * @param  int  $id
-     * @return \Webkul\Attribute\Contracts\AttributeFamily
-     */
-    public function update(array $data, $id)
+
+    public function update(array $dat, $i)
     {
-        $family = parent::update($data, $id);
+        $family = parent::update($dat, $i);
 
         $previousAttributeGroupIds = $family->attribute_groups()->pluck('id');
 
-        foreach ($data['attribute_groups'] ?? [] as $attributeGroupId => $attributeGroupInputs) {
+        foreach ($dat['attribute_groups'] ?? [] as $attributeGroupId => $attributeGroupInputs) {
             if (Str::contains($attributeGroupId, 'group_')) {
                 $attributeGroup = $family->attribute_groups()->create($attributeGroupInputs);
 
@@ -122,9 +111,7 @@ class AttributeFamilyRepository extends Repository
         return $family;
     }
 
-    /**
-     * @return array
-     */
+
     public function getPartial()
     {
         $attributeFamilies = $this->model->all();
@@ -147,9 +134,7 @@ class AttributeFamilyRepository extends Repository
         return $trimmed;
     }
 
-    /**
-     * Get all the comparable attributes which belongs to attribute family.
-     */
+
     public function getComparableAttributesBelongsToFamily()
     {
         return $this->attributeRepository

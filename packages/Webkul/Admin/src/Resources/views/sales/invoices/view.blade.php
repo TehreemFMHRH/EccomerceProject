@@ -4,13 +4,13 @@
     </x-slot>
 
     @php
-        $order = $invoice->order;
+        $o = $invoice->order;
     @endphp
 
     <!-- Main Body -->
     <div class="grid">
         <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
-            {!! view_render_event('bagisto.admin.sales.invoice.title.before', ['order' => $order]) !!}
+            {!! view_render_event('bagisto.admin.sales.invoice.title.before', ['order' => $o]) !!}
 
             <p class="text-xl font-bold leading-6 text-gray-800 dark:text-white">
                 @lang('admin::app.sales.invoices.view.title', ['invoice_id' => $invoice->increment_id ?? $invoice->id])
@@ -20,14 +20,12 @@
                 </span>
             </p>
 
-            {!! view_render_event('bagisto.admin.sales.invoice.title.after', ['order' => $order]) !!}
+            {!! view_render_event('bagisto.admin.sales.invoice.title.after', ['order' => $o]) !!}
 
             <div class="flex items-center gap-x-2.5">
                 <!-- Back Button -->
-                <a
-                    href="{{ route('admin.sales.invoices.index') }}"
-                    class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
-                >
+                <a href="{{ route('admin.sales.invoices.index') }}"
+                    class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800">
                     @lang('admin::app.account.edit.back-btn')
                 </a>
             </div>
@@ -37,12 +35,10 @@
     <!-- Filter row -->
     <div class="mt-7 flex items-center justify-between gap-4 max-md:flex-wrap">
         <div class="flex flex-wrap items-center gap-x-1 gap-y-2">
-            {!! view_render_event('bagisto.admin.sales.invoice.page_action.before', ['order' => $order]) !!}
+            {!! view_render_event('bagisto.admin.sales.invoice.page_action.before', ['order' => $o]) !!}
 
-            <a
-                href="{{ route('admin.sales.invoices.print', $invoice->id) }}"
-                class="inline-flex w-full max-w-max cursor-pointer items-center justify-between gap-x-2 px-1 py-1.5 text-center font-semibold text-gray-600 transition-all hover:rounded-md hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
-            >
+            <a href="{{ route('admin.sales.invoices.print', $invoice->id) }}"
+                class="inline-flex w-full max-w-max cursor-pointer items-center justify-between gap-x-2 px-1 py-1.5 text-center font-semibold text-gray-600 transition-all hover:rounded-md hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800">
                 <span class="icon-printer text-2xl"></span>
 
                 @lang('admin::app.sales.invoices.view.print')
@@ -50,11 +46,9 @@
 
             <!-- Send Duplicate Invoice Modal -->
             <div>
-                <button
-                    type="button"
+                <button type="button"
                     class="inline-flex w-full max-w-max cursor-pointer items-center justify-between gap-x-2 px-1 py-1.5 text-center font-semibold text-gray-600 transition-all hover:rounded-md hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
-                    @click="$refs.groupCreateModal.open()"
-                >
+                    @click="$refs.groupCreateModal.open()">
                     <span class="icon-mail text-2xl"></span>
 
                     @lang('admin::app.sales.invoices.view.send-duplicate-invoice')
@@ -77,14 +71,8 @@
                                     @lang('admin::app.sales.invoices.view.email')
                                 </x-admin::form.control-group.label>
 
-                                <x-admin::form.control-group.control
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    rules="required|email"
-                                    :value="$invoice->order->customer_email"
-                                    :label="trans('admin::app.sales.invoices.view.email')"
-                                />
+                                <x-admin::form.control-group.control type="email" id="email" name="email"
+                                    rules="required|email" :value="$invoice->order->customer_email" :label="trans('admin::app.sales.invoices.view.email')" />
 
                                 <x-admin::form.control-group.error control-name="email" />
                             </x-admin::form.control-group>
@@ -93,17 +81,13 @@
                         <!-- Modal Footer -->
                         <x-slot:footer>
                             <!-- Save Button -->
-                            <x-admin::button
-                                button-type="button"
-                                class="primary-button"
-                                :title="trans('admin::app.sales.invoices.view.send')"
-                            />
+                            <x-admin::button button-type="button" class="primary-button" :title="trans('admin::app.sales.invoices.view.send')" />
                         </x-slot>
                     </x-admin::modal>
                 </x-admin::form>
             </div>
 
-            {!! view_render_event('bagisto.admin.sales.invoice.page_action.after', ['order' => $order]) !!}
+            {!! view_render_event('bagisto.admin.sales.invoice.page_action.after', ['order' => $o]) !!}
 
         </div>
     </div>
@@ -120,20 +104,21 @@
 
                 <div class="grid">
                     <!-- Invoice Item Details-->
-                    @foreach($invoice->items as $item)
-                        <div class="flex justify-between gap-2.5 border-b border-slate-300 px-4 py-6 dark:border-gray-800">
+                    @foreach ($invoice->items as $item)
+                        <div
+                            class="flex justify-between gap-2.5 border-b border-slate-300 px-4 py-6 dark:border-gray-800">
                             <div class="flex gap-2.5">
                                 <!-- Product Image -->
                                 @if ($item->product?->base_image_url)
-                                    <img
-                                        class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded"
-                                        src="{{ $item->product->base_image_url }}"
-                                    >
+                                    <img class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded"
+                                        src="{{ $item->product->base_image_url }}">
                                 @else
-                                    <div class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
+                                    <div
+                                        class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
                                         <img src="{{ bagisto_asset('images/product-placeholders/front.svg') }}">
 
-                                        <p class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
+                                        <p
+                                            class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
                                             @lang('admin::app.sales.invoices.view.product-image')
                                         </p>
                                     </div>
@@ -148,8 +133,8 @@
                                     <p class="text-gray-600 dark:text-gray-300">
                                         @lang('admin::app.sales.invoices.view.amount-per-unit', [
                                             'amount' => core()->formatBasePrice($item->base_price),
-                                            'qty'    => $item->qty,
-                                            ])
+                                            'qty' => $item->qty,
+                                        ])
                                     </p>
 
                                     <div class="flex flex-col place-items-start gap-1.5">
@@ -157,19 +142,15 @@
                                             <!-- Item Additional Details -->
                                             @foreach ($item->additional['attributes'] as $attribute)
                                                 <p class="text-gray-600 dark:text-gray-300">
-                                                    @if (
-                                                        ! isset($attribute['attribute_type'])
-                                                        || $attribute['attribute_type'] !== 'file'
-                                                    )
-                                                        {{ $attribute['attribute_name'] }} : {{ $attribute['option_label'] }}
+                                                    @if (!isset($attribute['attribute_type']) || $attribute['attribute_type'] !== 'file')
+                                                        {{ $attribute['attribute_name'] }} :
+                                                        {{ $attribute['option_label'] }}
                                                     @else
                                                         {{ $attribute['attribute_name'] }} :
 
-                                                        <a
-                                                            href="{{ Storage::url($attribute['option_label']) }}"
+                                                        <a href="{{ Storage::url($attribute['option_label']) }}"
                                                             class="text-blue-600 hover:underline"
-                                                            download="{{ File::basename($attribute['option_label']) }}"
-                                                        >
+                                                            download="{{ File::basename($attribute['option_label']) }}">
                                                             {{ File::basename($attribute['option_label']) }}
                                                         </a>
                                                     @endif
@@ -192,7 +173,8 @@
 
                             <div class="grid place-content-start gap-1">
                                 <!-- Item Grand Total -->
-                                <p class="flex items-center justify-end gap-x-1 text-base font-semibold text-gray-800 dark:text-white">
+                                <p
+                                    class="flex items-center justify-end gap-x-1 text-base font-semibold text-gray-800 dark:text-white">
                                     {{ core()->formatBasePrice($item->base_total + $item->base_tax_amount - $item->base_discount_amount) }}
                                 </p>
 
@@ -369,24 +351,24 @@
                 </x-slot>
 
                 <x-slot:content>
-                    <div class="flex flex-col {{ $order->billing_address ? 'pb-4' : ''}}">
+                    <div class="flex flex-col {{ $o->billing_address ? 'pb-4' : '' }}">
                         <p class="font-semibold text-gray-800 dark:text-white">
                             {{ $invoice->order->customer_full_name }}
                         </p>
 
-                        {!! view_render_event('bagisto.admin.sales.invoice.customer_name.after', ['order' => $order]) !!}
+                        {!! view_render_event('bagisto.admin.sales.invoice.customer_name.after', ['order' => $o]) !!}
 
                         <p class="text-gray-600 dark:text-gray-300">
                             @lang('admin::app.sales.invoices.view.customer-email', ['email' => $invoice->order->customer_email])
                         </p>
 
-                        {!! view_render_event('bagisto.admin.sales.invoice.customer_email.after', ['order' => $order]) !!}
+                        {!! view_render_event('bagisto.admin.sales.invoice.customer_email.after', ['order' => $o]) !!}
                     </div>
 
-                    @if ($order->billing_address || $order->shipping_address)
+                    @if ($o->billing_address || $o->shipping_address)
                         <!-- Billing Address -->
-                        @if ($order->billing_address)
-                            <div class="{{ $order->shipping_address ? 'pb-4' : '' }}">
+                        @if ($o->billing_address)
+                            <div class="{{ $o->shipping_address ? 'pb-4' : '' }}">
                                 <span class="block w-full border-b dark:border-gray-800"></span>
 
                                 <div class="flex items-center justify-between">
@@ -395,14 +377,14 @@
                                     </p>
                                 </div>
 
-                                @include ('admin::sales.address', ['address' => $order->billing_address])
+                                @include ('admin::sales.address', ['address' => $o->billing_address])
 
-                                {!! view_render_event('bagisto.admin.sales.invoice.billing_address.after', ['order' => $order]) !!}
+                                {!! view_render_event('bagisto.admin.sales.invoice.billing_address.after', ['order' => $o]) !!}
                             </div>
                         @endif
 
                         <!-- Shipping Address -->
-                        @if ($order->shipping_address)
+                        @if ($o->shipping_address)
                             <span class="block w-full border-b dark:border-gray-800"></span>
 
                             <div class="flex items-center justify-between">
@@ -411,9 +393,9 @@
                                 </p>
                             </div>
 
-                            @include ('admin::sales.address', ['address' => $order->shipping_address])
+                            @include ('admin::sales.address', ['address' => $o->shipping_address])
 
-                            {!! view_render_event('bagisto.admin.sales.invoice.shipping_address.after', ['order' => $order]) !!}
+                            {!! view_render_event('bagisto.admin.sales.invoice.shipping_address.after', ['order' => $o]) !!}
                         @endif
                     @endif
                 </x-slot>
@@ -440,24 +422,24 @@
                         <div class="flex flex-col gap-y-1.5">
                             <!-- Order Id -->
                             <p class="font-semibold text-blue-600 transition-all hover:underline">
-                                <a href="{{ route('admin.sales.orders.view', $order->id) }}">#{{ $order->increment_id }}</a>
+                                <a href="{{ route('admin.sales.orders.view', $o->id) }}">#{{ $o->increment_id }}</a>
                             </p>
 
-                            {!! view_render_event('bagisto.admin.sales.invoice.increment_id.after', ['order' => $order]) !!}
+                            {!! view_render_event('bagisto.admin.sales.invoice.increment_id.after', ['order' => $o]) !!}
 
                             <!-- Order Date -->
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ core()->formatDate($order->created_at) }}
+                                {{ core()->formatDate($o->created_at) }}
                             </p>
 
-                            {!! view_render_event('bagisto.admin.sales.invoice.created_at.after', ['order' => $order]) !!}
+                            {!! view_render_event('bagisto.admin.sales.invoice.created_at.after', ['order' => $o]) !!}
 
                             <!-- Order Status -->
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->status_label }}
+                                {{ $o->status_label }}
                             </p>
 
-                            {!! view_render_event('bagisto.admin.sales.invoice.status_label.after', ['order' => $order]) !!}
+                            {!! view_render_event('bagisto.admin.sales.invoice.status_label.after', ['order' => $o]) !!}
 
                             <!-- Invoice Status -->
                             <p class="text-gray-600 dark:text-gray-300">
@@ -466,10 +448,10 @@
 
                             <!-- Order Channel -->
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->channel_name }}
+                                {{ $o->channel_name }}
                             </p>
 
-                            {!! view_render_event('bagisto.admin.sales.invoice.channel_name.after', ['order' => $order]) !!}
+                            {!! view_render_event('bagisto.admin.sales.invoice.channel_name.after', ['order' => $o]) !!}
                         </div>
                     </div>
                 </x-slot>

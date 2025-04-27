@@ -9,29 +9,19 @@ use Webkul\CatalogRule\Repositories\CatalogRuleRepository;
 
 class CatalogRule
 {
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CatalogRuleRepository $catalogRuleRepository,
         protected CatalogRuleProductPriceRepository $catalogRuleProductPriceRepository
     ) {}
 
-    /**
-     * @param  \Webkul\CatalogRule\Contracts\CatalogRule  $catalogRule
-     * @return void
-     */
+    
     public function afterUpdateCreate($catalogRule)
     {
         UpdateCreateCatalogRuleIndexJob::dispatch($catalogRule);
     }
 
-    /**
-     * @param  int  $catalogRuleId
-     * @return void
-     */
+    
     public function beforeUpdate($catalogRuleId)
     {
         $catalogRule = $this->catalogRuleRepository->find($catalogRuleId);
@@ -43,10 +33,7 @@ class CatalogRule
         DeleteCatalogRuleIndexJob::dispatch($productIds->toArray());
     }
 
-    /**
-     * @param  int  $catalogRuleId
-     * @return void
-     */
+    
     public function beforeDelete($catalogRuleId)
     {
         $catalogRule = $this->catalogRuleRepository->find($catalogRuleId);

@@ -1,28 +1,15 @@
 @php
-    $value = system_config()->getConfigData($field->getNameKey(), $currentChannel->code, $currentLocale->code);
+    $va = system_config()->getConfigData($field->getNameKey(), $currentChannel->code, $currentLocale->code);
 @endphp
 
-<input
-    type="hidden"
-    name="keys[]"
-    value="{{ json_encode($child) }}"
-/>
+<input type="hidden" name="keys[]" value="{{ json_encode($child) }}" />
 
 <div class="mb-4 last:!mb-0">
-    <v-configurable
-        name="{{ $field->getNameField() }}"
-        value="{{ $value }}"
-        label="{{ trans($field->getTitle()) }}"
-        info="{{ trans($field->getInfo()) }}"
-        validations="{{ $field->getValidations() }}"
-        is-require="{{ $field->isRequired() }}"
-        depend-name="{{ $field->getDependFieldName() }}"
-        src="{{ Storage::url($value) }}"
-        field-data="{{ json_encode($field) }}"
-        channel-count="{{ $channels->count() }}"
-        current-channel="{{ $currentChannel }}"
-        current-locale="{{ $currentLocale }}"
-    >
+    <v-configurable name="{{ $field->getNameField() }}" value="{{ $va }}" label="{{ trans($field->getTitle()) }}"
+        info="{{ trans($field->getInfo()) }}" validations="{{ $field->getValidations() }}"
+        is-require="{{ $field->isRequired() }}" depend-name="{{ $field->getDependFieldName() }}"
+        src="{{ Storage::url($va) }}" field-data="{{ json_encode($field) }}" channel-count="{{ $channels->count() }}"
+        current-channel="{{ $currentChannel }}" current-locale="{{ $currentLocale }}">
         <div class="shimmer mb-1.5 h-4 w-24"></div>
 
         <div class="shimmer flex h-[42px] w-full rounded-md"></div>
@@ -462,21 +449,21 @@
             },
 
             mounted() {
-                if (! this.dependName) {
+                if (!this.dependName) {
                     return;
                 }
 
                 const dependElement = document.getElementById(this.dependName);
 
-                if (! dependElement) {
+                if (!dependElement) {
                     return;
                 }
 
                 dependElement.addEventListener('change', (event) => {
-                    this.field['is_visible'] = 
-                        event.target.type === 'checkbox' 
-                        ? event.target.checked
-                        : this.validations.split(',').slice(1).includes(event.target.value);
+                    this.field['is_visible'] =
+                        event.target.type === 'checkbox' ?
+                        event.target.checked :
+                        this.validations.split(',').slice(1).includes(event.target.value);
                 });
 
                 dependElement.dispatchEvent(new Event('change'));
@@ -529,10 +516,10 @@
             methods: {
                 haveStates() {
                     /*
-                    * The double negation operator is used to convert the value to a boolean.
-                    * It ensures that the final result is a boolean value,
-                    * true if the array has a length greater than 0, and otherwise false.
-                    */
+                     * The double negation operator is used to convert the value to a boolean.
+                     * It ensures that the final result is a boolean value,
+                     * true if the array has a length greater than 0, and otherwise false.
+                     */
                     return !!this.countryStates[this.country]?.length;
                 },
             },

@@ -10,18 +10,10 @@ use Webkul\Core\Repositories\ChannelRepository;
 
 class ChannelController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected ChannelRepository $channelRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -31,24 +23,16 @@ class ChannelController extends Controller
         return view('admin::settings.channels.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::settings.channels.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
-        $data = $this->validate(request(), [
+        $dat = $this->validate(request(), [
             /* general */
             'code'                  => ['required', 'unique:channels,code', new \Webkul\Core\Rules\Code],
             'name'                  => 'required',
@@ -79,11 +63,11 @@ class ChannelController extends Controller
             'allowed_ips'           => 'nullable',
         ]);
 
-        $data = $this->setSEOContent($data);
+        $dat = $this->setSEOContent($dat);
 
         Event::dispatch('core.channel.create.before');
 
-        $channel = $this->channelRepository->create($data);
+        $channel = $this->channelRepository->create($dat);
 
         Event::dispatch('core.channel.create.after', $channel);
 
@@ -92,35 +76,27 @@ class ChannelController extends Controller
         return redirect()->route('admin.settings.channels.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($id);
+        $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($i);
 
         return view('admin::settings.channels.edit', compact('channel'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $locale = core()->getRequestedLocaleCode();
 
-        $data = $this->validate(request(), [
+        $dat = $this->validate(request(), [
             /* general */
-            'code'                             => ['required', 'unique:channels,code,'.$id, new \Webkul\Core\Rules\Code],
+            'code'                             => ['required', 'unique:channels,code,'.$i, new \Webkul\Core\Rules\Code],
             $locale.'.name'                    => 'required',
             $locale.'.description'             => 'nullable',
             'inventory_sources'                => 'required|array|min:1',
             'root_category_id'                 => 'required',
-            'hostname'                         => 'unique:channels,hostname,'.$id,
+            'hostname'                         => 'unique:channels,hostname,'.$i,
 
             /* currencies and locales */
             'locales'                          => 'required|array|min:1',
@@ -144,13 +120,13 @@ class ChannelController extends Controller
             'allowed_ips'                      => 'nullable',
         ]);
 
-        $data['is_maintenance_on'] = request()->input('is_maintenance_on') == '1';
+        $dat['is_maintenance_on'] = request()->input('is_maintenance_on') == '1';
 
-        $data = $this->setSEOContent($data, $locale);
+        $dat = $this->setSEOContent($dat, $locale);
 
-        Event::dispatch('core.channel.update.before', $id);
+        Event::dispatch('core.channel.update.before', $i);
 
-        $channel = $this->channelRepository->update($data, $id);
+        $channel = $this->channelRepository->update($dat, $i);
 
         Event::dispatch('core.channel.update.after', $channel);
 
@@ -163,12 +139,10 @@ class ChannelController extends Controller
         return redirect()->route('admin.settings.channels.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $channel = $this->channelRepository->findOrFail($id);
+        $channel = $this->channelRepository->findOrFail($i);
 
         if ($channel->code == config('app.channel')) {
             return new JsonResponse([
@@ -177,11 +151,11 @@ class ChannelController extends Controller
         }
 
         try {
-            Event::dispatch('core.channel.delete.before', $id);
+            Event::dispatch('core.channel.delete.before', $i);
 
-            $this->channelRepository->delete($id);
+            $this->channelRepository->delete($i);
 
-            Event::dispatch('core.channel.delete.after', $id);
+            Event::dispatch('core.channel.delete.after', $i);
 
             return new JsonResponse([
                 'message'    => trans('admin::app.settings.channels.index.delete-success'),
@@ -194,18 +168,13 @@ class ChannelController extends Controller
         ], 500);
     }
 
-    /**
-     * Set the seo content and return back the updated array.
-     *
-     * @param  string  $locale
-     * @return array
-     */
-    private function setSEOContent(array $data, $locale = null)
+    
+    private function setSEOContent(array $dat, $locale = null)
     {
-        $editedData = $data;
+        $editedData = $dat;
 
         if ($locale) {
-            $editedData = $data[$locale];
+            $editedData = $dat[$locale];
         }
 
         $editedData['home_seo']['meta_title'] = $editedData['seo_title'];
@@ -215,25 +184,20 @@ class ChannelController extends Controller
         $editedData = $this->unsetKeys($editedData, ['seo_title', 'seo_description', 'seo_keywords']);
 
         if ($locale) {
-            $data[$locale] = $editedData;
-            $editedData = $data;
+            $dat[$locale] = $editedData;
+            $editedData = $dat;
         }
 
         return $editedData;
     }
 
-    /**
-     * Unset keys.
-     *
-     * @param  array  $keys
-     * @return array
-     */
-    private function unsetKeys($data, $keys)
+    
+    private function unsetKeys($dat, $keys)
     {
         foreach ($keys as $key) {
-            unset($data[$key]);
+            unset($dat[$key]);
         }
 
-        return $data;
+        return $dat;
     }
 }

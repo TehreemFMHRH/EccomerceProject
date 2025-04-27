@@ -7,87 +7,69 @@ use Webkul\Core\Eloquent\Repository;
 
 class ChannelRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return 'Webkul\Core\Contracts\Channel';
     }
 
-    /**
-     * Create.
-     *
-     * @return \Webkul\Core\Contracts\Channel
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
 
         $model = $this->getModel();
 
         foreach (core()->getAllLocales() as $locale) {
             foreach ($model->translatedAttributes as $attribute) {
-                if (isset($data[$attribute])) {
-                    $data[$locale->code][$attribute] = $data[$attribute];
+                if (isset($dat[$attribute])) {
+                    $dat[$locale->code][$attribute] = $dat[$attribute];
                 }
             }
         }
 
-        $channel = parent::create($data);
+        $channel = parent::create($dat);
 
-        $channel->locales()->sync($data['locales']);
+        $channel->locales()->sync($dat['locales']);
 
-        $channel->currencies()->sync($data['currencies']);
+        $channel->currencies()->sync($dat['currencies']);
 
-        $channel->inventory_sources()->sync($data['inventory_sources']);
+        $channel->inventory_sources()->sync($dat['inventory_sources']);
 
-        $this->uploadImages($data, $channel);
+        $this->uploadImages($dat, $channel);
 
-        $this->uploadImages($data, $channel, 'favicon');
+        $this->uploadImages($dat, $channel, 'favicon');
 
         return $channel;
     }
 
-    /**
-     * Update.
-     *
-     * @param  int  $id
-     * @return \Webkul\Core\Contracts\Channel
-     */
-    public function update(array $data, $id)
+
+    public function update(array $dat, $i)
     {
-        $channel = parent::update($data, $id);
+        $channel = parent::update($dat, $i);
 
-        $channel->locales()->sync($data['locales']);
+        $channel->locales()->sync($dat['locales']);
 
-        $channel->currencies()->sync($data['currencies']);
+        $channel->currencies()->sync($dat['currencies']);
 
-        $channel->inventory_sources()->sync($data['inventory_sources']);
+        $channel->inventory_sources()->sync($dat['inventory_sources']);
 
-        $this->uploadImages($data, $channel);
+        $this->uploadImages($dat, $channel);
 
-        $this->uploadImages($data, $channel, 'favicon');
+        $this->uploadImages($dat, $channel, 'favicon');
 
         return $channel;
     }
 
-    /**
-     * Upload images.
-     *
-     * @param  array  $data
-     * @param  \Webkul\Core\Contracts\Channel  $channel
-     * @param  string  $type
-     * @return void
-     */
-    public function uploadImages($data, $channel, $type = 'logo')
+
+    public function uploadImages($dat, $channel, $type = 'logo')
     {
         if (request()->hasFile($type)) {
             $channel->{$type} = current(request()->file($type))->store('channel/'.$channel->id);
 
             $channel->save();
         } else {
-            if (! isset($data[$type])) {
-                if (! empty($data[$type])) {
+            if (! isset($dat[$type])) {
+                if (! empty($dat[$type])) {
                     Storage::delete($channel->{$type});
                 }
 

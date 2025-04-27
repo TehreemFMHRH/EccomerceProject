@@ -9,30 +9,19 @@ use Intervention\Image\ImageManager as BaseImageManager;
 
 class ImageManager extends BaseImageManager
 {
-    /**
-     * Initiates an Image instance from different input types
-     *
-     * @param  mixed  $data
-     * @return \Intervention\Image\Image
-     */
-    public function make($data)
+    
+    public function make($dat)
     {
         $driver = $this->createDriver();
 
-        if ((bool) filter_var($data, FILTER_VALIDATE_URL)) {
-            return $this->initFromUrl($driver, $data);
+        if ((bool) filter_var($dat, FILTER_VALIDATE_URL)) {
+            return $this->initFromUrl($driver, $dat);
         }
 
-        return $driver->init($data);
+        return $driver->init($dat);
     }
 
-    /**
-     * Init from given URL
-     *
-     * @param  mixed  $driver
-     * @param  string  $url
-     * @return \Intervention\Image\Image
-     */
+    
     public function initFromUrl($driver, $url)
     {
         $domain = config('app.url');
@@ -49,8 +38,8 @@ class ImageManager extends BaseImageManager
 
         $context = stream_context_create($options);
 
-        if ($data = @file_get_contents($url, false, $context)) {
-            return $driver->decoder->initFromBinary($data);
+        if ($dat = @file_get_contents($url, false, $context)) {
+            return $driver->decoder->initFromBinary($dat);
         }
 
         throw new NotReadableException(
@@ -58,11 +47,7 @@ class ImageManager extends BaseImageManager
         );
     }
 
-    /**
-     * Creates a driver instance according to config settings
-     *
-     * @return \Intervention\Image\AbstractDriver
-     */
+    
     private function createDriver()
     {
         if (is_string($this->config['driver'])) {

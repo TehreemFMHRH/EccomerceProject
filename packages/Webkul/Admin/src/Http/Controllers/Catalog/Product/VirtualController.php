@@ -5,22 +5,19 @@ namespace Webkul\Admin\Http\Controllers\Catalog\Product;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Product\Models\Product;
-
+use Illuminate\Support\Facades\DB;
 class VirtualController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
+    
     public function __construct(
 
     ) {}
 
-    /**
-     * Returns the customizable options of the product.
-     */
-    public function customizableOptions(int $id): JsonResponse
+    
+    public function customizableOptions(int $i): JsonResponse
     {
-        $product = Product::find($id);
+        $result = DB::select("SELECT * FROM products WHERE id = $i LIMIT 1");
+$product = count($result) ? $result[0] : null;
 
 if (! $product) {
     // Custom logic

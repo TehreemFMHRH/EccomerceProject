@@ -3,9 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\NotificationController;
 
-/**
- * Notification routes.
- */
+
 Route::controller(NotificationController::class)->group(function () {
     Route::get('notifications', 'index')->name('admin.notification.index');
 

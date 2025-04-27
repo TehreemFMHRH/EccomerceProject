@@ -6,20 +6,12 @@ use Webkul\BookingProduct\Repositories\BookingRepository;
 
 class Order
 {
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected BookingRepository $bookingRepository) {}
 
-    /**
-     * After sales order creation, add entry to bookings table
-     *
-     * @param  \Webkul\Sales\Contracts\Order  $order
-     */
-    public function afterPlaceOrder($order)
+    
+    public function afterPlaceOrder($o)
     {
-        $this->bookingRepository->create(['order' => $order]);
+        $this->bookingRepository->create(['order' => $o]);
     }
 }

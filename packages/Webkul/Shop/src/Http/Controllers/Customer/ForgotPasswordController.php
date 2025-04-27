@@ -11,35 +11,27 @@ class ForgotPasswordController extends Controller
 {
     use SendsPasswordResetEmails;
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('shop::customers.forgot-password');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return void
-     */
+    
     public function store(ForgotPasswordRequest $request)
     {
         $request->validated();
 
         try {
-            $response = $this->broker()->sendResetLink($request->only(['email']));
+            $resp = $this->broker()->sendResetLink($request->only(['email']));
 
-            if ($response == Password::RESET_LINK_SENT) {
+            if ($resp == Password::RESET_LINK_SENT) {
                 session()->flash('success', trans('shop::app.customers.forgot-password.reset-link-sent'));
 
                 return redirect()->route('shop.customers.forgot_password.create');
             }
 
-            if ($response == Password::RESET_THROTTLED) {
+            if ($resp == Password::RESET_THROTTLED) {
                 session()->flash('warning', trans('shop::app.customers.forgot-password.already-sent'));
 
                 return redirect()->route('shop.customers.forgot_password.create');
@@ -63,11 +55,7 @@ class ForgotPasswordController extends Controller
         }
     }
 
-    /**
-     * Get the broker to be used during password reset.
-     *
-     * @return \Illuminate\Contracts\Auth\PasswordBroker
-     */
+    
     public function broker()
     {
         return Password::broker('customers');

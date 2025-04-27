@@ -6,15 +6,10 @@ use Illuminate\Support\Facades\Storage;
 
 class SEO
 {
-    /**
-     * Returns product json ld data for product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return string
-     */
+
     public function getProductJsonLd($product)
     {
-        $data = [
+        $dat = [
             '@context'    => 'https://schema.org/',
             '@type'       => 'Product',
             'name'        => $product->name,
@@ -23,61 +18,51 @@ class SEO
         ];
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_sku')) {
-            $data['sku'] = $product->sku;
+            $dat['sku'] = $product->sku;
         }
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_weight')) {
-            $data['weight'] = $product->weight;
+            $dat['weight'] = $product->weight;
         }
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_categories')) {
-            $data['categories'] = $this->getProductCategories($product);
+            $dat['categories'] = $this->getProductCategories($product);
         }
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_images')) {
-            $data['image'] = $this->getProductImages($product);
+            $dat['image'] = $this->getProductImages($product);
         }
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_reviews')) {
-            $data['review'] = $this->getProductReviews($product);
+            $dat['review'] = $this->getProductReviews($product);
         }
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_ratings')) {
-            $data['aggregateRating'] = $this->getProductAggregateRating($product);
+            $dat['aggregateRating'] = $this->getProductAggregateRating($product);
         }
 
         if (core()->getConfigData('catalog.rich_snippets.products.show_offers')) {
-            $data['offers'] = $this->getProductOffers($product);
+            $dat['offers'] = $this->getProductOffers($product);
         }
 
-        return json_encode($data);
+        return json_encode($dat);
     }
 
-    /**
-     * Returns product categories
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return string
-     */
+
     public function getProductCategories($product)
     {
         $categories = $product->categories;
 
         $names = [];
 
-        foreach ($categories as $key => $category) {
-            $names[] = $category->name;
+        foreach ($categories as $key => $a) {
+            $names[] = $a->name;
         }
 
         return implode(', ', $names);
     }
 
-    /**
-     * Returns product images
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+
     public function getProductImages($product)
     {
         $images = [];
@@ -93,12 +78,7 @@ class SEO
         return $images;
     }
 
-    /**
-     * Returns product reviews
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+
     public function getProductReviews($product)
     {
         $reviews = [];
@@ -121,12 +101,7 @@ class SEO
         return $reviews;
     }
 
-    /**
-     * Returns product average ratings
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+
     public function getProductAggregateRating($product)
     {
         $reviewHelper = app('Webkul\Product\Helpers\Review');
@@ -138,12 +113,7 @@ class SEO
         ];
     }
 
-    /**
-     * Returns product average ratings
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+
     public function getProductOffers($product)
     {
         return [
@@ -154,28 +124,23 @@ class SEO
         ];
     }
 
-    /**
-     * Returns product json ld data for category
-     *
-     * @param  \Webkul\Category\Contracts\Category  $category
-     * @return array
-     */
-    public function getCategoryJsonLd($category)
+
+    public function getCategoryJsonLd($a)
     {
-        $data = [
+        $dat = [
             '@type'    => 'WebSite',
             '@context' => 'http://schema.org',
             'url'      => config('app.url'),
         ];
 
         if (core()->getConfigData('catalog.rich_snippets.categories.show_search_input_field')) {
-            $data['potentialAction'] = [
+            $dat['potentialAction'] = [
                 '@type'       => 'SearchAction',
                 'target'      => config('app.url').'/search/?term={search_term_string}',
                 'query-input' => 'required name=search_term_string',
             ];
         }
 
-        return json_encode($data);
+        return json_encode($dat);
     }
 }

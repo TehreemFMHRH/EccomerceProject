@@ -3,7 +3,7 @@
         @lang('admin::app.sales.shipments.view.title', ['shipment_id' => $shipment->id])
     </x-slot>
 
-    @php $order = $shipment->order; @endphp
+    @php $o = $shipment->order; @endphp
 
     <div class="grid">
         <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
@@ -13,10 +13,8 @@
 
             <div class="flex items-center gap-x-2.5">
                 <!-- Back Button -->
-                <a
-                    href="{{ route('admin.sales.shipments.index') }}"
-                    class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
-                >
+                <a href="{{ route('admin.sales.shipments.index') }}"
+                    class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800">
                     @lang('admin::app.account.edit.back-btn')
                 </a>
             </div>
@@ -30,7 +28,7 @@
             <!-- General -->
             <div class="box-shadow rounded bg-white dark:bg-gray-900">
                 <p class="mb-4 p-4 text-base font-semibold text-gray-800 dark:text-white">
-                    @lang('admin::app.sales.shipments.view.ordered-items') ({{count($shipment->items)}})
+                    @lang('admin::app.sales.shipments.view.ordered-items') ({{ count($shipment->items) }})
                 </p>
 
                 <div class="grid">
@@ -40,15 +38,15 @@
                             <div class="flex gap-2.5">
                                 <!-- Image -->
                                 @if ($item->product?->base_image_url)
-                                    <img
-                                        class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded"
-                                        src="{{ $item->product->base_image_url }}"
-                                    >
+                                    <img class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded"
+                                        src="{{ $item->product->base_image_url }}">
                                 @else
-                                    <div class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
+                                    <div
+                                        class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
                                         <img src="{{ bagisto_asset('images/product-placeholders/front.svg') }}">
 
-                                        <p class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
+                                        <p
+                                            class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
                                             @lang('admin::app.sales.invoices.view.product-image')
                                         </p>
                                     </div>
@@ -63,19 +61,15 @@
                                         @if (isset($item->additional['attributes']))
                                             @foreach ($item->additional['attributes'] as $attribute)
                                                 <p class="text-gray-600 dark:text-gray-300">
-                                                    @if (
-                                                        ! isset($attribute['attribute_type'])
-                                                        || $attribute['attribute_type'] !== 'file'
-                                                    )
-                                                        {{ $attribute['attribute_name'] }} : {{ $attribute['option_label'] }}
+                                                    @if (!isset($attribute['attribute_type']) || $attribute['attribute_type'] !== 'file')
+                                                        {{ $attribute['attribute_name'] }} :
+                                                        {{ $attribute['option_label'] }}
                                                     @else
                                                         {{ $attribute['attribute_name'] }} :
 
-                                                        <a
-                                                            href="{{ Storage::url($attribute['option_label']) }}"
+                                                        <a href="{{ Storage::url($attribute['option_label']) }}"
                                                             class="text-blue-600 hover:underline"
-                                                            download="{{ File::basename($attribute['option_label']) }}"
-                                                        >
+                                                            download="{{ File::basename($attribute['option_label']) }}">
                                                             {{ File::basename($attribute['option_label']) }}
                                                         </a>
                                                     @endif
@@ -84,11 +78,11 @@
                                         @endif
 
                                         <p class="text-gray-600 dark:text-gray-300">
-                                            @lang('admin::app.sales.shipments.view.sku', ['sku' =>  $item->sku ])
+                                            @lang('admin::app.sales.shipments.view.sku', ['sku' => $item->sku])
                                         </p>
 
                                         <p class="text-gray-600 dark:text-gray-300">
-                                            @lang('admin::app.sales.shipments.view.qty', ['qty' =>  $item->qty ])
+                                            @lang('admin::app.sales.shipments.view.qty', ['qty' => $item->qty])
                                         </p>
                                     </div>
                                 </div>
@@ -122,27 +116,26 @@
 
                         <!-- Customer Email -->
                         <p class="text-gray-600 dark:text-gray-300">
-                            @lang('admin::app.sales.shipments.view.email', ['email' =>  $shipment->order->customer_email ])
+                            @lang('admin::app.sales.shipments.view.email', ['email' => $shipment->order->customer_email])
                         </p>
                     </div>
 
                     <span class="block w-full border-b dark:border-gray-800"></span>
 
-                    @if ($order->billing_address || $order->shipping_address)
+                    @if ($o->billing_address || $o->shipping_address)
                         <!-- Billing Address -->
-                        @if ($order->billing_address)
+                        @if ($o->billing_address)
                             <div class="flex items-center justify-between">
                                 <p class="py-4 text-base font-semibold text-gray-600 dark:text-gray-300">
                                     @lang('admin::app.sales.shipments.view.billing-address')
                                 </p>
                             </div>
 
-                            @include ('admin::sales.address', ['address' => $order->billing_address])
-
+                            @include ('admin::sales.address', ['address' => $o->billing_address])
                         @endif
 
                         <!-- Shipping Address -->
-                        @if ($order->shipping_address)
+                        @if ($o->shipping_address)
                             <span class="mt-4 block w-full border-b dark:border-gray-800"></span>
 
                             <div class="flex items-center justify-between">
@@ -151,8 +144,7 @@
                                 </p>
                             </div>
 
-                            @include ('admin::sales.address', ['address' => $order->shipping_address])
-
+                            @include ('admin::sales.address', ['address' => $o->shipping_address])
                         @endif
                     @endif
                 </x-slot>
@@ -175,7 +167,7 @@
 
                             <p class="text-gray-600 dark:text-gray-300">
                                 @lang('admin::app.sales.shipments.view.order-date')
-                           </p>
+                            </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
                                 @lang('admin::app.sales.shipments.view.order-status')
@@ -189,24 +181,24 @@
                         <div class="flex flex-col gap-y-1.5">
                             <!-- Order Id -->
                             <p class="font-semibold text-blue-600">
-                                <a href="{{ route('admin.sales.orders.view', $order->id) }}">
-                                    #{{ $order->increment_id }}
+                                <a href="{{ route('admin.sales.orders.view', $o->id) }}">
+                                    #{{ $o->increment_id }}
                                 </a>
                             </p>
 
                             <!-- Order Date -->
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ core()->formatDate($order->created_at) }}
+                                {{ core()->formatDate($o->created_at) }}
                             </p>
 
                             <!-- Order Status -->
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->status_label }}
+                                {{ $o->status_label }}
                             </p>
 
                             <!-- Order Channel -->
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->channel_name }}
+                                {{ $o->channel_name }}
                             </p>
                         </div>
                     </div>
@@ -225,7 +217,7 @@
                     <div class="pb-4">
                         <!-- Payment method -->
                         <p class="font-semibold text-gray-800 dark:text-white">
-                            {{ core()->getConfigData('sales.payment_methods.' . $order->payment->method . '.title') }}
+                            {{ core()->getConfigData('sales.payment_methods.' . $o->payment->method . '.title') }}
                         </p>
 
                         <p class="text-gray-600 dark:text-gray-300">
@@ -234,7 +226,7 @@
 
                         <!-- Currency Code -->
                         <p class="pt-4 font-semibold text-gray-800 dark:text-white">
-                            {{ $order->order_currency_code }}
+                            {{ $o->order_currency_code }}
                         </p>
 
                         <p class="text-gray-600 dark:text-gray-300">
@@ -248,7 +240,7 @@
                     <div class="pt-4">
                         <!-- Shipping Menthod -->
                         <p class="font-semibold text-gray-800 dark:text-white">
-                            {{ $order->shipping_title }}
+                            {{ $o->shipping_title }}
                         </p>
 
                         <p class="text-gray-600 dark:text-gray-300">
@@ -257,17 +249,14 @@
 
                         <!-- Inventory Source -->
                         <p class="pt-4 font-semibold text-gray-800 dark:text-white">
-                            {{ core()->formatBasePrice($order->base_shipping_amount) }}
+                            {{ core()->formatBasePrice($o->base_shipping_amount) }}
                         </p>
 
                         <p class="text-gray-600 dark:text-gray-300">
                             @lang('admin::app.sales.shipments.view.shipping-price')
                         </p>
 
-                        @if (
-                            $shipment->inventory_source
-                            || $shipment->inventory_source_name
-                        )
+                        @if ($shipment->inventory_source || $shipment->inventory_source_name)
                             <p class="pt-4 font-semibold text-gray-800 dark:text-white">
                                 {{ $shipment->inventory_source ? $shipment->inventory_source->name : $shipment->inventory_source_name }}
                             </p>

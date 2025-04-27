@@ -19,37 +19,31 @@ it('returns a successful response', function () {
 
 it('displays the current currency code and channel code', function () {
     // Act
-    $response = get(route('shop.home.index'));
+    $resp = get(route('shop.home.index'));
 
     // Assert
-    $response->assertOk();
+    $resp->assertOk();
 
-    /**
-     * We avoid using the `assertSeeText` method of the response because it may sometimes
-     * produce false positive results when dealing with large DOM sizes.
-     */
-    expect(Str::contains($response->content(), core()->getCurrentChannelCode()))
+    
+    expect(Str::contains($resp->content(), core()->getCurrentChannelCode()))
         ->toBeTruthy();
 
-    expect(Str::contains($response->content(), core()->getCurrentCurrencyCode()))
+    expect(Str::contains($resp->content(), core()->getCurrentCurrencyCode()))
         ->toBeTruthy();
 });
 
 it('displays the "Sign In" and "Sign Up" buttons when the customer is not logged in', function () {
     // Act
-    $response = get(route('shop.home.index'));
+    $resp = get(route('shop.home.index'));
 
     // Assert
-    $response->assertOk();
+    $resp->assertOk();
 
-    /**
-     * We avoid using the `assertSeeText` method of the response because it may sometimes
-     * produce false positive results when dealing with large DOM sizes.
-     */
-    expect(Str::contains($response->content(), trans('shop::app.components.layouts.header.sign-in')))
+    
+    expect(Str::contains($resp->content(), trans('shop::app.components.layouts.header.sign-in')))
         ->toBeTruthy();
 
-    expect(Str::contains($response->content(), trans('shop::app.components.layouts.header.sign-up')))
+    expect(Str::contains($resp->content(), trans('shop::app.components.layouts.header.sign-up')))
         ->toBeTruthy();
 });
 
@@ -57,25 +51,22 @@ it('displays navigation buttons when the customer is logged in', function () {
     // Act
     $this->loginAsCustomer();
 
-    $response = get(route('shop.home.index'));
+    $resp = get(route('shop.home.index'));
 
     // Assert
-    $response->assertOk();
+    $resp->assertOk();
 
-    /**
-     * We avoid using the `assertSeeText` method of the response because it may sometimes
-     * produce false positive results when dealing with large DOM sizes.
-     */
-    expect(Str::contains($response->content(), trans('shop::app.components.layouts.header.profile')))
+    
+    expect(Str::contains($resp->content(), trans('shop::app.components.layouts.header.profile')))
         ->toBeTruthy();
 
-    expect(Str::contains($response->content(), trans('shop::app.components.layouts.header.orders')))
+    expect(Str::contains($resp->content(), trans('shop::app.components.layouts.header.orders')))
         ->toBeTruthy();
 
-    expect(Str::contains($response->content(), trans('shop::app.components.layouts.header.wishlist')))
+    expect(Str::contains($resp->content(), trans('shop::app.components.layouts.header.wishlist')))
         ->toBeTruthy();
 
-    expect(Str::contains($response->content(), trans('shop::app.components.layouts.header.logout')))
+    expect(Str::contains($resp->content(), trans('shop::app.components.layouts.header.logout')))
         ->toBeTruthy();
 });
 
@@ -132,14 +123,14 @@ it('should fails the validation error when provided wrong email address when sub
 it('should store the subscription of the shop', function () {
     // Act and Assert.
     postJson(route('shop.subscription.store'), [
-        'email' => $email = fake()->email(),
+        'email' => $e = fake()->email(),
     ])
         ->assertRedirect();
 
     $this->assertModelWise([
         SubscribersList::class => [
             [
-                'email'         => $email,
+                'email'         => $e,
                 'is_subscribed' => 1,
             ],
         ],
@@ -151,14 +142,14 @@ it('should store the subscription of the shop and send the mail to the admin', f
     Mail::fake();
 
     postJson(route('shop.subscription.store'), [
-        'email' => $email = fake()->email(),
+        'email' => $e = fake()->email(),
     ])
         ->assertRedirect();
 
     $this->assertModelWise([
         SubscribersList::class => [
             [
-                'email'         => $email,
+                'email'         => $e,
                 'is_subscribed' => 1,
             ],
         ],

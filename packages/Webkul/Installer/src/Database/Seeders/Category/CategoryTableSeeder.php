@@ -13,12 +13,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CategoryTableSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('categories')->delete();
@@ -62,11 +57,7 @@ class CategoryTableSeeder extends Seeder
         }
     }
 
-    /**
-     * Create Sample Categories.
-     *
-     * @return void
-     */
+    
     public function sampleCategories(array $parameters = [])
     {
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');

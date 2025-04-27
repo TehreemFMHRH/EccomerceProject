@@ -1,18 +1,13 @@
 @props([
-    'name'     => 'rating',
-    'value'    => 0,
+    'name' => 'rating',
+    'value' => 0,
     'disabled' => true,
 ])
 
-<v-star-rating
-    {{ $attributes }}
-    name="{{ $name }}"
-    value="{{ $value }}"
-    disabled="{{ $disabled }}"
->
+<v-star-rating {{ $attributes }} name="{{ $na }}" value="{{ $va }}" disabled="{{ $disabled }}">
 </v-star-rating>
 
-@pushOnce("scripts")
+@pushOnce('scripts')
     <script
         type="text/x-template"
         id="v-star-rating-template"

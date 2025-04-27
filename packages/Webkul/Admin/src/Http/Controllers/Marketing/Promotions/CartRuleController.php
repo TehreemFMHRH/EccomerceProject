@@ -13,18 +13,10 @@ use Webkul\CartRule\Repositories\CartRuleRepository;
 
 class CartRuleController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CartRuleRepository $cartRuleRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -34,22 +26,13 @@ class CartRuleController extends Controller
         return view('admin::marketing.promotions.cart-rules.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::marketing.promotions.cart-rules.create');
     }
 
-    /**
-     * Copy a given Cart Rule id. Always make the copy is inactive so the
-     * user is able to configure it before setting it live.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function copy(int $cartRuleId)
     {
         $cartRule = $this->cartRuleRepository->with(['channels', 'customer_groups'])->findOrFail($cartRuleId);
@@ -74,11 +57,7 @@ class CartRuleController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(CartRuleRequest $cartRuleRequest)
     {
         try {
@@ -100,27 +79,19 @@ class CartRuleController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $cartRule = $this->cartRuleRepository->findOrFail($id);
+        $cartRule = $this->cartRuleRepository->findOrFail($i);
 
         return view('admin::marketing.promotions.cart-rules.edit', compact('cartRule'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CartRuleRequest $cartRuleRequest, int $id)
+    
+    public function update(CartRuleRequest $cartRuleRequest, int $i)
     {
         try {
-            $cartRule = $this->cartRuleRepository->findOrFail($id);
+            $cartRule = $this->cartRuleRepository->findOrFail($i);
 
             if ($cartRule->coupon_type) {
                 if ($cartRule->cart_rule_coupon) {
@@ -134,9 +105,9 @@ class CartRuleController extends Controller
                 }
             }
 
-            Event::dispatch('promotions.cart_rule.update.before', $id);
+            Event::dispatch('promotions.cart_rule.update.before', $i);
 
-            $cartRule = $this->cartRuleRepository->update($cartRuleRequest->all(), $id);
+            $cartRule = $this->cartRuleRepository->update($cartRuleRequest->all(), $i);
 
             Event::dispatch('promotions.cart_rule.update.after', $cartRule);
 
@@ -152,19 +123,17 @@ class CartRuleController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $this->cartRuleRepository->findOrFail($id);
+        $this->cartRuleRepository->findOrFail($i);
 
         try {
-            Event::dispatch('promotions.cart_rule.delete.before', $id);
+            Event::dispatch('promotions.cart_rule.delete.before', $i);
 
-            $this->cartRuleRepository->delete($id);
+            $this->cartRuleRepository->delete($i);
 
-            Event::dispatch('promotions.cart_rule.delete.after', $id);
+            Event::dispatch('promotions.cart_rule.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.marketing.promotions.cart-rules.delete-success'

@@ -10,11 +10,7 @@ use Webkul\Sales\Models\Order;
 
 class ShipmentRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected OrderRepository $orderRepository,
         protected OrderItemRepository $orderItemRepository,
@@ -24,45 +20,38 @@ class ShipmentRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return 'Webkul\Sales\Contracts\Shipment';
     }
 
-    /**
-     * Create.
-     *
-     * @param  string  $orderState
-     * @return \Webkul\Sales\Contracts\Shipment
-     */
-    public function create(array $data, $orderState = null)
+
+    public function create(array $dat, $orderState = null)
     {
         DB::beginTransaction();
 
         try {
-            Event::dispatch('sales.shipment.save.before', $data);
+            Event::dispatch('sales.shipment.save.before', $dat);
 
-            $order = $this->orderRepository->find($data['order_id']);
+            $o = $this->orderRepository->find($dat['order_id']);
 
             $shipment = $this->model->create([
-                'order_id'            => $order->id,
+                'order_id'            => $o->id,
                 'total_qty'           => 0,
                 'total_weight'        => 0,
-                'carrier_title'       => $data['shipment']['carrier_title'],
-                'track_number'        => $data['shipment']['track_number'],
-                'customer_id'         => $order->customer_id,
-                'customer_type'       => $order->customer_type,
-                'order_address_id'    => $order->shipping_address->id,
-                'inventory_source_id' => $data['shipment']['source'],
+                'carrier_title'       => $dat['shipment']['carrier_title'],
+                'track_number'        => $dat['shipment']['track_number'],
+                'customer_id'         => $o->customer_id,
+                'customer_type'       => $o->customer_type,
+                'order_address_id'    => $o->shipping_address->id,
+                'inventory_source_id' => $dat['shipment']['source'],
             ]);
 
             $totalQty = $totalWeight = 0;
 
-            foreach ($data['shipment']['items'] as $itemId => $inventorySource) {
-                $qty = $inventorySource[$data['shipment']['source']];
+            foreach ($dat['shipment']['items'] as $itemId => $inventorySource) {
+                $qty = $inventorySource[$dat['shipment']['source']];
 
                 $orderItem = $this->orderItemRepository->find($itemId);
 
@@ -104,7 +93,7 @@ class ShipmentRepository extends Repository
                             'shipment'  => $shipment,
                             'product'   => $child->product,
                             'qty'       => $finalQty,
-                            'vendor_id' => $data['vendor_id'] ?? 0,
+                            'vendor_id' => $dat['vendor_id'] ?? 0,
                         ]);
 
                         $this->orderItemRepository->update(['qty_shipped' => $child->qty_shipped + $finalQty], $child->id);
@@ -114,7 +103,7 @@ class ShipmentRepository extends Repository
                         'shipment'  => $shipment,
                         'product'   => $orderItem->product,
                         'qty'       => $qty,
-                        'vendor_id' => $data['vendor_id'] ?? 0,
+                        'vendor_id' => $dat['vendor_id'] ?? 0,
                     ]);
                 }
 
@@ -128,11 +117,11 @@ class ShipmentRepository extends Repository
             ]);
 
             if (isset($orderState)) {
-                $this->orderRepository->updateOrderStatus($order, $orderState);
-            } elseif ($order->hasOpenInvoice()) {
-                $this->orderRepository->updateOrderStatus($order, Order::STATUS_PENDING_PAYMENT);
+                $this->orderRepository->updateOrderStatus($o, $orderState);
+            } elseif ($o->hasOpenInvoice()) {
+                $this->orderRepository->updateOrderStatus($o, Order::STATUS_PENDING_PAYMENT);
             } else {
-                $this->orderRepository->updateOrderStatus($order);
+                $this->orderRepository->updateOrderStatus($o);
             }
 
             Event::dispatch('sales.shipment.save.after', $shipment);

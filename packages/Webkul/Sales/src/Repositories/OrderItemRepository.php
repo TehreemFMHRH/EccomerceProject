@@ -9,17 +9,13 @@ use Webkul\Sales\Contracts\OrderItem;
 
 class OrderItemRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return OrderItem::class;
     }
 
-    /**
-     * Collect totals.
-     */
+    
     public function collectTotals(OrderItem $orderItem): OrderItem
     {
         $qtyShipped = $qtyInvoiced = $qtyRefunded = 0;
@@ -75,9 +71,7 @@ class OrderItemRepository extends Repository
         return $orderItem;
     }
 
-    /**
-     * Manage inventory.
-     */
+    
     public function manageInventory(OrderItem $orderItem): void
     {
         $orderItems = [];
@@ -127,9 +121,7 @@ class OrderItemRepository extends Repository
         }
     }
 
-    /**
-     * Returns qty to product inventory after order cancellation.
-     */
+    
     public function returnQtyToProductInventory(OrderItem $orderItem): void
     {
         if (! $orderItem->product) {
@@ -165,9 +157,7 @@ class OrderItemRepository extends Repository
         }
     }
 
-    /**
-     * Update product ordered quantity.
-     */
+    
     public function updateProductOrderedInventories(OrderItem $orderItem): void
     {
         $orderedInventory = $orderItem->product->ordered_inventories()
@@ -191,9 +181,7 @@ class OrderItemRepository extends Repository
         $orderedInventory->update(['qty' => $qty]);
     }
 
-    /**
-     * Manage customizable options.
-     */
+    
     public function manageCustomizableOptions(OrderItem $orderItem): void
     {
         if (

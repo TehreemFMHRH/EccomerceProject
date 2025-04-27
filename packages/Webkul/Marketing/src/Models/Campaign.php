@@ -14,18 +14,10 @@ class Campaign extends Model implements CampaignContract
 {
     use HasFactory;
 
-    /**
-     * Define the table name for the model
-     *
-     * @var string
-     */
+    
     protected $table = 'marketing_campaigns';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'name',
         'subject',
@@ -37,41 +29,31 @@ class Campaign extends Model implements CampaignContract
         'marketing_event_id',
     ];
 
-    /**
-     * Get the event
-     */
+    
     public function event()
     {
         return $this->belongsTo(EventProxy::modelClass(), 'marketing_event_id');
     }
 
-    /**
-     * Get the channel
-     */
+    
     public function channel()
     {
         return $this->belongsTo(ChannelProxy::modelClass(), 'channel_id');
     }
 
-    /**
-     * Get the customer group
-     */
+    
     public function customer_group()
     {
         return $this->belongsTo(CustomerGroupProxy::modelClass(), 'customer_group_id');
     }
 
-    /**
-     * Get the email template
-     */
+    
     public function email_template()
     {
         return $this->belongsTo(TemplateProxy::modelClass(), 'marketing_template_id');
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return CampaignFactory::new();

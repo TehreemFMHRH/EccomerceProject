@@ -14,22 +14,13 @@ class UpdateCreateIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  array  $productIds
-     * @return void
-     */
+    
     public function __construct(protected $productIds)
     {
         $this->productIds = $productIds;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         if (core()->getConfigData('catalog.products.search.engine') != 'elastic') {

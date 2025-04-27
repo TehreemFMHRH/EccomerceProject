@@ -11,18 +11,10 @@ use Webkul\Tax\Repositories\TaxRateRepository;
 
 class TaxRateController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected TaxRateRepository $taxRateRepository) {}
 
-    /**
-     * Display a listing resource for the available tax rates.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,11 +24,7 @@ class TaxRateController extends Controller
         return view('admin::settings.taxes.rates.index');
     }
 
-    /**
-     * Display a create form for tax rate.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         if (request()->ajax()) {
@@ -46,11 +34,7 @@ class TaxRateController extends Controller
         return view('admin::settings.taxes.rates.create');
     }
 
-    /**
-     * Create the tax rate.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(TaxRateRequest $request)
     {
         Event::dispatch('tax.rate.create.before');
@@ -73,26 +57,18 @@ class TaxRateController extends Controller
         return redirect()->route('admin.settings.taxes.rates.index');
     }
 
-    /**
-     * Show the edit form for the previously created tax rates.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $taxRate = $this->taxRateRepository->findOrFail($id);
+        $taxRate = $this->taxRateRepository->findOrFail($i);
 
         return view('admin::settings.taxes.rates.edit')->with('taxRate', $taxRate);
     }
 
-    /**
-     * Edit the previous tax rate.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(TaxRateRequest $request, int $id)
+    
+    public function update(TaxRateRequest $request, int $i)
     {
-        Event::dispatch('tax.rate.update.before', $id);
+        Event::dispatch('tax.rate.update.before', $i);
 
         $taxRate = $this->taxRateRepository->update($request->only([
             'identifier',
@@ -103,7 +79,7 @@ class TaxRateController extends Controller
             'is_zip',
             'zip_from',
             'zip_to',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('tax.rate.update.after', $taxRate);
 
@@ -112,17 +88,15 @@ class TaxRateController extends Controller
         return redirect()->route('admin.settings.taxes.rates.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            Event::dispatch('tax.rate.delete.before', $id);
+            Event::dispatch('tax.rate.delete.before', $i);
 
-            $this->taxRateRepository->delete($id);
+            $this->taxRateRepository->delete($i);
 
-            Event::dispatch('tax.rate.delete.after', $id);
+            Event::dispatch('tax.rate.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.taxes.rates.delete-success'),

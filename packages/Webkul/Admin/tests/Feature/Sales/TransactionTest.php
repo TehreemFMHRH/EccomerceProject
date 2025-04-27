@@ -46,13 +46,13 @@ it('should fails the validation error when store the transaction when certain in
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -69,10 +69,10 @@ it('should fails the validation error when store the transaction when certain in
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -82,19 +82,19 @@ it('should fails the validation error when store the transaction when certain in
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -104,17 +104,17 @@ it('should fails the validation error when store the transaction when certain in
         'method_title' => core()->getConfigData('sales.payment_methods.'.$paymentMethod.'.title'),
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
@@ -122,22 +122,22 @@ it('should fails the validation error when store the transaction when certain in
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     $invoice = Invoice::factory([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'state'    => 'paid',
     ])->create();
 
@@ -181,7 +181,7 @@ it('should fails the validation error when store the transaction when certain in
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -213,7 +213,7 @@ it('should fails the validation error when store the transaction when certain in
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -252,13 +252,13 @@ it('should store the order transaction', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -275,10 +275,10 @@ it('should store the order transaction', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -288,19 +288,19 @@ it('should store the order transaction', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -319,12 +319,12 @@ it('should store the order transaction', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -332,7 +332,7 @@ it('should store the order transaction', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -343,30 +343,30 @@ it('should store the order transaction', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory([
-        'order_id'         => $order->id,
-        'sub_total'        => $order->grand_total,
-        'base_sub_total'   => $order->grand_total,
-        'grand_total'      => $order->grand_total,
-        'base_grand_total' => $order->grand_total,
+        'order_id'         => $o->id,
+        'sub_total'        => $o->grand_total,
+        'base_sub_total'   => $o->grand_total,
+        'grand_total'      => $o->grand_total,
+        'base_grand_total' => $o->grand_total,
         'increment_id'     => app(InvoiceSequencer::class)->resolveGeneratorClass(),
     ])->create();
 
@@ -394,7 +394,7 @@ it('should store the order transaction', function () {
     postJson(route('admin.sales.transactions.store'), [
         'invoice_id'     => $invoice->id,
         'payment_method' => $orderPayment->method,
-        'amount'         => $order->grand_total,
+        'amount'         => $o->grand_total,
     ])
         ->assertOk()
         ->assertJsonPath('message', trans('admin::app.sales.transactions.index.create.transaction-saved'));
@@ -411,7 +411,7 @@ it('should store the order transaction', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -447,7 +447,7 @@ it('should store the order transaction', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -466,7 +466,7 @@ it('should store the order transaction', function () {
 
         Invoice::class => [
             [
-                'order_id' => $order->id,
+                'order_id' => $o->id,
                 'state'    => 'paid',
             ],
         ],
@@ -479,7 +479,7 @@ it('should store the order transaction', function () {
             [
                 'status'     => 'paid',
                 'invoice_id' => $invoice->id,
-                'order_id'   => $order->id,
+                'order_id'   => $o->id,
             ],
         ],
     ]);
@@ -501,13 +501,13 @@ it('should view the transaction', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -524,10 +524,10 @@ it('should view the transaction', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -537,19 +537,19 @@ it('should view the transaction', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -568,12 +568,12 @@ it('should view the transaction', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -581,7 +581,7 @@ it('should view the transaction', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -592,31 +592,31 @@ it('should view the transaction', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -677,7 +677,7 @@ it('should view the transaction', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -715,7 +715,7 @@ it('should view the transaction', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -733,7 +733,7 @@ it('should view the transaction', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [

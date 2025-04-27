@@ -8,11 +8,7 @@ use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 
 class DownloadableLinkPurchasedRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ProductDownloadableLinkRepository $productDownloadableLinkRepository,
         Container $container
@@ -20,18 +16,13 @@ class DownloadableLinkPurchasedRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify Model class name
-     */
+    
     public function model(): string
     {
         return 'Webkul\Sales\Contracts\DownloadableLinkPurchased';
     }
 
-    /**
-     * @param  \Webkul\Sales\Contracts\OrderItem  $orderItem
-     * @return void
-     */
+    
     public function saveLinks($orderItem)
     {
         if (! $this->isValidDownloadableProduct($orderItem)) {
@@ -59,11 +50,7 @@ class DownloadableLinkPurchasedRepository extends Repository
         }
     }
 
-    /**
-     * Return true, if ordered item is valid downloadable product with links
-     *
-     * @param  \Webkul\Sales\Contracts\OrderItem  $orderItem
-     */
+    
     private function isValidDownloadableProduct($orderItem): bool
     {
         if (
@@ -76,17 +63,13 @@ class DownloadableLinkPurchasedRepository extends Repository
         return false;
     }
 
-    /**
-     * @param  \Webkul\Sales\Contracts\OrderItem  $orderItem
-     * @param  string  $status
-     * @return void
-     */
-    public function updateStatus($orderItem, $status)
+    
+    public function updateStatus($orderItem, $st)
     {
         $purchasedLinks = $this->findByField('order_item_id', $orderItem->id);
 
         foreach ($purchasedLinks as $purchasedLink) {
-            if ($status == 'expired') {
+            if ($st == 'expired') {
                 if (count($purchasedLink->order_item->invoice_items) > 0) {
                     $totalInvoiceQty = 0;
 
@@ -98,18 +81,18 @@ class DownloadableLinkPurchasedRepository extends Repository
                     $totalInvoiceQty = $totalInvoiceQty * ($purchasedLink->download_bought / $orderedQty);
 
                     $this->update([
-                        'status'            => $purchasedLink->download_used == $totalInvoiceQty ? $status : $purchasedLink->status,
+                        'status'            => $purchasedLink->download_used == $totalInvoiceQty ? $st : $purchasedLink->status,
                         'download_canceled' => $purchasedLink->download_bought - $totalInvoiceQty,
                     ], $purchasedLink->id);
                 } else {
                     $this->update([
-                        'status'            => $status,
+                        'status'            => $st,
                         'download_canceled' => $purchasedLink->download_bought,
                     ], $purchasedLink->id);
                 }
             } else {
                 $this->update([
-                    'status' => $status,
+                    'status' => $st,
                 ], $purchasedLink->id);
             }
         }

@@ -16,11 +16,7 @@ class Admin extends Authenticatable implements AdminContract
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'name',
         'email',
@@ -31,20 +27,14 @@ class Admin extends Authenticatable implements AdminContract
         'status',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+    
     protected $hidden = [
         'password',
         'api_token',
         'remember_token',
     ];
 
-    /**
-     * Get image url for the product image.
-     */
+    
     public function image_url()
     {
         if (! $this->image) {
@@ -54,17 +44,13 @@ class Admin extends Authenticatable implements AdminContract
         return Storage::url($this->image);
     }
 
-    /**
-     * Get image url for the product image.
-     */
+    
     public function getImageUrlAttribute()
     {
         return $this->image_url();
     }
 
-    /**
-     * @return array
-     */
+    
     public function toArray()
     {
         $array = parent::toArray();
@@ -74,22 +60,13 @@ class Admin extends Authenticatable implements AdminContract
         return $array;
     }
 
-    /**
-     * Get the role that owns the admin.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    
     public function role()
     {
         return $this->belongsTo(RoleProxy::modelClass());
     }
 
-    /**
-     * Checks if admin has permission to perform certain action.
-     *
-     * @param  string  $permission
-     * @return bool
-     */
+    
     public function hasPermission($permission)
     {
         if (
@@ -102,20 +79,13 @@ class Admin extends Authenticatable implements AdminContract
         return in_array($permission, $this->role->permissions);
     }
 
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
+    
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token));
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return AdminFactory::new();

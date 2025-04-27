@@ -6,9 +6,7 @@ use GuzzleHttp\Client;
 
 class Ollama
 {
-    /**
-     * New service instance.
-     */
+    
     public function __construct(
         protected string $model,
         protected string $prompt,
@@ -17,16 +15,14 @@ class Ollama
         protected bool $raw,
     ) {}
 
-    /**
-     * Set LLM prompt text.
-     */
+    
     public function ask(): string
     {
         $httpClient = new Client;
 
         $endpoint = core()->getConfigData('general.magic_ai.settings.api_domain').'/api/generate';
 
-        $result = $httpClient->request('POST', $endpoint, [
+        res = $httpClient->request('POST', $endpoint, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -38,8 +34,8 @@ class Ollama
             ],
         ]);
 
-        $result = json_decode($result->getBody()->getContents(), true);
+        res = json_decode(res->getBody()->getContents(), true);
 
-        return $result['response'];
+        return res['response'];
     }
 }

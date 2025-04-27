@@ -6,20 +6,13 @@ use Webkul\Core\Eloquent\Repository;
 
 class SearchSynonymRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return 'Webkul\Marketing\Contracts\SearchSynonym';
     }
 
-    /**
-     * Returns synonyms by query
-     *
-     * @param  string  $query
-     * @return array
-     */
+    
     public function getSynonymsByQuery($query)
     {
         $synonyms = [$query];

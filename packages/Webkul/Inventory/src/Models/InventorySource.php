@@ -14,9 +14,7 @@ class InventorySource extends Model implements InventorySourceContract
 
     protected $guarded = ['_token'];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return InventorySourceFactory::new();

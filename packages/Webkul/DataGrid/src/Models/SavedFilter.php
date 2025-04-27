@@ -10,18 +10,10 @@ class SavedFilter extends Model implements SavedFilterContract
 {
     use HasFactory;
 
-    /**
-     * Deinfine model table name.
-     *
-     * @var string
-     */
+    
     protected $table = 'datagrid_saved_filters';
 
-    /**
-     * Fillable property for the model.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'user_id',
         'src',
@@ -29,11 +21,7 @@ class SavedFilter extends Model implements SavedFilterContract
         'applied',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'applied' => 'json',
     ];

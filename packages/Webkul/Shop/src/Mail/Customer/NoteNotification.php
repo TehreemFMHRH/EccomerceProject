@@ -10,16 +10,10 @@ use Webkul\Shop\Mail\Mailable;
 
 class NoteNotification extends Mailable
 {
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public CustomerNote $customerNote) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -30,9 +24,7 @@ class NoteNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

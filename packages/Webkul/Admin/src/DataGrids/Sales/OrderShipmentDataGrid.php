@@ -8,18 +8,10 @@ use Webkul\Sales\Models\OrderAddress;
 
 class OrderShipmentDataGrid extends DataGrid
 {
-    /**
-     * Shipment Id.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'shipment_id';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('shipments')
@@ -50,11 +42,7 @@ class OrderShipmentDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -119,11 +107,7 @@ class OrderShipmentDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('sales.shipments.view')) {

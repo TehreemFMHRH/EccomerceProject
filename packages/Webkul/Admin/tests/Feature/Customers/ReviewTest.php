@@ -38,12 +38,12 @@ it('should return the edit page of the review', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $productReview = ProductReview::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
-        'name'        => $customer->name,
+        'customer_id' => $k->id,
+        'name'        => $k->name,
     ]);
 
     $attachment = UploadedFile::fake()->image('test.png');
@@ -108,12 +108,12 @@ it('should fail the validation with errors for status for review update', functi
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $productReview = ProductReview::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
-        'name'        => $customer->name,
+        'customer_id' => $k->id,
+        'name'        => $k->name,
     ]);
 
     $attachment = UploadedFile::fake()->image('test.png');
@@ -176,12 +176,12 @@ it('should update the status of the review', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $productReview = ProductReview::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
-        'name'        => $customer->name,
+        'customer_id' => $k->id,
+        'name'        => $k->name,
     ]);
 
     $attachment = UploadedFile::fake()->image('test.png');
@@ -199,7 +199,7 @@ it('should update the status of the review', function () {
     $this->loginAsAdmin();
 
     putJson(route('admin.customers.customers.review.update', $productReview->id), [
-        'status' => $status = Arr::random(['approved', 'disapproved', 'pending']),
+        'status' => $st = Arr::random(['approved', 'disapproved', 'pending']),
     ])
         ->assertOk()
         ->assertJsonPath('message', trans('admin::app.customers.reviews.update-success'));
@@ -220,7 +220,7 @@ it('should update the status of the review', function () {
                 'title'       => $productReview->title,
                 'rating'      => $productReview->rating,
                 'comment'     => $productReview->comment,
-                'status'      => $status,
+                'status'      => $st,
                 'product_id'  => $productReview->product_id,
                 'customer_id' => $productReview->customer_id,
             ],
@@ -246,12 +246,12 @@ it('should delete the review', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $productReview = ProductReview::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
-        'name'        => $customer->name,
+        'customer_id' => $k->id,
+        'name'        => $k->name,
     ]);
 
     $attachment = UploadedFile::fake()->image('test.png');
@@ -299,12 +299,12 @@ it('should mass delete the product review', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $productReviews = ProductReview::factory()->count(5)->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
-        'name'        => $customer->name,
+        'customer_id' => $k->id,
+        'name'        => $k->name,
     ]);
 
     $productReviewAttachments = [];
@@ -348,7 +348,7 @@ it('should mass delete the product review', function () {
 
 it('should mass update the product review', function () {
     // Arrange.
-    $status = Arr::random(['approved', 'disapproved', 'pending']);
+    $st = Arr::random(['approved', 'disapproved', 'pending']);
 
     $product = (new ProductFaker([
         'attributes' => [
@@ -365,7 +365,7 @@ it('should mass update the product review', function () {
         ->create();
 
     $productReviews = ProductReview::factory()->count(2)->create([
-        'status'     => $status,
+        'status'     => $st,
         'product_id' => $product->id,
     ]);
 
@@ -374,7 +374,7 @@ it('should mass update the product review', function () {
 
     postJson(route('admin.customers.customers.review.mass_update', [
         'indices' => $productReviews->pluck('id')->toArray(),
-        'value'   => $status,
+        'value'   => $st,
     ]))
         ->assertOk()
         ->assertSeeText(trans('admin::app.customers.reviews.index.datagrid.mass-update-success'));

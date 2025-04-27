@@ -6,9 +6,7 @@ use Carbon\Carbon;
 
 class DefaultSlot extends Booking
 {
-    /**
-     * @return array
-     */
+    
     protected $daysOfWeek = [
         'Sunday',
         'Monday',
@@ -19,11 +17,7 @@ class DefaultSlot extends Booking
         'Saturday',
     ];
 
-    /**
-     * Returns slots for a particular day
-     *
-     * @param  \Webkul\BookingProduct\Contracts\BookingProduct  $bookingProduct
-     */
+    
     public function getSlotsByDate($bookingProduct, string $date): array
     {
         $bookingProductSlot = $this->typeRepositories[$bookingProduct->type]->findOneByField('booking_product_id', $bookingProduct->id);
@@ -54,11 +48,7 @@ class DefaultSlot extends Booking
             : $this->getManyBookingsForOneDaySlots($bookingProductSlot, $requestedDate);
     }
 
-    /**
-     * Returns slots for One Booking For Many Days
-     *
-     * @param  \Webkul\BookingProduct\Contracts\BookingProductTableSlot  $bookingProductSlot
-     */
+    
     public function getOneBookingForManyDaysSlots($bookingProductSlot, object $requestedDate)
     {
         $slots = [];
@@ -86,11 +76,7 @@ class DefaultSlot extends Booking
         return $slots;
     }
 
-    /**
-     * Returns slots for Many Bookings for One Day
-     *
-     * @param  \Webkul\BookingProduct\Contracts\BookingProductTableSlot  $bookingProductSlot
-     */
+    
     public function getManyBookingsForOneDaySlots($bookingProductSlot, object $requestedDate)
     {
         return $this->slotsCalculation($bookingProductSlot->booking_product, $requestedDate, $bookingProductSlot);

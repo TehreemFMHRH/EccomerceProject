@@ -10,17 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ThemeCustomizationTableSeeder extends Seeder
 {
-    /**
-     * Base path for the images.
-     */
+    
     const BASE_PATH = 'packages/Webkul/Installer/src/Resources/assets/images/seeders/theme/';
 
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('theme_customizations')->delete();
@@ -151,9 +144,7 @@ class ThemeCustomizationTableSeeder extends Seeder
         foreach ($locales as $locale) {
             DB::table('theme_customization_translations')
                 ->insert([
-                    /**
-                     * Customizations for current locale
-                     */
+                    
                     [
                         'theme_customization_id' => 1,
                         'locale'                 => $locale,
@@ -344,11 +335,7 @@ class ThemeCustomizationTableSeeder extends Seeder
         }
     }
 
-    /**
-     * Store image in storage.
-     *
-     * @return void
-     */
+    
     public function storeFileIfExists($targetPath, $file, $default = null)
     {
         if (file_exists(base_path(self::BASE_PATH.$file))) {

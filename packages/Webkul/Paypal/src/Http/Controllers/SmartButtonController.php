@@ -10,22 +10,14 @@ use Webkul\Sales\Transformers\OrderResource;
 
 class SmartButtonController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected SmartButton $smartButton,
         protected OrderRepository $orderRepository,
         protected InvoiceRepository $invoiceRepository
     ) {}
 
-    /**
-     * Paypal order creation for approval of client.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function createOrder()
     {
         try {
@@ -35,11 +27,7 @@ class SmartButtonController extends Controller
         }
     }
 
-    /**
-     * Capturing paypal order after approval.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function captureOrder()
     {
         try {
@@ -51,18 +39,14 @@ class SmartButtonController extends Controller
         }
     }
 
-    /**
-     * Build request body.
-     *
-     * @return array
-     */
+
     protected function buildRequestBody()
     {
         $cart = Cart::getCart();
 
         $billingAddressLines = $this->getAddressLines($cart->billing_address->address);
 
-        $data = [
+        $dat = [
             'intent' => 'CAPTURE',
 
             'payer'  => [
@@ -122,7 +106,7 @@ class SmartButtonController extends Controller
         ];
 
         if (! empty($cart->billing_address->phone)) {
-            $data['payer']['phone'] = [
+            $dat['payer']['phone'] = [
                 'phone_type'   => 'MOBILE',
 
                 'phone_number' => [
@@ -135,9 +119,9 @@ class SmartButtonController extends Controller
             $cart->haveStockableItems()
             && $cart->shipping_address
         ) {
-            $data['application_context']['shipping_preference'] = 'SET_PROVIDED_ADDRESS';
+            $dat['application_context']['shipping_preference'] = 'SET_PROVIDED_ADDRESS';
 
-            $data['purchase_units'][0] = array_merge($data['purchase_units'][0], [
+            $dat['purchase_units'][0] = array_merge($dat['purchase_units'][0], [
                 'shipping' => [
                     'address' => [
                         'address_line_1' => current($billingAddressLines),
@@ -151,15 +135,10 @@ class SmartButtonController extends Controller
             ]);
         }
 
-        return $data;
+        return $dat;
     }
 
-    /**
-     * Return cart items.
-     *
-     * @param  string  $cart
-     * @return array
-     */
+
     protected function getLineItems($cart)
     {
         $lineItems = [];
@@ -180,20 +159,15 @@ class SmartButtonController extends Controller
         return $lineItems;
     }
 
-    /**
-     * Return convert multiple address lines into 2 address lines.
-     *
-     * @param  string  $address
-     * @return array
-     */
-    protected function getAddressLines($address)
+
+    protected function getAddressLines($addr)
     {
-        $address = explode(PHP_EOL, $address, 2);
+        $addr = explode(PHP_EOL, $addr, 2);
 
-        $addressLines = [current($address)];
+        $addressLines = [current($addr)];
 
-        if (isset($address[1])) {
-            $addressLines[] = str_replace(["\r\n", "\r", "\n"], ' ', last($address));
+        if (isset($addr[1])) {
+            $addressLines[] = str_replace(["\r\n", "\r", "\n"], ' ', last($addr));
         } else {
             $addressLines[] = '';
         }
@@ -201,11 +175,7 @@ class SmartButtonController extends Controller
         return $addressLines;
     }
 
-    /**
-     * Saving order once captured and all formalities done.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     protected function saveOrder()
     {
         if (Cart::hasError()) {
@@ -219,19 +189,19 @@ class SmartButtonController extends Controller
 
             $cart = Cart::getCart();
 
-            $data = (new OrderResource($cart))->jsonSerialize();
+            $dat = (new OrderResource($cart))->jsonSerialize();
 
-            $order = $this->orderRepository->create($data);
+            $o = $this->orderRepository->create($dat);
 
-            $this->orderRepository->update(['status' => 'processing'], $order->id);
+            $this->orderRepository->update(['status' => 'processing'], $o->id);
 
-            if ($order->canInvoice()) {
-                $this->invoiceRepository->create($this->prepareInvoiceData($order));
+            if ($o->canInvoice()) {
+                $this->invoiceRepository->create($this->prepareInvoiceData($o));
             }
 
             Cart::deActivateCart();
 
-            session()->flash('order_id', $order->id);
+            session()->flash('order_id', $o->id);
 
             return response()->json([
                 'success' => true,
@@ -243,28 +213,19 @@ class SmartButtonController extends Controller
         }
     }
 
-    /**
-     * Prepares order's invoice data for creation.
-     *
-     * @param  \Webkul\Sales\Models\Order  $order
-     * @return array
-     */
-    protected function prepareInvoiceData($order)
-    {
-        $invoiceData = ['order_id' => $order->id];
 
-        foreach ($order->items as $item) {
+    protected function prepareInvoiceData($o)
+    {
+        $invoiceData = ['order_id' => $o->id];
+
+        foreach ($o->items as $item) {
             $invoiceData['invoice']['items'][$item->id] = $item->qty_to_invoice;
         }
 
         return $invoiceData;
     }
 
-    /**
-     * Validate order before creation.
-     *
-     * @return void|\Exception
-     */
+
     protected function validateOrder()
     {
         $cart = Cart::getCart();

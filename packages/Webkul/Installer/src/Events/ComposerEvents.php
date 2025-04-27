@@ -6,11 +6,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ComposerEvents
 {
-    /**
-     * Post create project.
-     *
-     * @return void
-     */
+    
     public static function postCreateProject()
     {
         $output = new ConsoleOutput;

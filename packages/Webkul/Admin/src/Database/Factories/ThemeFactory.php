@@ -7,16 +7,10 @@ use Webkul\Theme\Models\ThemeCustomization as ThemeCustomizationModel;
 
 class ThemeFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = ThemeCustomizationModel::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition()
     {
         $lastTheme = ThemeCustomizationModel::query()->orderBy('id', 'desc')->limit(1)->first();

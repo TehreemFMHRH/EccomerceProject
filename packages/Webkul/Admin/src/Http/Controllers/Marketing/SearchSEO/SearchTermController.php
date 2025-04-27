@@ -12,18 +12,10 @@ use Webkul\Marketing\Repositories\SearchTermRepository;
 
 class SearchTermController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public SearchTermRepository $searchTermRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -33,9 +25,7 @@ class SearchTermController extends Controller
         return view('admin::marketing.search-seo.search-terms.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -61,14 +51,10 @@ class SearchTermController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request()->id;
+        $i = request()->id;
 
         $this->validate(request(), [
             'term'         => 'required',
@@ -77,7 +63,7 @@ class SearchTermController extends Controller
             'locale'       => 'required|exists:locales,code',
         ]);
 
-        Event::dispatch('marketing.search_seo.search_terms.update.before', $id);
+        Event::dispatch('marketing.search_seo.search_terms.update.before', $i);
 
         $searchTerm = $this->searchTermRepository->update(request()->only([
             'term',
@@ -86,7 +72,7 @@ class SearchTermController extends Controller
             'redirect_url',
             'channel_id',
             'locale',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('marketing.search_seo.search_terms.update.after', $searchTerm);
 
@@ -95,20 +81,15 @@ class SearchTermController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function destroy($id)
+    
+    public function destroy($i)
     {
         try {
-            Event::dispatch('marketing.search_seo.search_terms.delete.before', $id);
+            Event::dispatch('marketing.search_seo.search_terms.delete.before', $i);
 
-            $this->searchTermRepository->delete($id);
+            $this->searchTermRepository->delete($i);
 
-            Event::dispatch('marketing.search_seo.search_terms.delete.after', $id);
+            Event::dispatch('marketing.search_seo.search_terms.delete.after', $i);
 
             return response()->json([
                 'message' => trans('admin::app.marketing.search-seo.search-terms.index.edit.delete-success'),
@@ -121,9 +102,7 @@ class SearchTermController extends Controller
         ], 500);
     }
 
-    /**
-     * Mass delete the search terms.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $searchTermIds = $massDestroyRequest->input('indices');

@@ -10,19 +10,13 @@ use Webkul\Customer\Contracts\Customer;
 
 class NewCustomerNotification extends Mailable
 {
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
-        public Customer $customer,
+        public Customer $k,
         public string $password
     ) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -33,9 +27,7 @@ class NewCustomerNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

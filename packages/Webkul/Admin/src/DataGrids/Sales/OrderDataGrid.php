@@ -10,11 +10,7 @@ use Webkul\Sales\Repositories\OrderRepository;
 
 class OrderDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('orders')
@@ -49,11 +45,7 @@ class OrderDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -167,9 +159,7 @@ class OrderDataGrid extends DataGrid
             'sortable'   => true,
         ]);
 
-        /**
-         * Searchable dropdown sample. In testing phase.
-         */
+        
         $this->addColumn([
             'index'      => 'customer_email',
             'label'      => trans('admin::app.sales.orders.index.datagrid.email'),
@@ -190,8 +180,8 @@ class OrderDataGrid extends DataGrid
             'label'      => trans('admin::app.sales.orders.index.datagrid.items'),
             'type'       => 'string',
             'exportable' => false,
-            'closure'    => function ($value) {
-                $order = app(OrderRepository::class)->with('items')->find($value->id);
+            'closure'    => function ($va) {
+                $o = app(OrderRepository::class)->with('items')->find($va->id);
 
                 return view('admin::sales.orders.items', compact('order'))->render();
             },
@@ -207,11 +197,7 @@ class OrderDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('sales.orders.view')) {

@@ -8,38 +8,29 @@ use Webkul\Sales\Contracts\Order as OrderContract;
 
 class Order extends Base
 {
-    /**
-     * After order is created
-     *
-     * @return void
-     */
-    public function afterCreated(OrderContract $order)
+    
+    public function afterCreated(OrderContract $o)
     {
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order_mail_to_admin')) {
                 return;
             }
 
-            $this->prepareMail($order, new CreatedNotification($order));
+            $this->prepareMail($o, new CreatedNotification($o));
         } catch (\Exception $e) {
             report($e);
         }
     }
 
-    /**
-     * Send cancel order mail.
-     *
-     * @param  \Webkul\Sales\Contracts\Order  $order
-     * @return void
-     */
-    public function afterCanceled($order)
+    
+    public function afterCanceled($o)
     {
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.cancel_order_mail_to_admin')) {
                 return;
             }
 
-            $this->prepareMail($order, new CanceledNotification($order));
+            $this->prepareMail($o, new CanceledNotification($o));
         } catch (\Exception $e) {
             report($e);
         }

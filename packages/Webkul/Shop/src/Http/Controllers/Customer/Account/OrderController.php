@@ -13,21 +13,13 @@ class OrderController extends Controller
 {
     use PDFHandler;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderRepository $orderRepository,
         protected InvoiceRepository $invoiceRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -37,34 +29,25 @@ class OrderController extends Controller
         return view('shop::customers.account.orders.index');
     }
 
-    /**
-     * Show the view for the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\View\View
-     */
-    public function view($id)
+    
+    public function view($i)
     {
-        $order = $this->orderRepository->findOneWhere([
+        $o = $this->orderRepository->findOneWhere([
             'customer_id' => auth()->guard('customer')->id(),
-            'id'          => $id,
+            'id'          => $i,
         ]);
 
-        abort_if(! $order, 404);
+        abort_if(! $o, 404);
 
         return view('shop::customers.account.orders.view', compact('order'));
     }
 
-    /**
-     * Reorder action for the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function reorder(int $id)
+    
+    public function reorder(int $i)
     {
-        $order = $this->orderRepository->findOrFail($id);
+        $o = $this->orderRepository->findOrFail($i);
 
-        foreach ($order->items as $item) {
+        foreach ($o->items as $item) {
             try {
                 Cart::addProduct($item->product, $item->additional);
             } catch (\Exception $e) {
@@ -75,15 +58,10 @@ class OrderController extends Controller
         return redirect()->route('shop.checkout.cart.index');
     }
 
-    /**
-     * Print and download the for the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function printInvoice($id)
+    
+    public function printInvoice($i)
     {
-        $invoice = $this->invoiceRepository->where('id', $id)
+        $invoice = $this->invoiceRepository->where('id', $i)
             ->whereHas('order', function ($query) {
                 $query->where('customer_id', auth()->guard('customer')->id());
             })
@@ -95,25 +73,20 @@ class OrderController extends Controller
         );
     }
 
-    /**
-     * Cancel action for the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function cancel($id)
+    
+    public function cancel($i)
     {
-        $customer = auth()->guard('customer')->user();
+        $k = auth()->guard('customer')->user();
 
         /* find by order id in customer's order */
-        $order = $customer->orders()->find($id);
+        $o = $k->orders()->find($i);
 
         /* if order id not found then process should be aborted with 404 page */
-        if (! $order) {
+        if (! $o) {
             abort(404);
         }
 
-        $result = $this->orderRepository->cancel($order);
+        $result = $this->orderRepository->cancel($o);
 
         if ($result) {
             session()->flash('success', trans('shop::app.customers.account.orders.view.cancel-success', ['name' => trans('admin::app.customers.account.orders.order')]));

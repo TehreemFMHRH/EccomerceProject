@@ -7,18 +7,10 @@ use Webkul\Checkout\Facades\Cart;
 
 class Shipping
 {
-    /**
-     * Rates.
-     *
-     * @var array
-     */
+    
     protected $rates = [];
 
-    /**
-     * Collects rate from available shipping methods.
-     *
-     * @return array|bool
-     */
+    
     public function collectRates()
     {
         if (! Cart::getCart()) {
@@ -50,11 +42,7 @@ class Shipping
         ];
     }
 
-    /**
-     * Remove all shipping rates.
-     *
-     * @return void
-     */
+    
     public function removeAllShippingRates()
     {
         if (! $cart = Cart::getCart()) {
@@ -66,11 +54,7 @@ class Shipping
         $this->rates = [];
     }
 
-    /**
-     * Save all shipping rates.
-     *
-     * @return void
-     */
+    
     public function saveAllShippingRates()
     {
         if (! $cart = Cart::getCart()) {
@@ -93,11 +77,7 @@ class Shipping
         }
     }
 
-    /**
-     * Returns shipping rates, grouped by shipping method.
-     *
-     * @return array
-     */
+    
     public function getGroupedAllShippingRates()
     {
         $rates = [];
@@ -118,11 +98,7 @@ class Shipping
         return $rates;
     }
 
-    /**
-     * Returns active shipping methods.
-     *
-     * @return array
-     */
+    
     public function getShippingMethods()
     {
         $methods = [];
@@ -145,12 +121,7 @@ class Shipping
         return $methods;
     }
 
-    /**
-     * Is method exist in active shipping methods.
-     *
-     * @param  string  $shippingMethodCode
-     * @return bool
-     */
+    
     public function isMethodCodeExists($shippingMethodCode)
     {
         $shippingMethods = $this->collectRates()['shippingMethods'] ?? [];

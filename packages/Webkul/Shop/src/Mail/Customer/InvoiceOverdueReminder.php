@@ -10,18 +10,10 @@ use Webkul\Sales\Contracts\Invoice;
 
 class InvoiceOverdueReminder extends Mailable
 {
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public Invoice $invoice) {}
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -35,9 +27,7 @@ class InvoiceOverdueReminder extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

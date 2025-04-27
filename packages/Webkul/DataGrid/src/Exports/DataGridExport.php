@@ -10,24 +10,16 @@ use Webkul\DataGrid\DataGrid;
 
 class DataGridExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping
 {
-    /**
-     * Create a new instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected DataGrid $datagrid) {}
 
-    /**
-     * Query.
-     */
+    
     public function query(): mixed
     {
         return $this->datagrid->getQueryBuilder();
     }
 
-    /**
-     * Headings.
-     */
+    
     public function headings(): array
     {
         return collect($this->datagrid->getColumns())
@@ -36,9 +28,7 @@ class DataGridExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMap
             ->toArray();
     }
 
-    /**
-     * Mapping.
-     */
+    
     public function map(mixed $record): array
     {
         return collect($this->datagrid->getColumns())

@@ -9,16 +9,10 @@ use Webkul\Shop\Mail\Mailable;
 
 class CanceledNotification extends Mailable
 {
-    /**
-     * Create a new CanceledNotification instance.
-     *
-     * @return void
-     */
-    public function __construct(public $order) {}
+    
+    public function __construct(public $o) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -29,9 +23,7 @@ class CanceledNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

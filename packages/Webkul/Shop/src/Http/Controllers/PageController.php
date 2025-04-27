@@ -7,22 +7,13 @@ use Webkul\Marketing\Repositories\URLRewriteRepository;
 
 class PageController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected PageRepository $pageRepository,
         protected URLRewriteRepository $urlRewriteRepository
     ) {}
 
-    /**
-     * To extract the page content and load it in the respective view file
-     *
-     * @param  string  $urlKey
-     * @return \Illuminate\View\View
-     */
+    
     public function view($urlKey)
     {
         $page = $this->pageRepository->findByUrlKey($urlKey);

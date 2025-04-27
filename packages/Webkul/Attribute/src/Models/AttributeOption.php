@@ -24,26 +24,18 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
         'attribute_id',
     ];
 
-    /**
-     * Append to the model attributes
-     *
-     * @var array
-     */
+    
     protected $appends = [
         'swatch_value_url',
     ];
 
-    /**
-     * Get the attribute that owns the attribute option.
-     */
+    
     public function attribute(): BelongsTo
     {
         return $this->belongsTo(AttributeProxy::modelClass());
     }
 
-    /**
-     * Get image url for the swatch value url.
-     */
+    
     public function swatch_value_url()
     {
         if (
@@ -56,17 +48,13 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
         return null;
     }
 
-    /**
-     * Get image url for the product image.
-     */
+    
     public function getSwatchValueUrlAttribute()
     {
         return $this->swatch_value_url();
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return AttributeOptionFactory::new();

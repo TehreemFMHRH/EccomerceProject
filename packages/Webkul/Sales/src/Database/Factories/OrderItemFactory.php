@@ -8,16 +8,10 @@ use Webkul\Sales\Models\OrderItem;
 
 class OrderItemFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = OrderItem::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         $fallbackPrice = $this->faker->randomFloat(4, 0, 1000);

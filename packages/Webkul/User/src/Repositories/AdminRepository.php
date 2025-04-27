@@ -6,17 +6,13 @@ use Webkul\Core\Eloquent\Repository;
 
 class AdminRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return 'Webkul\User\Contracts\Admin';
     }
 
-    /**
-     * Count admins with all access.
-     */
+    
     public function countAdminsWithAllAccess(): int
     {
         return $this->getModel()
@@ -26,9 +22,7 @@ class AdminRepository extends Repository
             ->count();
     }
 
-    /**
-     * Count admins with all access and active status.
-     */
+    
     public function countAdminsWithAllAccessAndActiveStatus(): int
     {
         return $this->getModel()

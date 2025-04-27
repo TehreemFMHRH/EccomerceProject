@@ -13,9 +13,7 @@ class CountryState extends TranslatableModel implements CountryStateContract
 
     protected $with = ['translations'];
 
-    /**
-     * @return array
-     */
+    
     public function toArray()
     {
         $array = parent::toArray();

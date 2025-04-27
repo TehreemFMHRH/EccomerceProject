@@ -7,12 +7,7 @@ use Webkul\Tax\Facades\Tax;
 
 class CartResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
+    
     public function toArray($request)
     {
         $taxes = collect(Tax::getTaxRatesWithAmount($this, true))->map(function ($rate) {

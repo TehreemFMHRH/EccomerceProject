@@ -9,28 +9,16 @@ use Webkul\Customer\Models\Customer;
 
 class CustomerFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Customer::class;
 
-    /**
-     * States.
-     *
-     * @var array
-     */
+    
     protected $states = [
         'male',
         'female',
     ];
 
-    /**
-     * Define the model's default state.
-     *
-     * @throws \Exception
-     */
+    
     public function definition(): array
     {
         return [
@@ -48,9 +36,7 @@ class CustomerFactory extends Factory
         ];
     }
 
-    /**
-     * Male.
-     */
+    
     public function male(): CustomerFactory
     {
         return $this->state(function (array $attributes) {
@@ -60,9 +46,7 @@ class CustomerFactory extends Factory
         });
     }
 
-    /**
-     * Female.
-     */
+    
     public function female(): CustomerFactory
     {
         return $this->state(function (array $attributes) {

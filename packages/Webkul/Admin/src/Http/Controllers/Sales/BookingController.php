@@ -9,18 +9,10 @@ use Webkul\BookingProduct\Repositories\BookingRepository;
 
 class BookingController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected BookingRepository $bookingRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -30,11 +22,7 @@ class BookingController extends Controller
         return view('admin::sales.bookings.index');
     }
 
-    /**
-     * Returns a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function get()
     {
         if (! request('view_type')) {

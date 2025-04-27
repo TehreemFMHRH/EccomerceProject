@@ -11,11 +11,7 @@ class Mailable extends BaseMailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Add the sender to the message.
-     *
-     * @param  \Illuminate\Mail\Message  $message
-     */
+    
     protected function buildFrom($message): Mailable
     {
         ! empty($this->from)

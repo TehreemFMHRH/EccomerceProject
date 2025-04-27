@@ -9,44 +9,23 @@ use Webkul\Product\Repositories\ProductCustomerGroupPriceRepository;
 
 abstract class AbstractType
 {
-    /**
-     * Product instance.
-     *
-     * @var \Webkul\Product\Contracts\Product
-     */
+    
     protected $product;
 
-    /**
-     * Channel instance.
-     *
-     * @var \Webkul\Core\Contracts\Channel
-     */
+    
     protected $channel;
 
-    /**
-     * Customer Group instance.
-     *
-     * @var \Webkul\Customer\Contracts\CustomerGroup
-     */
+    
     protected $customerGroup;
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected ProductCustomerGroupPriceRepository $productCustomerGroupPriceRepository,
         protected CatalogRuleProductPriceRepository $catalogRuleProductPriceRepository
     ) {}
 
-    /**
-     * Set current product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Helpers\Indexers\Price\AbstractPriceIndex
-     */
+    
     public function setProduct($product)
     {
         $this->product = $product;
@@ -54,12 +33,7 @@ abstract class AbstractType
         return $this;
     }
 
-    /**
-     * Set channel
-     *
-     * @param  \Webkul\Core\Contracts\Channel  $channel
-     * @return \Webkul\Product\Helpers\Indexers\Price\AbstractPriceIndex
-     */
+    
     public function setChannel($channel)
     {
         $this->channel = $channel;
@@ -67,12 +41,7 @@ abstract class AbstractType
         return $this;
     }
 
-    /**
-     * Set customer group
-     *
-     * @param  \Webkul\Customer\Contracts\CustomerGroup  $customerGroup
-     * @return \Webkul\Product\Helpers\Indexers\Price\AbstractPriceIndex
-     */
+    
     public function setCustomerGroup($customerGroup)
     {
         $this->customerGroup = $customerGroup;
@@ -80,11 +49,7 @@ abstract class AbstractType
         return $this;
     }
 
-    /**
-     * Returns product specific pricing for customer group
-     *
-     * @return array
-     */
+    
     public function getIndices()
     {
         return [
@@ -98,12 +63,7 @@ abstract class AbstractType
         ];
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @param  int  $qty
-     * @return float
-     */
+    
     public function getMinimalPrice($qty = null)
     {
         $customerGroupPrice = $this->getCustomerGroupPrice($qty ?? 1);
@@ -153,12 +113,7 @@ abstract class AbstractType
         return min($discountedPrice, $customerGroupPrice);
     }
 
-    /**
-     * Get product group price.
-     *
-     * @param  int  $qty
-     * @return float
-     */
+    
     public function getCustomerGroupPrice($qty)
     {
         $customerGroupPrices = $this->productCustomerGroupPriceRepository
@@ -204,11 +159,7 @@ abstract class AbstractType
         return $lastPrice;
     }
 
-    /**
-     * Get catalog rules product price for specific date, channel and customer group.
-     *
-     * @return mixed
-     */
+    
     public function getCatalogRulePrice()
     {
         return $this->product->catalog_rule_prices

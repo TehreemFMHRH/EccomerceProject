@@ -11,21 +11,13 @@ use Webkul\GDPR\Repositories\GDPRDataRequestRepository;
 
 class GDPRController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected GDPRDataRequestRepository $gdprDataRequestRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -35,13 +27,11 @@ class GDPRController extends Controller
         return view('admin::customers.gdpr.index');
     }
 
-    /**
-     * Method to show the form for updating a new Data Request.
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
         try {
-            $request = $this->gdprDataRequestRepository->findOrFail($id);
+            $request = $this->gdprDataRequestRepository->findOrFail($i);
 
             return new JsonResponse([
                 'data' => $request,
@@ -54,15 +44,13 @@ class GDPRController extends Controller
         }
     }
 
-    /**
-     * Method to update the Data Request information.
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         try {
             Event::dispatch('customer.gdpr-request.update.before');
 
-            $gdprRequest = $this->gdprDataRequestRepository->update(request()->all(), $id);
+            $gdprRequest = $this->gdprDataRequestRepository->update(request()->all(), $i);
 
             Event::dispatch('customer.account.gdpr-request.update.after', $gdprRequest);
 
@@ -77,13 +65,11 @@ class GDPRController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function delete(int $id)
+    
+    public function delete(int $i)
     {
         try {
-            $gdprRequest = $this->gdprDataRequestRepository->findOrFail($id);
+            $gdprRequest = $this->gdprDataRequestRepository->findOrFail($i);
 
             $gdprRequest->delete();
 

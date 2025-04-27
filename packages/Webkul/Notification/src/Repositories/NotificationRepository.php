@@ -7,17 +7,13 @@ use Webkul\Core\Eloquent\Repository;
 
 class NotificationRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+    
     public function model(): string
     {
         return 'Webkul\Notification\Contracts\Notification';
     }
 
-    /**
-     * Return Filtered Notification resources.
-     */
+    
     public function getParamsData(array $params): array
     {
         $query = $this->model->with('order');
@@ -44,11 +40,7 @@ class NotificationRepository extends Repository
         return ['notifications' => $notifications, 'status_counts' => $statusCounts];
     }
 
-    /**
-     * Return Notification resources.
-     *
-     * @return array
-     */
+    
     public function getAll(array $params = [])
     {
         $query = $this->model->with('order');

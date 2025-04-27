@@ -16,31 +16,19 @@ class UpdateCreateCatalogRuleIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Default batch size
-     */
+    
     protected const BATCH_SIZE = 100;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CatalogRule $catalogRule) {}
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         if ($this->catalogRule->status) {
             app(CatalogRuleIndex::class)->reIndexRule($this->catalogRule);
 
-            /**
-             * Reindex price index for the products associated with the catalog rule.
-             */
+            
             $productIds = $this->catalogRule->catalog_rule_products->pluck('product_id')->unique();
         } else {
             $productIds = $this->catalogRule->catalog_rule_products->pluck('product_id')->unique();
@@ -53,14 +41,7 @@ class UpdateCreateCatalogRuleIndex implements ShouldQueue
                 ->whereIn('id', $productIds)
                 ->cursorPaginate(self::BATCH_SIZE);
 
-            /**
-             * TODO:
-             *
-             * If the catalog rule is disabled and 'end_other_rules' flag is set,
-             * it indicates that this rule might have preempted the
-             * application of other rules on the products. In such a scenario,
-             * it's necessary to reindex the remaining rules for these products.
-             */
+            
             app(PriceIndexer::class)->reindexBatch($paginator->items());
 
             if (! $cursor = $paginator->nextCursor()) {

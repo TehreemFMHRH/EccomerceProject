@@ -1,192 +1,133 @@
 <?php
-
 namespace Webkul\Payment;
 
 use Illuminate\Support\Facades\Config;
 
 class Payment
 {
-    /**
-     * Returns all supported payment methods
-     *
-     * @return array
-     */
     public function getSupportedPaymentMethods()
     {
-        $methods = [];
-
-        // Example: hardcoded shipping methods for demo purposes
-        $availableMethods = ['paypal_standard', 'paypal_smart_button', 'cashondelivery', 'moneytransfer'];
-
-        foreach ($availableMethods as $method) {
-            if ($this->isPaymentAvailable($method)) {
-                $methods[] = [
-                    'method'       => $method,
-                    'method_title' => $this->getTitle($method),
-                    'description'  => $this->getDescription($method),
-                    'sort'         => $this->getSortOrder($method),
-                    'image'        => $this->getImage($method),
+        $a = [];
+        $b = ['paypal_standard', 'paypal_smart_button', 'cashondelivery', 'moneytransfer'];
+        foreach ($b as $m) {
+            if ($this->a($m)) {
+                $a[] = [
+                    'method' => $m,
+                    'method_title' => $this->b($m),
+                    'description' => $this->c($m),
+                    'sort' => $this->d($m),
+                    'image' => $this->e($m),
                 ];
             }
         }
-
-        usort($methods, function ($a, $b) {
-            return $a['sort'] <=> $b['sort'];
+        usort($a, function ($x, $y) {
+            return $x['sort'] <=> $y['sort'];
         });
-
-        return ['payment_methods' => $methods];
+        return ['payment_methods' => $a];
     }
 
-    /**
-     * Returns all supported payment methods
-     *
-     * @return array
-     */
     public function getPaymentMethods()
     {
-        $paymentMethods = [];
-
-        foreach (Config::get('payment_methods') as $paymentMethodConfig) {
-            $paymentMethod = app($paymentMethodConfig['class']);
-
-            if ($paymentMethod->isAvailable()) {
-                $paymentMethods[] = [
-                    'method'       => $paymentMethod->getCode(),
-                    'method_title' => $paymentMethod->getTitle(),
-                    'description'  => $paymentMethod->getDescription(),
-                    'sort'         => $paymentMethod->getSortOrder(),
-                    'image'        => $paymentMethod->getImage(),
+        $x = [];
+        foreach (Config::get('payment_methods') as $xCfg) {
+            $x = app($xCfg['class']);
+            if ($x->isAvailable()) {
+                $x[] = [
+                    'method' => $x->getCode(),
+                    'method_title' => $x->f1(),
+                    'description' => $x->getDescription(),
+                    'sort' => $x->getSortOrder(),
+                    'image' => $x->getImage(),
                 ];
             }
         }
-
-        usort($paymentMethods, function ($a, $b) {
-            if ($a['sort'] == $b['sort']) {
-                return 0;
-            }
-
-            return ($a['sort'] < $b['sort']) ? -1 : 1;
+        usort($x, function ($x, $y) {
+            return $x['sort'] == $y['sort'] ? 0 : ($x['sort'] < $y['sort'] ? -1 : 1);
         });
-
-        return $paymentMethods;
+        return $x;
     }
 
-    protected function isPaymentAvailable($method)
+    protected function a($m)
     {
-        switch ($method) {
+        switch ($m) {
             case 'paypal_standard':
             case 'paypal_smart_button':
             case 'cashondelivery':
             case 'moneytransfer':
                 return true;
-
             default:
                 return false;
         }
     }
 
-    protected function getTitle($method)
+    protected function b($m)
     {
-        return match ($method) {
-            'paypal_standard' => 'PayPal Standard',
-            'paypal_smart_button' => 'PayPal Smart Button',
-            'cashondelivery'    => 'Cash on Delivery',
-            'moneytransfer'    => 'Money Transfer',
-            default  => 'Unknown',
-        };
+        if ($m == 'paypal_standard') return 'PayPal Standard';
+        if ($m == 'paypal_smart_button') return 'PayPal Smart Button';
+        if ($m == 'cashondelivery') return 'Cash on Delivery';
+        if ($m == 'moneytransfer') return 'Money Transfer';
+        return 'Unknown';
     }
 
-    protected function getDescription($method)
+    protected function c($m)
     {
-        return match ($method) {
-            'paypal_standard' => 'Pay securely via PayPal',
-            'paypal_smart_button' => 'Pay securely via PayPal Options',
-            'cashondelivery'    => 'Pay with cash upon delivery',
-            'moneytransfer'    => 'Pay with cash upon delivery',
-            default  => '',
-        };
-    }
-
-    protected function getImage($method)
-    {
-        return match ($method) {
-            'paypal_standard'      => bagisto_asset('images/paypal.png', 'shop'),
-            'paypal_smart_button'  => bagisto_asset('images/paypal.png', 'shop'),
-            'cashondelivery'                  => bagisto_asset('images/cash-on-delivery.png', 'shop'),
-            'moneytransfer'        => bagisto_asset('images/money-transfer.png', 'shop'),
-            default                => '',
-        };
-    }
-
-    protected function getSortOrder($method)
-    {
-        return match ($method) {
-            'paypal_standard' => 3,
-            'paypal_smart_button' => 4,
-            'cashondelivery'    => 1,
-            'moneytransfer'    => 2,
-            default  => 99,
-        };
-    }
-
-
-    /**
-     * Returns payment redirect url if have any
-     *
-     * @param  \Webkul\Checkout\Contracts\Cart  $cart
-     * @return string
-     */
-    public function getRedirectUrl($cart)
-    {
-        $method = $cart->payment->method;
-
-        switch ($method) {
-            case 'paypal_standard':
-                return $this->getPayPalStandardRedirectUrl($cart);
-
-            case 'paypal_smart_button':
-                return $this->getPaypalSmartButtonRedirectUrl($cart);
-
-            case 'cashondelivery':
-                return null;
-
-            case 'moneytransfer':
-                return null;
-
-            default:
-                throw new \Exception("Unsupported payment method: {$method}");
+        switch ($m) {
+            case 'paypal_standard': return 'Pay securely via PayPal';
+            case 'paypal_smart_button': return 'Pay securely via PayPal Options';
+            case 'cashondelivery': return 'Pay with cash upon delivery';
+            case 'moneytransfer': return 'Pay with cash upon delivery';
+            default: return '';
         }
     }
 
-    protected function getPayPalStandardRedirectUrl($cart)
+    protected function e($m)
+    {
+        if ($m == 'paypal_standard') return bagisto_asset('images/paypal.png', 'shop');
+        if ($m == 'paypal_smart_button') return bagisto_asset('images/paypal.png', 'shop');
+        if ($m == 'cashondelivery') return bagisto_asset('images/cash-on-delivery.png', 'shop');
+        if ($m == 'moneytransfer') return bagisto_asset('images/money-transfer.png', 'shop');
+        return '';
+    }
+
+    protected function d($m)
+    {
+        if ($m == 'paypal_standard') return 3;
+        if ($m == 'paypal_smart_button') return 4;
+        if ($m == 'cashondelivery') return 1;
+        if ($m == 'moneytransfer') return 2;
+        return 99;
+    }
+
+    public function getRedirectUrl($c)
+    {
+        $m = $c->payment->method;
+        switch ($m) {
+            case 'paypal_standard': return $this->g($c);
+            case 'paypal_smart_button': return $this->h($c);
+            case 'cashondelivery': return null;
+            case 'moneytransfer': return null;
+            default: throw new \Exception("Unsupported payment method: {$m}");
+        }
+    }
+
+    protected function g($c)
     {
         return route('paypal.standard.redirect');
     }
 
-    protected function getPaypalSmartButtonRedirectUrl($cart)
+    protected function h($c)
     {
         return null;
     }
 
-    /**
-     * Returns payment method additional information
-     *
-     * @param  string  $code
-     * @return array
-     */
     public static function getAdditionalDetails($code)
     {
         switch ($code) {
-            case 'paypal_standard':
-                return ['instructions' => 'Pay via PayPal'];
-            case 'paypal_smart_button':
-                return ['instructions' => 'Pay via PayPal smart buttons'];
-            case 'cashondelivery':
-                return ['instructions' => 'Pay via Cash on delivery'];
-            case 'moneytransfer':
-                return ['instructions' => 'Pay via online money transfer'];
-
-
+            case 'paypal_standard': return ['instructions' => 'Pay via PayPal'];
+            case 'paypal_smart_button': return ['instructions' => 'Pay via PayPal smart buttons'];
+            case 'cashondelivery': return ['instructions' => 'Pay via Cash on delivery'];
+            case 'moneytransfer': return ['instructions' => 'Pay via online money transfer'];
+            default: return [];
         }
     }
 }

@@ -6,12 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductVideo
 {
-    /**
-     * Retrieve collection of videos
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getVideos($product)
     {
         if (! $product) {

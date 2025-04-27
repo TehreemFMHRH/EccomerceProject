@@ -11,36 +11,32 @@ use Webkul\Core\Eloquent\Repository;
 
 class CoreConfigRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return 'Webkul\Core\Contracts\CoreConfig';
     }
 
-    /**
-     * Create core configuration.
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
         Event::dispatch('core.configuration.save.before');
 
         if (
-            $data['locale']
-            || $data['channel']
+            $dat['locale']
+            || $dat['channel']
         ) {
-            $locale = $data['locale'];
-            $channel = $data['channel'];
+            $locale = $dat['locale'];
+            $channel = $dat['channel'];
 
-            unset($data['locale']);
-            unset($data['channel']);
+            unset($dat['locale']);
+            unset($dat['channel']);
         }
 
-        foreach ($data as $method => $fieldData) {
+        foreach ($dat as $method => $fieldData) {
             $recursiveData = $this->recursiveArray($fieldData, $method);
 
-            foreach ($recursiveData as $fieldName => $value) {
+            foreach ($recursiveData as $fieldName => $va) {
                 $field = core()->getConfigField($fieldName);
 
                 $channelBased = ! empty($field['channel_based']);
@@ -48,10 +44,10 @@ class CoreConfigRepository extends Repository
                 $localeBased = ! empty($field['locale_based']);
 
                 if (
-                    gettype($value) == 'array'
-                    && ! isset($value['delete'])
+                    gettype($va) == 'array'
+                    && ! isset($va['delete'])
                 ) {
-                    $value = implode(',', $value);
+                    $va = implode(',', $va);
                 }
 
                 if (! empty($field['channel_based'])) {
@@ -81,13 +77,13 @@ class CoreConfigRepository extends Repository
                 }
 
                 if (request()->hasFile($fieldName)) {
-                    $value = request()->file($fieldName)->store('configuration');
+                    $va = request()->file($fieldName)->store('configuration');
                 }
 
                 if (! count($coreConfigValue)) {
                     parent::create([
                         'code'         => $fieldName,
-                        'value'        => $value,
+                        'value'        => $va,
                         'locale_code'  => $localeBased ? $locale : null,
                         'channel_code' => $channelBased ? $channel : null,
                     ]);
@@ -97,12 +93,12 @@ class CoreConfigRepository extends Repository
                             Storage::delete($coreConfig['value']);
                         }
 
-                        if (isset($value['delete'])) {
+                        if (isset($va['delete'])) {
                             parent::delete($coreConfig['id']);
                         } else {
                             parent::update([
                                 'code'         => $fieldName,
-                                'value'        => $value,
+                                'value'        => $va,
                                 'locale_code'  => $localeBased ? $locale : null,
                                 'channel_code' => $channelBased ? $channel : null,
                             ], $coreConfig->id);
@@ -115,9 +111,7 @@ class CoreConfigRepository extends Repository
         Event::dispatch('core.configuration.save.after');
     }
 
-    /**
-     * Get the configuration title.
-     */
+
     protected function getTranslatedTitle(mixed $configuration): string
     {
         if (
@@ -137,9 +131,7 @@ class CoreConfigRepository extends Repository
         return '';
     }
 
-    /**
-     * Get children and fields.
-     */
+
     protected function getChildrenAndFields(mixed $configuration, string $searchTerm, array $path, array &$results): void
     {
         if (
@@ -159,11 +151,7 @@ class CoreConfigRepository extends Repository
         }
     }
 
-    /**
-     * Search configuration.
-     *
-     * @param  array  $items
-     */
+
     public function search(Collection $items, string $searchTerm, array $path = []): array
     {
         $results = [];
@@ -189,39 +177,34 @@ class CoreConfigRepository extends Repository
         return $results;
     }
 
-    /**
-     * Recursive array.
-     *
-     * @param  string  $method
-     * @return array
-     */
+
     public function recursiveArray(array $formData, $method)
     {
-        static $data = [];
+        static $dat = [];
 
         static $recursiveArrayData = [];
 
         foreach ($formData as $form => $formValue) {
-            $value = $method.'.'.$form;
+            $va = $method.'.'.$form;
 
             if (is_array($formValue)) {
                 $dim = $this->countDim($formValue);
 
                 if ($dim > 1) {
-                    $this->recursiveArray($formValue, $value);
+                    $this->recursiveArray($formValue, $va);
                 } elseif ($dim == 1) {
-                    $data[$value] = $formValue;
+                    $dat[$va] = $formValue;
                 }
             }
         }
 
-        foreach ($data as $key => $value) {
+        foreach ($dat as $key => $va) {
             $field = core()->getConfigField($key);
 
             if ($field) {
-                $recursiveArrayData[$key] = $value;
+                $recursiveArrayData[$key] = $va;
             } else {
-                foreach ($value as $key1 => $val) {
+                foreach ($va as $key1 => $val) {
                     $recursiveArrayData[$key.'.'.$key1] = $val;
                 }
             }
@@ -230,12 +213,7 @@ class CoreConfigRepository extends Repository
         return $recursiveArrayData;
     }
 
-    /**
-     * Return dimension of the array.
-     *
-     * @param  array  $array
-     * @return int
-     */
+
     public function countDim($array)
     {
         if (is_array(reset($array))) {

@@ -7,25 +7,17 @@ use Webkul\Sales\Models\Invoice;
 
 class InvoiceFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Invoice::class;
 
-    /**
-     * @var array
-     */
+    
     protected $states = [
         'pending',
         'paid',
         'refunded',
     ];
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [];

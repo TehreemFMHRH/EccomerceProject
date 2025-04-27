@@ -9,11 +9,7 @@ use Webkul\Shop\Http\Requests\Customer\LoginRequest;
 
 class SessionController extends Controller
 {
-    /**
-     * Display the resource.
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
+    
     public function index()
     {
         if (auth()->guard('customer')->check()) {
@@ -23,11 +19,7 @@ class SessionController extends Controller
         return view('shop::customers.sign-in');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(LoginRequest $loginRequest)
     {
         if (! auth()->guard('customer')->attempt($loginRequest->only(['email', 'password']))) {
@@ -56,9 +48,7 @@ class SessionController extends Controller
             return redirect()->back();
         }
 
-        /**
-         * Event passed to prepare cart after login.
-         */
+        
         Event::dispatch('customer.after.login', auth()->guard()->user());
 
         if (core()->getConfigData('customer.settings.login_options.redirected_to_page') == 'account') {
@@ -68,17 +58,12 @@ class SessionController extends Controller
         return redirect()->route('shop.home.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    
+    public function destroy($i)
     {
         auth()->guard('customer')->logout();
 
-        Event::dispatch('customer.after.logout', $id);
+        Event::dispatch('customer.after.logout', $i);
 
         return redirect()->route('shop.home.index');
     }

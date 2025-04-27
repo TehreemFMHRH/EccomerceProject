@@ -9,11 +9,7 @@ use Webkul\Customer\Repositories\CustomerRepository;
 
 class CustomerSocialAccountRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected CustomerGroupRepository $customerGroupRepository,
@@ -22,19 +18,13 @@ class CustomerSocialAccountRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify Model class name.
-     */
+    
     public function model(): string
     {
         return 'Webkul\SocialLogin\Contracts\CustomerSocialAccount';
     }
 
-    /**
-     * @param  array  $providerUser
-     * @param  string  $provider
-     * @return void
-     */
+    
     public function findOrCreateCustomer($providerUser, $provider)
     {
         $account = $this->findOneWhere([
@@ -45,12 +35,12 @@ class CustomerSocialAccountRepository extends Repository
         if ($account) {
             return $account->customer;
         } else {
-            $customer = $providerUser->getEmail() ? $this->customerRepository->findOneByField('email', $providerUser->getEmail()) : null;
+            $k = $providerUser->getEmail() ? $this->customerRepository->findOneByField('email', $providerUser->getEmail()) : null;
 
-            if (! $customer) {
+            if (! $k) {
                 $names = $this->getFirstLastName($providerUser->getName());
 
-                $customer = $this->customerRepository->create([
+                $k = $this->customerRepository->create([
                     'email'             => $providerUser->getEmail(),
                     'first_name'        => $names['first_name'],
                     'last_name'         => $names['last_name'],
@@ -61,28 +51,23 @@ class CustomerSocialAccountRepository extends Repository
             }
 
             $this->create([
-                'customer_id'   => $customer->id,
+                'customer_id'   => $k->id,
                 'provider_id'   => $providerUser->getId(),
                 'provider_name' => $provider,
             ]);
 
-            return $customer;
+            return $k;
         }
     }
 
-    /**
-     * Returns first and last name from name
-     *
-     * @param  string  $name
-     * @return string
-     */
-    public function getFirstLastName($name)
+    
+    public function getFirstLastName($na)
     {
-        $name = trim($name);
+        $na = trim($na);
 
-        $lastName = (strpos($name, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $name);
+        $lastName = (strpos($na, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $na);
 
-        $firstName = trim(preg_replace('#'.$lastName.'#', '', $name));
+        $firstName = trim(preg_replace('#'.$lastName.'#', '', $na));
 
         return [
             'first_name' => $firstName,

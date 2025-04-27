@@ -12,21 +12,13 @@ use Webkul\Tax\Repositories\TaxRateRepository;
 
 class TaxCategoryController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected TaxCategoryRepository $taxCategoryRepository,
         protected TaxRateRepository $taxRateRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -36,11 +28,7 @@ class TaxCategoryController extends Controller
         return view('admin::settings.taxes.categories.index')->with('taxRates', $this->taxRateRepository->all());
     }
 
-    /**
-     * Function to create the tax category.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -52,16 +40,16 @@ class TaxCategoryController extends Controller
 
         Event::dispatch('tax.category.create.before');
 
-        $data = request()->only([
+        $dat = request()->only([
             'code',
             'name',
             'description',
             'taxrates',
         ]);
 
-        $taxCategory = $this->taxCategoryRepository->create($data);
+        $taxCategory = $this->taxCategoryRepository->create($dat);
 
-        $taxCategory->tax_rates()->sync($data['taxrates']);
+        $taxCategory->tax_rates()->sync($dat['taxrates']);
 
         Event::dispatch('tax.category.create.after', $taxCategory);
 
@@ -70,42 +58,38 @@ class TaxCategoryController extends Controller
         ]);
     }
 
-    /**
-     * Tax Category Details
-     */
-    public function edit(int $id): TaxCategoryResource
+    
+    public function edit(int $i): TaxCategoryResource
     {
-        $taxCategory = $this->taxCategoryRepository->findOrFail($id);
+        $taxCategory = $this->taxCategoryRepository->findOrFail($i);
 
         return new TaxCategoryResource($taxCategory);
     }
 
-    /**
-     * To update the tax category.
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request()->id;
+        $i = request()->id;
 
         $this->validate(request(), [
-            'code'        => 'required|string|unique:tax_categories,code,'.$id,
+            'code'        => 'required|string|unique:tax_categories,code,'.$i,
             'name'        => 'required|string',
             'description' => 'required|string',
             'taxrates'    => 'array|required',
         ]);
 
-        Event::dispatch('tax.category.update.before', $id);
+        Event::dispatch('tax.category.update.before', $i);
 
-        $data = request()->only([
+        $dat = request()->only([
             'code',
             'name',
             'description',
             'taxrates',
         ]);
 
-        $taxCategory = $this->taxCategoryRepository->update($data, $id);
+        $taxCategory = $this->taxCategoryRepository->update($dat, $i);
 
-        $taxCategory->tax_rates()->sync($data['taxrates']);
+        $taxCategory->tax_rates()->sync($dat['taxrates']);
 
         Event::dispatch('tax.category.update.after', $taxCategory);
 
@@ -114,20 +98,18 @@ class TaxCategoryController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            $taxCategory = $this->taxCategoryRepository->findOrFail($id);
+            $taxCategory = $this->taxCategoryRepository->findOrFail($i);
 
             if (! $taxCategory->tax_rates()->count()) {
-                Event::dispatch('tax.category.delete.before', $id);
+                Event::dispatch('tax.category.delete.before', $i);
 
                 $taxCategory->delete();
 
-                Event::dispatch('tax.category.delete.after', $id);
+                Event::dispatch('tax.category.delete.after', $i);
 
                 return new JsonResponse([
                     'message' => trans('admin::app.settings.taxes.categories.index.delete-success'),

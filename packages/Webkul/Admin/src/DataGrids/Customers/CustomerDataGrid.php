@@ -10,25 +10,13 @@ use Webkul\Sales\Repositories\OrderRepository;
 
 class CustomerDataGrid extends DataGrid
 {
-    /**
-     * Index.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'customer_id';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerGroupRepository $customerGroupRepository) {}
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
@@ -66,11 +54,7 @@ class CustomerDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -187,11 +171,7 @@ class CustomerDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         $this->addAction([
@@ -214,11 +194,7 @@ class CustomerDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('customers.customers.delete')) {

@@ -128,12 +128,7 @@
             },
 
             methods: {
-                /**
-                 * Validate mass action.
-                 *
-                 * @param {object} filters
-                 * @returns {void}
-                 */
+                
                 validateMassAction() {
                     if (! this.massActions.indices.length) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('shop::app.components.datagrid.toolbar.mass-actions.no-records-selected')" });
@@ -159,13 +154,7 @@
                     return true;
                 },
 
-                /**
-                 * Perform mass action.
-                 *
-                 * @param {object} currentAction
-                 * @param {object} currentOption
-                 * @returns {void}
-                 */
+                
                 performMassAction(currentAction, currentOption = null) {
                     this.massActions.meta.action = currentAction;
 
@@ -211,17 +200,13 @@
                                         .then(response => {
                                             this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
-                                            /**
-                                             * Need to check reason why this.$emit('massActionSuccess') not emitting.
-                                             */
+                                            
                                             this.$parent.get();
                                         })
                                         .catch((error) => {
                                             this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
 
-                                            /**
-                                             * Need to check reason why this.$emit('massActionSuccess') not emitting.
-                                             */
+                                            
                                             this.$parent.get();
                                         });
 

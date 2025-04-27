@@ -11,29 +11,19 @@ use Webkul\Core\SystemConfig\Item;
 
 class SystemConfig
 {
-    /**
-     * Items array.
-     */
+    
     public array $items = [];
 
-    /**
-     * Create a new class instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CoreConfigRepository $coreConfigRepository) {}
 
-    /**
-     * Add Item.
-     */
+    
     public function addItem(Item $item): void
     {
         $this->items[] = $item;
     }
 
-    /**
-     * Get all configuration items.
-     */
+    
     public function getItems(): Collection
     {
         if (! $this->items) {
@@ -44,9 +34,7 @@ class SystemConfig
             ->sortBy('sort');
     }
 
-    /**
-     * Retrieve Core Config
-     */
+    
     private function retrieveCoreConfig(): array
     {
         static $items;
@@ -58,9 +46,7 @@ class SystemConfig
         return $items = config('core');
     }
 
-    /**
-     * Prepare configuration items.
-     */
+    
     public function prepareConfigurationItems()
     {
         $configWithDotNotation = [];
@@ -88,14 +74,12 @@ class SystemConfig
         }
     }
 
-    /**
-     * Process sub config items.
-     */
+    
     private function processSubConfigItems($configItem): Collection
     {
         return collect($configItem)
             ->sortBy('sort')
-            ->filter(fn ($value) => is_array($value) && isset($value['name']))
+            ->filter(fn ($va) => is_array($va) && isset($va['name']))
             ->map(function ($subConfigItem) {
                 $configItemChildren = $this->processSubConfigItems($subConfigItem);
 
@@ -113,9 +97,7 @@ class SystemConfig
             });
     }
 
-    /**
-     * Get active configuration item.
-     */
+    
     public function getActiveConfigurationItem(): ?Item
     {
         if (! $slug = request()->route('slug')) {
@@ -135,9 +117,7 @@ class SystemConfig
         return $activeItem;
     }
 
-    /**
-     * Get config field.
-     */
+    
     public function getConfigField(string $fieldName): ?array
     {
         foreach ($this->retrieveCoreConfig() as $coreData) {
@@ -146,9 +126,9 @@ class SystemConfig
             }
 
             foreach ($coreData['fields'] as $field) {
-                $name = $coreData['key'].'.'.$field['name'];
+                $na = $coreData['key'].'.'.$field['name'];
 
-                if ($name == $fieldName) {
+                if ($na == $fieldName) {
                     return $field;
                 }
             }
@@ -157,9 +137,7 @@ class SystemConfig
         return null;
     }
 
-    /**
-     * Get core config values.
-     */
+    
     protected function getCoreConfig(string $field, ?string $channel, ?string $locale): ?CoreConfig
     {
         $fields = $this->getConfigField($field);
@@ -193,9 +171,7 @@ class SystemConfig
         return $coreConfigValue;
     }
 
-    /**
-     * Get default config.
-     */
+    
     protected function getDefaultConfig(string $field): mixed
     {
         $configFieldInfo = $this->getConfigField($field);
@@ -209,9 +185,7 @@ class SystemConfig
         return Config::get($field, $configFieldInfo['default'] ?? null);
     }
 
-    /**
-     * Get the config data.
-     */
+    
     public function getConfigData(string $field, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): mixed
     {
         if (empty($currentChannelCode)) {

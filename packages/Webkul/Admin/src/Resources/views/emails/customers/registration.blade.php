@@ -6,9 +6,13 @@
 
         <p style="font-size: 16px;color: #384860;line-height: 24px;">
             {!! __('admin::app.emails.customers.registration.greeting', [
-                'customer_name' => '<a href="' . route('admin.customers.customers.view', $customer->id) . '" style="color: #2969FF;">'.$customer->name. '</a>'
-                ])
-            !!}
+                'customer_name' =>
+                    '<a href="' .
+                    route('admin.customers.customers.view', $k->id) .
+                    '" style="color: #2969FF;">' .
+                    $k->name .
+                    '</a>',
+            ]) !!}
         </p>
     </div>
 

@@ -14,18 +14,10 @@ class SubscribersList extends Model implements SubscribersListContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $table = 'subscribers_list';
 
-    /**
-     * Fillable properties of the model.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'email',
         'is_subscribed',
@@ -34,24 +26,16 @@ class SubscribersList extends Model implements SubscribersListContract
         'channel_id',
     ];
 
-    /**
-     * Hide the token attribute to the model.
-     *
-     * @var array
-     */
+    
     protected $hidden = ['token'];
 
-    /**
-     * Get the customer associated with the subscription.
-     */
+    
     public function customer(): BelongsTo
     {
         return $this->belongsTo(CustomerProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return SubscriberListFactory::new();

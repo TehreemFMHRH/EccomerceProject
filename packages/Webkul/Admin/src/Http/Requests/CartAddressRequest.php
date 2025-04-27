@@ -8,24 +8,16 @@ use Webkul\Core\Rules\PostCode;
 
 class CartAddressRequest extends FormRequest
 {
-    /**
-     * Rules.
-     *
-     * @var array
-     */
+    
     protected $rules = [];
 
-    /**
-     * Determine if the product is authorized to make this request.
-     */
+    
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
+    
     public function rules(): array
     {
         if ($this->has('billing')) {
@@ -39,11 +31,7 @@ class CartAddressRequest extends FormRequest
         return $this->rules;
     }
 
-    /**
-     * Merge new address rules.
-     *
-     * @return void
-     */
+    
     private function mergeAddressRules(string $addressType)
     {
         $this->mergeWithRules([
@@ -60,9 +48,7 @@ class CartAddressRequest extends FormRequest
         ]);
     }
 
-    /**
-     * Merge additional rules.
-     */
+    
     private function mergeWithRules($rules): void
     {
         $this->rules = array_merge($this->rules, $rules);

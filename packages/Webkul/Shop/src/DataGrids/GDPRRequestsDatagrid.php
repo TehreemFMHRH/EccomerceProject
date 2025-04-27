@@ -7,41 +7,25 @@ use Webkul\DataGrid\DataGrid;
 
 class GDPRRequestsDatagrid extends DataGrid
 {
-    /**
-     * Request status "approved".
-     */
+    
     const STATUS_COMPLETED = 'completed';
 
-    /**
-     * Request status "pending", indicating awaiting approval.
-     */
+    
     const STATUS_PENDING = 'pending';
 
-    /**
-     * Request status "declined", indicating rejection or denial.
-     */
+    
     const STATUS_DECLINED = 'declined';
 
-    /**
-     * Request status "processing".
-     */
+    
     const STATUS_PROCESSING = 'processing';
 
-    /**
-     * Request status "revoked".
-     */
+    
     const STATUS_REVOKED = 'revoked';
 
-    /**
-     * $status Stores the status of the GDPR request.
-     */
-    private static $status = '';
+    
+    private static $st = '';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('gdpr_data_request as gdpr')
@@ -100,7 +84,7 @@ class GDPRRequestsDatagrid extends DataGrid
                 ],
             ],
             'closure'    => function ($row) {
-                self::$status = $row->status;
+                self::$st = $row->status;
 
                 switch ($row->status) {
                     case self::STATUS_COMPLETED:
@@ -176,7 +160,7 @@ class GDPRRequestsDatagrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'closure'    => function ($row) {
-                $isPending = self::$status == 'pending';
+                $isPending = self::$st == 'pending';
 
                 $url = route('shop.customers.account.gdpr.revoke', $row->id);
 

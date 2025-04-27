@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class CurrencyDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('currencies')
@@ -22,11 +18,7 @@ class CurrencyDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -56,11 +48,7 @@ class CurrencyDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('settings.currencies.edit')) {

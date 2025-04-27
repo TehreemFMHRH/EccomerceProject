@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class ImportDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('imports')
@@ -26,11 +22,7 @@ class ImportDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -102,7 +94,7 @@ class ImportDataGrid extends DataGrid
 
                 $stats = [];
 
-                foreach ($summary as $type => $value) {
+                foreach ($summary as $type => $va) {
                     $stats[] = trans('admin::app.settings.data-transfer.imports.index.datagrid.'.$type).': '.$summary[$type];
                 }
 
@@ -111,11 +103,7 @@ class ImportDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('settings.data_transfer.imports.import')) {

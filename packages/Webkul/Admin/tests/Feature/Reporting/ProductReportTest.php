@@ -57,13 +57,13 @@ it('should return the product reporting stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -80,10 +80,10 @@ it('should return the product reporting stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -93,19 +93,19 @@ it('should return the product reporting stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -124,17 +124,17 @@ it('should return the product reporting stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     $orderItem = OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
@@ -142,18 +142,18 @@ it('should return the product reporting stats', function () {
 
     $orderBillingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     // Act and Assert.
@@ -178,7 +178,7 @@ it('should return the product reporting stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -212,7 +212,7 @@ it('should return the product reporting stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -247,12 +247,12 @@ it('should return the total products added to wishlist reporting stats', functio
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     Wishlist::factory()->create([
         'channel_id'  => core()->getDefaultChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
@@ -282,13 +282,13 @@ it('should return the top selling products by revenue reporting stats', function
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -305,10 +305,10 @@ it('should return the top selling products by revenue reporting stats', function
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -318,19 +318,19 @@ it('should return the top selling products by revenue reporting stats', function
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -349,12 +349,12 @@ it('should return the top selling products by revenue reporting stats', function
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -362,7 +362,7 @@ it('should return the top selling products by revenue reporting stats', function
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -373,31 +373,31 @@ it('should return the top selling products by revenue reporting stats', function
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -439,7 +439,7 @@ it('should return the top selling products by revenue reporting stats', function
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = get(route('admin.reporting.products.stats', [
+    $resp = get(route('admin.reporting.products.stats', [
         'type' => 'top-selling-products-by-revenue',
     ]))
         ->assertOk()
@@ -448,9 +448,9 @@ it('should return the top selling products by revenue reporting stats', function
         ->assertJsonPath('statistics.0.formatted_price', core()->formatBasePrice($orderItem->price))
         ->assertJsonPath('statistics.0.formatted_revenue', core()->formatBasePrice($orderItem->base_total_invoiced));
 
-    $this->assertPrice($orderItem->product->price, $response->json('statistics.0.price'));
+    $this->assertPrice($orderItem->product->price, $resp->json('statistics.0.price'));
 
-    $this->assertPrice($orderItem->base_total_invoiced, $response->json('statistics.0.revenue'));
+    $this->assertPrice($orderItem->base_total_invoiced, $resp->json('statistics.0.revenue'));
 
     $cart->refresh();
 
@@ -464,7 +464,7 @@ it('should return the top selling products by revenue reporting stats', function
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -502,7 +502,7 @@ it('should return the top selling products by revenue reporting stats', function
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -520,7 +520,7 @@ it('should return the top selling products by revenue reporting stats', function
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -549,13 +549,13 @@ it('should return the top selling products by quantity reporting stats', functio
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -572,10 +572,10 @@ it('should return the top selling products by quantity reporting stats', functio
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -585,19 +585,19 @@ it('should return the top selling products by quantity reporting stats', functio
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -616,12 +616,12 @@ it('should return the top selling products by quantity reporting stats', functio
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -629,7 +629,7 @@ it('should return the top selling products by quantity reporting stats', functio
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -640,31 +640,31 @@ it('should return the top selling products by quantity reporting stats', functio
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -707,13 +707,13 @@ it('should return the top selling products by quantity reporting stats', functio
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = get(route('admin.reporting.products.stats', [
+    $resp = get(route('admin.reporting.products.stats', [
         'type' => 'top-selling-products-by-quantity',
     ]))
         ->assertOk()
         ->assertJsonPath('statistics.0.id', $orderItem->product->id);
 
-    $this->assertPrice($orderItem->product->price, $response->json('statistics.0.price'));
+    $this->assertPrice($orderItem->product->price, $resp->json('statistics.0.price'));
 
     $cart->refresh();
 
@@ -727,7 +727,7 @@ it('should return the top selling products by quantity reporting stats', functio
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -765,7 +765,7 @@ it('should return the top selling products by quantity reporting stats', functio
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -783,7 +783,7 @@ it('should return the top selling products by quantity reporting stats', functio
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -812,13 +812,13 @@ it('should return the products with most reviews reporting stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     ProductReview::factory()->count(2)->create([
         'status'      => 'approved',
         'comment'     => fake()->sentence(20),
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
@@ -983,13 +983,13 @@ it('should returns the report the product', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -1006,10 +1006,10 @@ it('should returns the report the product', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -1019,19 +1019,19 @@ it('should returns the report the product', function () {
 
     CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -1050,12 +1050,12 @@ it('should returns the report the product', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -1063,7 +1063,7 @@ it('should returns the report the product', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -1074,31 +1074,31 @@ it('should returns the report the product', function () {
     OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,

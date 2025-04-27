@@ -12,11 +12,7 @@ use Webkul\Marketing\Repositories\URLRewriteRepository;
 
 class CacheResponse extends BaseCacheResponseMiddleware
 {
-    /**
-     * Create a middleware instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected BaseResponseCache $responseCache)
     {
         $this->responseCache = $responseCache;
@@ -24,21 +20,14 @@ class CacheResponse extends BaseCacheResponseMiddleware
         parent::__construct($responseCache);
     }
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param  mixed  ...$args
-     * @return mixed
-     */
+    
     public function handle(Request $request, Closure $next, ...$args): Response
     {
         if (! $this->responseCache->enabled($request)) {
             return parent::handle($request, $next, ...$args);
         }
 
-        /**
-         * Redirect to the search term redirect url if the search term is found.
-         */
+        
         if ($request->route()->getName() == 'shop.search.index') {
             $searchTerm = app(SearchTermRepository::class)->findOneWhere([
                 'term'       => request()->query('query'),
@@ -51,9 +40,7 @@ class CacheResponse extends BaseCacheResponseMiddleware
             }
         }
 
-        /**
-         * Redirect to the target path if the url rewrite is found.
-         */
+        
         if ($request->route()->getName() == 'shop.product_or_category.index') {
             $slugOrPath = urldecode(trim($request->getPathInfo(), '/'));
 
@@ -77,9 +64,7 @@ class CacheResponse extends BaseCacheResponseMiddleware
             }
         }
 
-        /**
-         * Redirect to the target path if the cms page url rewrite is found.
-         */
+        
         if ($request->route()->getName() == 'shop.cms.page') {
             $slug = last(explode('/', $request->getPathInfo()));
 

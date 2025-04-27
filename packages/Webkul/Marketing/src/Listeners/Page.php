@@ -8,34 +8,19 @@ use Webkul\Marketing\Repositories\URLRewriteRepository;
 
 class Page
 {
-    /**
-     * Permanent redirect code
-     *
-     * @var int
-     */
+    
     const PERMANENT_REDIRECT_CODE = 301;
 
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected PageRepository $pageRepository,
         protected URLRewriteRepository $urlRewriteRepository
     ) {}
 
-    /**
-     * After page is created
-     *
-     * @param  \Webkul\CMS\Contracts\Page  $page
-     * @return void
-     */
+    
     public function afterCreate($page)
     {
-        /**
-         * Delete if url rewrite already exists for request path
-         */
+        
         $urlRewrites = $this->urlRewriteRepository->findWhere([
             'entity_type'  => 'cms_page',
             'request_path' => $page->url_key,
@@ -51,23 +36,16 @@ class Page
         }
     }
 
-    /**
-     * Before page is updated
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function beforeUpdate($id)
+    
+    public function beforeUpdate($i)
     {
         $locale = request()->input('locale');
 
-        $page = $this->pageRepository->find($id);
+        $page = $this->pageRepository->find($i);
 
         $translations = $page->translate($locale);
 
-        /**
-         * If url key is empty for requested locale then return
-         */
+        
         if (empty($translations['url_key'])) {
             return;
         }
@@ -78,9 +56,7 @@ class Page
             return;
         }
 
-        /**
-         * Delete if url rewrite already exists for target path
-         */
+        
         $this->urlRewriteRepository->deleteWhere([
             'entity_type' => 'cms_page',
             'target_path' => $translations['url_key'],
@@ -100,19 +76,12 @@ class Page
         Event::dispatch('marketing.search_seo.url_rewrites.create.after', $urlRewrite);
     }
 
-    /**
-     * Before page is deleted
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function beforeDelete($id)
+    
+    public function beforeDelete($i)
     {
-        $page = $this->pageRepository->find($id);
+        $page = $this->pageRepository->find($i);
 
-        /**
-         * Delete all url rewrites for all locales
-         */
+        
         $translations = $page->getTranslationsArray();
 
         foreach ($translations as $locale => $translation) {

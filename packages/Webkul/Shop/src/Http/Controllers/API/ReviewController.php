@@ -12,31 +12,23 @@ use Webkul\Shop\Http\Resources\ProductReviewResource;
 
 class ReviewController extends APIController
 {
-    /**
-     * Create a controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
 
         protected ProductReviewRepository $productReviewRepository,
         protected ProductReviewAttachmentRepository $productReviewAttachmentRepository
     ) {}
 
-    /**
-     * Using const variable for status
-     */
+    
     const STATUS_APPROVED = 'approved';
 
     const STATUS_PENDING = 'pending';
 
-    /**
-     * Product listings.
-     */
-    public function index(int $id): JsonResource
+    
+    public function index(int $i): JsonResource
     {
         $product = Product
-            ->findOrFail($id)
+            ->findOrFail($i)
             ->reviews()
             ->where('status', self::STATUS_APPROVED)
             ->paginate(8);
@@ -52,10 +44,8 @@ class ReviewController extends APIController
         return ProductReviewResource::collection($product);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(int $id): JsonResource
+    
+    public function store(int $i): JsonResource
     {
         $this->validate(request(), [
             'title'         => 'required',
@@ -65,31 +55,29 @@ class ReviewController extends APIController
             'attachments.*' => 'file|mimetypes:image/*,video/*',
         ]);
 
-        $data = array_merge(request()->only([
+        $dat = array_merge(request()->only([
             'title',
             'comment',
             'rating',
         ]), [
             'attachments' => request()->file('attachments') ?? [],
             'status'      => self::STATUS_PENDING,
-            'product_id'  => $id,
+            'product_id'  => $i,
         ]);
 
-        $data['name'] = auth()->guard('customer')->user()?->name ?? request()->input('name');
-        $data['customer_id'] = auth()->guard('customer')->id() ?? null;
+        $dat['name'] = auth()->guard('customer')->user()?->name ?? request()->input('name');
+        $dat['customer_id'] = auth()->guard('customer')->id() ?? null;
 
-        $review = $this->productReviewRepository->create($data);
+        $review = $this->productReviewRepository->create($dat);
 
-        $this->productReviewAttachmentRepository->upload($data['attachments'], $review);
+        $this->productReviewAttachmentRepository->upload($dat['attachments'], $review);
 
         return new JsonResource([
             'message' => trans('shop::app.products.view.reviews.success'),
         ]);
     }
 
-    /**
-     * Translate the specified resource in storage.
-     */
+    
     public function translate(int $reviewId): JsonResponse
     {
         $review = $this->productReviewRepository->find($reviewId);
@@ -110,12 +98,12 @@ class ReviewController extends APIController
         try {
             $model = core()->getConfigData('general.magic_ai.review_translation.model');
 
-            $response = MagicAI::setModel($model)
+            $resp = MagicAI::setModel($model)
                 ->setPrompt($prompt)
                 ->ask();
 
             return new JsonResponse([
-                'content' => $response,
+                'content' => $resp,
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
@@ -124,12 +112,10 @@ class ReviewController extends APIController
         }
     }
 
-    /**
-     * Censoring the Reviewer name
-     */
-    private function censorReviewerName(string $name): string
+    
+    private function censorReviewerName(string $na): string
     {
-        return collect(explode(' ', $name))
+        return collect(explode(' ', $na))
             ->map(fn ($part) => substr($part, 0, 1).str_repeat('*', max(strlen($part) - 1, 0)))
             ->join(' ');
     }

@@ -25,33 +25,25 @@ class ProductReview extends Model implements ProductReviewContract
         'name',
     ];
 
-    /**
-     * Get the product attribute family that owns the product.
-     */
+    
     public function customer(): BelongsTo
     {
         return $this->belongsTo(CustomerProxy::modelClass());
     }
 
-    /**
-     * Get the product.
-     */
+    
     public function product(): BelongsTo
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * The images that belong to the review.
-     */
+    
     public function images(): HasMany
     {
         return $this->hasMany(ProductReviewAttachmentProxy::modelClass(), 'review_id');
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductReviewFactory::new();

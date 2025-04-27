@@ -12,18 +12,10 @@ class URLRewrite extends Model implements URLRewriteContract
 {
     use HasFactory;
 
-    /**
-     * Define the table name for the model.
-     *
-     * @var string
-     */
+    
     protected $table = 'url_rewrites';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'entity_type',
         'request_path',
@@ -32,9 +24,7 @@ class URLRewrite extends Model implements URLRewriteContract
         'locale',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return UrlRewriteFactory::new();

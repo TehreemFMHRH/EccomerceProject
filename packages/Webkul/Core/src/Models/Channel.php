@@ -17,11 +17,7 @@ class Channel extends TranslatableModel implements ChannelContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'code',
         'name',
@@ -37,20 +33,12 @@ class Channel extends TranslatableModel implements ChannelContract
         'allowed_ips',
     ];
 
-    /**
-     * Castable.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'home_seo' => 'array',
     ];
 
-    /**
-     * Translated attributes.
-     *
-     * @var array
-     */
+    
     public $translatedAttributes = [
         'name',
         'description',
@@ -58,57 +46,43 @@ class Channel extends TranslatableModel implements ChannelContract
         'home_seo',
     ];
 
-    /**
-     * Get the channel locales.
-     */
+    
     public function locales(): BelongsToMany
     {
         return $this->belongsToMany(LocaleProxy::modelClass(), 'channel_locales');
     }
 
-    /**
-     * Get the default locale
-     */
+    
     public function default_locale(): BelongsTo
     {
         return $this->belongsTo(LocaleProxy::modelClass());
     }
 
-    /**
-     * Get the channel locales.
-     */
+    
     public function currencies(): BelongsToMany
     {
         return $this->belongsToMany(CurrencyProxy::modelClass(), 'channel_currencies');
     }
 
-    /**
-     * Get the channel inventory sources.
-     */
+    
     public function inventory_sources(): BelongsToMany
     {
         return $this->belongsToMany(InventorySourceProxy::modelClass(), 'channel_inventory_sources');
     }
 
-    /**
-     * Get the base currency.
-     */
+    
     public function base_currency(): BelongsTo
     {
         return $this->belongsTo(CurrencyProxy::modelClass());
     }
 
-    /**
-     * Get the root category.
-     */
+    
     public function root_category(): BelongsTo
     {
         return $this->belongsTo(CategoryProxy::modelClass(), 'root_category_id');
     }
 
-    /**
-     * Get logo image url.
-     */
+    
     public function logo_url()
     {
         if (! $this->logo) {
@@ -118,17 +92,13 @@ class Channel extends TranslatableModel implements ChannelContract
         return Storage::url($this->logo);
     }
 
-    /**
-     * Get logo image url.
-     */
+    
     public function getLogoUrlAttribute()
     {
         return $this->logo_url();
     }
 
-    /**
-     * Get favicon image url.
-     */
+    
     public function favicon_url()
     {
         if (! $this->favicon) {
@@ -138,17 +108,13 @@ class Channel extends TranslatableModel implements ChannelContract
         return Storage::url($this->favicon);
     }
 
-    /**
-     * Get favicon image url.
-     */
+    
     public function getFaviconUrlAttribute()
     {
         return $this->favicon_url();
     }
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return ChannelFactory::new();

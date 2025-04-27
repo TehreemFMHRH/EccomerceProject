@@ -15,19 +15,13 @@ use Webkul\Shop\Http\Resources\CartResource;
 
 class OnepageController extends APIController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderRepository $orderRepository,
         protected CustomerRepository $customerRepository
     ) {}
 
-    /**
-     * Return cart summary.
-     */
+    
     public function summary(): JsonResource
     {
         $cart = Cart::getCart();
@@ -35,9 +29,7 @@ class OnepageController extends APIController
         return new CartResource($cart);
     }
 
-    /**
-     * Store address.
-     */
+    
     public function storeAddress(CartAddressRequest $cartAddressRequest): JsonResource
     {
         $params = $cartAddressRequest->all();
@@ -85,11 +77,7 @@ class OnepageController extends APIController
         ]);
     }
 
-    /**
-     * Store shipping method.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function storeShippingMethod()
     {
         $validatedData = $this->validate(request(), [
@@ -111,11 +99,7 @@ class OnepageController extends APIController
         return response()->json(Payment::getSupportedPaymentMethods());
     }
 
-    /**
-     * Store payment method.
-     *
-     * @return array
-     */
+    
     public function storePaymentMethod()
     {
         $validatedData = $this->validate(request(), [
@@ -141,9 +125,7 @@ class OnepageController extends APIController
         ];
     }
 
-    /**
-     * Store order
-     */
+    
     public function storeOrder()
     {
         if (Cart::hasError()) {
@@ -172,13 +154,13 @@ class OnepageController extends APIController
             ]);
         }
 
-        $data = (new OrderResource($cart))->jsonSerialize();
+        $dat = (new OrderResource($cart))->jsonSerialize();
 
-        $order = $this->orderRepository->create($data);
+        $o = $this->orderRepository->create($dat);
 
         Cart::deActivateCart();
 
-        session()->flash('order_id', $order->id);
+        session()->flash('order_id', $o->id);
 
         return new JsonResource([
             'redirect'     => true,
@@ -186,11 +168,7 @@ class OnepageController extends APIController
         ]);
     }
 
-    /**
-     * Validate order before creation.
-     *
-     * @return void|\Exception
-     */
+    
     public function validateOrder()
     {
         $cart = Cart::getCart();

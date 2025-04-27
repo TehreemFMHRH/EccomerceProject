@@ -19,25 +19,25 @@ use function Pest\Laravel\putJson;
 
 it('should returns the profile page', function () {
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
     get(route('shop.customers.account.profile.index'))
         ->assertOk()
         ->assertSeeText(trans('shop::app.customers.account.profile.index.edit'))
         ->assertSeeText(trans('shop::app.customers.account.profile.index.delete'))
-        ->assertSeeText($customer->first_name)
-        ->assertSeeText($customer->last_name)
-        ->assertSeeText($customer->email);
+        ->assertSeeText($k->first_name)
+        ->assertSeeText($k->last_name)
+        ->assertSeeText($k->email);
 });
 
 it('should returns the edit page of the customer', function () {
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
     get(route('shop.customers.account.profile.edit'))
         ->assertOk()
-        ->assertSeeText($customer->email)
-        ->assertSeeText($customer->first_name)
+        ->assertSeeText($k->email)
+        ->assertSeeText($k->first_name)
         ->assertSeeText(trans('shop::app.customers.account.profile.edit.edit-profile'));
 });
 
@@ -63,13 +63,13 @@ it('should fails the validations error when certain inputs are not provided when
 
 it('should update the customer', function () {
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
     postJson(route('shop.customers.account.profile.update'), [
         'first_name'                => $firstName = 'test',
         'last_name'                 => $lastName = fake()->lastName(),
         'gender'                    => $gender = fake()->randomElement(['Other', 'Male', 'Female']),
-        'email'                     => $customer->email,
+        'email'                     => $k->email,
         'status'                    => 1,
         'customer_group_id'         => 2,
         'phone'                     => $phone = fake()->e164PhoneNumber(),
@@ -87,7 +87,7 @@ it('should update the customer', function () {
                 'first_name'        => $firstName,
                 'last_name'         => $lastName,
                 'gender'            => $gender,
-                'email'             => $customer->email,
+                'email'             => $k->email,
                 'status'            => 1,
                 'customer_group_id' => 2,
                 'phone'             => $phone,
@@ -100,17 +100,17 @@ it('should update the customer password and send email to the customer', functio
     // Act and Assert.
     Mail::fake();
 
-    $customer = Customer::factory()->create([
+    $k = Customer::factory()->create([
         'password' => Hash::make($currentPassword = fake()->password(8, 10)),
     ]);
 
-    $customer = $this->loginAsCustomer($customer);
+    $k = $this->loginAsCustomer($k);
 
     postJson(route('shop.customers.account.profile.update'), [
         'first_name'                => $firstName = fake()->firstName(),
         'last_name'                 => $lastName = fake()->lastName(),
         'gender'                    => $gender = fake()->randomElement(['Other', 'Male', 'Female']),
-        'email'                     => $customer->email,
+        'email'                     => $k->email,
         'status'                    => 1,
         'customer_group_id'         => 2,
         'phone'                     => $phone = fake()->e164PhoneNumber(),
@@ -126,7 +126,7 @@ it('should update the customer password and send email to the customer', functio
                 'first_name'        => $firstName,
                 'last_name'         => $lastName,
                 'gender'            => $gender,
-                'email'             => $customer->email,
+                'email'             => $k->email,
                 'status'            => 1,
                 'customer_group_id' => 2,
                 'phone'             => $phone,
@@ -150,12 +150,12 @@ it('should fails the validation error when password is not provided when delete 
 
 it('should delete the customer account', function () {
     // Arrange.
-    $customer = Customer::factory()->create([
+    $k = Customer::factory()->create([
         'password' => Hash::make('admin123'),
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     postJson(route('shop.customers.account.profile.destroy'), [
         'password' => 'admin123',
@@ -163,7 +163,7 @@ it('should delete the customer account', function () {
         ->assertRedirect(route('shop.customer.session.index'));
 
     $this->assertDatabaseMissing('customers', [
-        'id' => $customer->id,
+        'id' => $k->id,
     ]);
 });
 
@@ -192,15 +192,15 @@ it('should shows the reviews of customer', function () {
         ],
     ]))->getSimpleProductFactory()->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $productReview = ProductReview::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer($customer);
+    $k = $this->loginAsCustomer($k);
 
     get(route('shop.customers.account.reviews.index'))
         ->assertOk()
@@ -211,14 +211,14 @@ it('should shows the reviews of customer', function () {
 
 it('should returns the address page of the customer', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $customerAddress = CustomerAddress::factory()->create([
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     get(route('shop.customers.account.addresses.index'))
         ->assertOk()
@@ -264,10 +264,10 @@ it('should fails the validation error when certain inputs not provided when stor
 
 it('should store the customer address', function () {
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
     postJson(route('shop.customers.account.addresses.store'), [
-        'customer_id'     => $customer->id,
+        'customer_id'     => $k->id,
         'company_name'    => $companyName = fake()->word(),
         'first_name'      => $firstName = fake()->firstName(),
         'last_name'       => $lastName = fake()->lastName(),
@@ -279,14 +279,14 @@ it('should store the customer address', function () {
         'phone'           => $phoneNumber = fake()->e164PhoneNumber(),
         'default_address' => fake()->randomElement([0, 1]),
         'address_type'    => $addressType = CustomerAddress::ADDRESS_TYPE,
-        'email'           => $email = fake()->email(),
+        'email'           => $e = fake()->email(),
     ])
         ->assertRedirect(route('shop.customers.account.addresses.index'));
 
     $this->assertModelWise([
         CustomerAddress::class => [
             [
-                'customer_id'  => $customer->id,
+                'customer_id'  => $k->id,
                 'company_name' => $companyName,
                 'first_name'   => $firstName,
                 'last_name'    => $lastName,
@@ -296,7 +296,7 @@ it('should store the customer address', function () {
                 'postcode'     => $postCode,
                 'phone'        => $phoneNumber,
                 'address_type' => $addressType,
-                'email'        => $email,
+                'email'        => $e,
             ],
         ],
     ]);
@@ -304,14 +304,14 @@ it('should store the customer address', function () {
 
 it('should edit the customer address', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $customerAddress = CustomerAddress::factory()->create([
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     get(route('shop.customers.account.addresses.edit', $customerAddress->id))
         ->assertOk()
@@ -321,14 +321,14 @@ it('should edit the customer address', function () {
 });
 
 it('should fails the validation error when certain inputs not provided update the customer address', function () {
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $customerAddress = CustomerAddress::factory()->create([
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     putJson(route('shop.customers.account.addresses.update', $customerAddress->id))
         ->assertJsonValidationErrorFor('city')
@@ -344,17 +344,17 @@ it('should fails the validation error when certain inputs not provided update th
 });
 
 it('should update the customer address', function () {
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $customerAddress = CustomerAddress::factory()->create([
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     putJson(route('shop.customers.account.addresses.update', $customerAddress->id), [
-        'customer_id'     => $customer->id,
+        'customer_id'     => $k->id,
         'company_name'    => $companyName = fake()->word(),
         'first_name'      => $firstName = fake()->firstName(),
         'last_name'       => $lastName = fake()->lastName(),
@@ -366,14 +366,14 @@ it('should update the customer address', function () {
         'phone'           => $customerAddress->phone,
         'default_address' => 1,
         'address_type'    => $customerAddress->address_type,
-        'email'           => $email = fake()->email(),
+        'email'           => $e = fake()->email(),
     ])
         ->assertRedirect(route('shop.customers.account.addresses.index'));
 
     $this->assertModelWise([
         CustomerAddress::class => [
             [
-                'customer_id'     => $customer->id,
+                'customer_id'     => $k->id,
                 'company_name'    => $companyName,
                 'first_name'      => $firstName,
                 'last_name'       => $lastName,
@@ -384,7 +384,7 @@ it('should update the customer address', function () {
                 'phone'           => $customerAddress->phone,
                 'default_address' => $customerAddress->default_address,
                 'address_type'    => $customerAddress->address_type,
-                'email'           => $email,
+                'email'           => $e,
             ],
         ],
     ]);
@@ -392,15 +392,15 @@ it('should update the customer address', function () {
 
 it('should set default address for the customer', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $customerAddresses = CustomerAddress::factory()->create([
-        'customer_id'     => $customer->id,
+        'customer_id'     => $k->id,
         'default_address' => 0,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     patchJson(route('shop.customers.account.addresses.update.default', $customerAddresses->id))
         ->assertRedirect();
@@ -408,7 +408,7 @@ it('should set default address for the customer', function () {
     $this->assertModelWise([
         CustomerAddress::class => [
             [
-                'customer_id'     => $customer->id,
+                'customer_id'     => $k->id,
                 'default_address' => 1,
             ],
         ],
@@ -417,21 +417,21 @@ it('should set default address for the customer', function () {
 
 it('should delete the customer address', function () {
     // Arrange.
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $customerAddress = CustomerAddress::factory()->create([
-        'customer_id'     => $customer->id,
+        'customer_id'     => $k->id,
         'default_address' => 0,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     deleteJson(route('shop.customers.account.addresses.delete', $customerAddress->id))
         ->assertRedirect();
 
     $this->assertDatabaseMissing('addresses', [
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
         'id'          => $customerAddress->id,
     ]);
 });
@@ -440,20 +440,20 @@ it('should send email for password reset', function () {
     // Arrange.
     Notification::fake();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     postJson(route('shop.customers.forgot_password.store'), [
-        'email' => $customer->email,
+        'email' => $k->email,
     ])
         ->assertRedirect(route('shop.customers.forgot_password.create'))
         ->isRedirect();
 
     $this->assertDatabaseHas('customer_password_resets', [
-        'email' => $customer->email,
+        'email' => $k->email,
     ]);
 
     Notification::assertSentTo(
-        $customer,
+        $k,
         ResetPasswordNotification::class,
     );
 
@@ -463,13 +463,13 @@ it('should send email for password reset', function () {
 it('should not send email for password reset when email is invalid', function () {
     // Arrange.
     postJson(route('shop.customers.forgot_password.store'), [
-        'email' => $email = 'WRONG_EMAIL@gmail.com',
+        'email' => $e = 'WRONG_EMAIL@gmail.com',
     ])
         ->assertRedirect(route('shop.customers.forgot_password.create'))
         ->isRedirect();
 
     $this->assertDatabaseMissing('customer_password_resets', [
-        'email' => $email,
+        'email' => $e,
     ]);
 });
 

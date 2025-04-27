@@ -21,11 +21,7 @@ class BookingProductController extends Controller
     protected array $bookingHelpers = [];
     protected $typeRepositories = [];
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected DefaultSlotHelper $defaultSlotHelper,
         protected AppointmentSlotHelper $appointmentSlotHelper,
@@ -54,12 +50,10 @@ class BookingProductController extends Controller
         ];
     }
 
-    /**
-     * Get available slots for the given product and the date.
-     */
-    public function index(int $id): JsonResource
+
+    public function index(int $i): JsonResource
     {
-        $bookingProduct = BookingProduct::find($id);
+        $bookingProduct = BookingProduct::find($i);
 
         return new JsonResource([
             'data' => $this->bookingHelpers[$bookingProduct->type]->getSlotsByDate($bookingProduct, request()->date),
@@ -68,71 +62,71 @@ class BookingProductController extends Controller
 
     public function create(Request $request)
     {
-        $data = $request->all();
+        $dat = $request->all();
 
         // Direct logic for creating the BookingProduct without repository
-        if (isset($data['slots'])) {
-            $data['slots'] = $this->validateSlots($data);
+        if (isset($dat['slots'])) {
+            $dat['slots'] = $this->validateSlots($dat);
         }
 
-        $bookingProduct = BookingProduct::create($data);
+        $bookingProduct = BookingProduct::create($dat);
 
         // Event handling logic directly in the controller
         if ($bookingProduct->type == 'event') {
             // Directly handle event ticket logic
-            $this->saveEventTickets($data, $bookingProduct);
+            $this->saveEventTickets($dat, $bookingProduct);
         } else {
             // No repository, just create directly
-            $this->createSlot($data, $bookingProduct);
+            $this->createSlot($dat, $bookingProduct);
         }
 
         return response()->json($bookingProduct);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $i)
     {
-        $data = $request->all();
+        $dat = $request->all();
 
-        if (isset($data['slots'])) {
-            $data['slots'] = $this->skipOverlappingSlots($data['slots']);
+        if (isset($dat['slots'])) {
+            $dat['slots'] = $this->skipOverlappingSlots($dat['slots']);
         }
 
-        $bookingProduct = BookingProduct::findOrFail($id);
-        $bookingProduct->update($data);
+        $bookingProduct = BookingProduct::findOrFail($i);
+        $bookingProduct->update($dat);
 
         // Deleting other slots types
         foreach ($this->typeRepositories as $type => $repository) {
-            if ($type == $data['type']) {
+            if ($type == $dat['type']) {
                 continue;
             }
 
-            $repository->deleteWhere(['booking_product_id' => $id]);
+            $repository->deleteWhere(['booking_product_id' => $i]);
         }
 
         if ($bookingProduct->type == 'event') {
-            $this->saveEventTickets($data, $bookingProduct);
+            $this->saveEventTickets($dat, $bookingProduct);
         } else {
             // Direct slot management logic
-            $this->createSlot($data, $bookingProduct);
+            $this->createSlot($dat, $bookingProduct);
         }
     }
 
-    public function validateSlots(array $data): array
+    public function validateSlots(array $dat): array
     {
         // Move the logic from the repository into the controller directly
-        if (!isset($data['same_slot_all_days'])) {
-            return $data['slots'];
+        if (!isset($dat['same_slot_all_days'])) {
+            return $dat['slots'];
         }
 
-        if (!$data['same_slot_all_days']) {
-            foreach ($data['slots'] as $day => $slots) {
-                $data['slots'][$day] = $this->skipOverlappingSlots($slots);
+        if (!$dat['same_slot_all_days']) {
+            foreach ($dat['slots'] as $day => $slots) {
+                $dat['slots'][$day] = $this->skipOverlappingSlots($slots);
             }
         } else {
-            $data['slots'] = $this->skipOverlappingSlots($data['slots']);
+            $dat['slots'] = $this->skipOverlappingSlots($dat['slots']);
         }
 
-        return $data['slots'];
+        return $dat['slots'];
     }
 
     public function skipOverlappingSlots(array $slots): array
@@ -182,46 +176,44 @@ class BookingProductController extends Controller
         return $validSlots;
     }
 
-    public function addSlots(array $data): array
+    public function addSlots(array $dat): array
     {
-        if (isset($data['same_slot_all_days']) && !$data['same_slot_all_days']) {
+        if (isset($dat['same_slot_all_days']) && !$dat['same_slot_all_days']) {
             return [[], [], [], [], [], [], []];
         } else {
-            return ($data['type'] == 'default' && $data['booking_type'] == 'many') ? [[], [], [], [], [], [], []] : [];
+            return ($dat['type'] == 'default' && $dat['booking_type'] == 'many') ? [[], [], [], [], [], [], []] : [];
         }
     }
 
-    /**
-     * Format Slots data.
-     */
-    public function formatSlots(array $data): array
+
+    public function formatSlots(array $dat): array
     {
         if (
-            isset($data['same_slot_all_days'])
-            && ! $data['same_slot_all_days']
+            isset($dat['same_slot_all_days'])
+            && ! $dat['same_slot_all_days']
         ) {
             for ($i = 0; $i < 7; $i++) {
-                if (! isset($data['slots'][$i])) {
-                    $data['slots'][$i] = [];
+                if (! isset($dat['slots'][$i])) {
+                    $dat['slots'][$i] = [];
                 } else {
                     $count = 0;
 
                     $slots = [];
 
-                    foreach ($data['slots'][$i] as $slot) {
+                    foreach ($dat['slots'][$i] as $slot) {
                         $slots[] = array_merge($slot, ['id' => $i.'_slot_'.$count]);
 
                         $count++;
                     }
 
-                    $data['slots'][$i] = $slots;
+                    $dat['slots'][$i] = $slots;
                 }
             }
 
-            ksort($data['slots']);
+            ksort($dat['slots']);
         }
 
-        return $data['slots'];
+        return $dat['slots'];
     }
 
 

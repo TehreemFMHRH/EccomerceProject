@@ -14,9 +14,7 @@ class CartPayment extends Model implements CartPaymentContract
 
     protected $table = 'cart_payment';
 
-    /**
-     * Create a new factory instance for the model
-     */
+    
     protected static function newFactory(): Factory
     {
         return CartPaymentFactory::new();

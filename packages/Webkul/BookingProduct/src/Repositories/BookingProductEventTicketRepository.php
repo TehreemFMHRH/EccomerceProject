@@ -10,21 +10,17 @@ use Webkul\Core\Eloquent\Repository;
 
 class BookingProductEventTicketRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+    
     public function model(): string
     {
         return BookingProductEventTicket::class;
     }
 
-    /**
-     * Summary of save Event Tickets.
-     */
-    public function saveEventTickets(array $data, BookingProduct $bookingProduct): void
+    
+    public function saveEventTickets(array $dat, BookingProduct $bookingProduct): void
     {
         Event::dispatch('booking_product.booking.event-ticket.save.before', [
-            'data'           => $data,
+            'data'           => $dat,
             'bookingProduct' => $bookingProduct,
         ]);
 
@@ -32,8 +28,8 @@ class BookingProductEventTicketRepository extends Repository
 
         $savedTickets = [];
 
-        if (! empty($data['tickets'])) {
-            foreach ($data['tickets'] as $ticketId => &$ticketInputs) {
+        if (! empty($dat['tickets'])) {
+            foreach ($dat['tickets'] as $ticketId => &$ticketInputs) {
                 $this->sanitizeInput('special_price', $ticketInputs);
 
                 $this->sanitizeInput('special_price_from', $ticketInputs);
@@ -66,12 +62,7 @@ class BookingProductEventTicketRepository extends Repository
         }
     }
 
-    /**
-     * Summary of sanitize Input.
-     *
-     * @param  string  $fieldName
-     * @param  array  $inputs
-     */
+    
     private function sanitizeInput($fieldName, &$inputs)
     {
         $fieldValue = $inputs[$fieldName] ?? null;

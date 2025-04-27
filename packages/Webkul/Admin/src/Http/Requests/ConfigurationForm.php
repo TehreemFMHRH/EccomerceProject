@@ -9,28 +9,20 @@ use Webkul\Core\Rules\PostCode;
 
 class ConfigurationForm extends FormRequest
 {
-    /**
-     * Determine if the Configuration is authorized to make this request.
-     *
-     * @return bool
-     */
+    
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
+    
     public function rules()
     {
         return collect(request()->input('keys', []))->mapWithKeys(function ($item) {
-            $data = json_decode($item, true);
+            $dat = json_decode($item, true);
 
-            return collect($data['fields'])->mapWithKeys(function ($field) use ($data) {
-                $key = "{$data['key']}.{$field['name']}";
+            return collect($dat['fields'])->mapWithKeys(function ($field) use ($dat) {
+                $key = "{$dat['key']}.{$field['name']}";
 
                 // Check delete key exist in the request
                 if (! $this->has("{$key}.delete")) {
@@ -42,12 +34,7 @@ class ConfigurationForm extends FormRequest
         })->toArray();
     }
 
-    /**
-     * Transform validation rules into an array and map custom validation rules
-     *
-     * @param  string|array  $validation
-     * @return array
-     */
+    
     protected function getValidationRules($validation)
     {
         $validations = is_array($validation) ? $validation : explode('|', $validation);

@@ -90,9 +90,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('orders', 'storeOrder')->name('shop.checkout.onepage.orders.store');
     });
 
-    /**
-     * Login routes.
-     */
+    
     Route::controller(CustomerController::class)->prefix('customer')->group(function () {
         Route::post('login', 'login')->name('shop.api.customers.session.create');
     });

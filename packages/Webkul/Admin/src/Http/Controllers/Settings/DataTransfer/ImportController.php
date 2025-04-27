@@ -12,26 +12,16 @@ use Webkul\DataTransfer\Repositories\ImportRepository;
 
 class ImportController extends Controller
 {
-    /**
-     * Supported formats.
-     */
+    
     protected array $supportedFormats = ['csv', 'xls', 'xlsx', 'xml'];
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ImportRepository $importRepository,
         protected Import $importHelper
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -41,11 +31,7 @@ class ImportController extends Controller
         return view('admin::settings.data-transfer.imports.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::settings.data-transfer.imports.create', [
@@ -53,11 +39,7 @@ class ImportController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $importers = implode(',', array_keys(config('importers')));
@@ -75,7 +57,7 @@ class ImportController extends Controller
 
         Event::dispatch('data_transfer.imports.create.before');
 
-        $data = request()->only([
+        $dat = request()->only([
             'type',
             'action',
             'process_in_queue',
@@ -86,10 +68,10 @@ class ImportController extends Controller
             'images_directory_path',
         ]);
 
-        if (! isset($data['process_in_queue'])) {
-            $data['process_in_queue'] = false;
+        if (! isset($dat['process_in_queue'])) {
+            $dat['process_in_queue'] = false;
         } else {
-            $data['process_in_queue'] = true;
+            $dat['process_in_queue'] = true;
         }
 
         $file = request()->file('file');
@@ -105,7 +87,7 @@ class ImportController extends Controller
                         'private'
                     ),
                 ],
-                $data
+                $dat
             )
         );
 
@@ -116,31 +98,23 @@ class ImportController extends Controller
         return redirect()->route('admin.settings.data_transfer.imports.import', $import->id);
     }
 
-    /**
-     * Show the form for editing a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
         return view('admin::settings.data-transfer.imports.edit', [
-            'import'           => $this->importRepository->findOrFail($id),
+            'import'           => $this->importRepository->findOrFail($i),
             'supportedFormats' => $this->supportedFormats,
         ]);
     }
 
-    /**
-     * Update a resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $importers = implode(',', array_keys(config('importers')));
 
         $supportedFormats = implode(',', $this->supportedFormats);
 
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         $this->validate(request(), [
             'type'                => 'required|in:'.$importers,
@@ -153,7 +127,7 @@ class ImportController extends Controller
 
         Event::dispatch('data_transfer.imports.update.before');
 
-        $data = array_merge(
+        $dat = array_merge(
             request()->only([
                 'type',
                 'action',
@@ -190,18 +164,18 @@ class ImportController extends Controller
 
             Storage::disk('private')->delete($import->file_path);
 
-            $data['file_path'] = $file->storeAs(
+            $dat['file_path'] = $file->storeAs(
                 'imports',
                 $safeFilename.'.'.$extension,
                 'private'
             );
         }
 
-        if (! isset($data['process_in_queue'])) {
-            $data['process_in_queue'] = false;
+        if (! isset($dat['process_in_queue'])) {
+            $dat['process_in_queue'] = false;
         }
 
-        $import = $this->importRepository->update($data, $import->id);
+        $import = $this->importRepository->update($dat, $import->id);
 
         Event::dispatch('data_transfer.imports.update.after', $import);
 
@@ -210,22 +184,17 @@ class ImportController extends Controller
         return redirect()->route('admin.settings.data_transfer.imports.import', $import->id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
+    
+    public function destroy($i)
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         try {
             Storage::disk('private')->delete($import->file_path);
 
             Storage::disk('private')->delete($import->error_file_path ?? '');
 
-            $this->importRepository->delete($id);
+            $this->importRepository->delete($i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.delete-success'),
@@ -238,14 +207,10 @@ class ImportController extends Controller
         ], 500);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function import(int $id)
+    
+    public function import(int $i)
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         $isValid = $this->importHelper
             ->setImport($import)
@@ -270,12 +235,10 @@ class ImportController extends Controller
         return view('admin::settings.data-transfer.imports.import', compact('import', 'isValid', 'stats'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function validateImport(int $id): JsonResponse
+    
+    public function validateImport(int $i): JsonResponse
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         $isValid = $this->importHelper
             ->setImport($import)
@@ -287,12 +250,10 @@ class ImportController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function start(int $id): JsonResponse
+    
+    public function start(int $i): JsonResponse
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -317,22 +278,16 @@ class ImportController extends Controller
             ], 400);
         }
 
-        /**
-         * Set the import state to processing.
-         */
+        
         if ($import->state == Import::STATE_VALIDATED) {
             $this->importHelper->started();
         }
 
-        /**
-         * Get the first pending batch to import.
-         */
+        
         $importBatch = $import->batches->where('state', Import::STATE_PENDING)->first();
 
         if ($importBatch) {
-            /**
-             * Start the import process.
-             */
+            
             try {
                 if ($import->process_in_queue) {
                     $this->importHelper->start();
@@ -360,12 +315,10 @@ class ImportController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function link(int $id): JsonResponse
+    
+    public function link(int $i): JsonResponse
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -381,25 +334,17 @@ class ImportController extends Controller
             ], 400);
         }
 
-        /**
-         * Set the import state to linking.
-         */
+        
         if ($import->state == Import::STATE_PROCESSED) {
             $this->importHelper->linking();
         }
 
-        /**
-         * Get the first processing batch to link.
-         */
+        
         $importBatch = $import->batches->where('state', Import::STATE_PROCESSED)->first();
 
-        /**
-         * Set the import state to linking/completed.
-         */
+        
         if ($importBatch) {
-            /**
-             * Start the resource linking process.
-             */
+            
             try {
                 $this->importHelper->link($importBatch);
             } catch (\Exception $e) {
@@ -421,12 +366,10 @@ class ImportController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function indexData(int $id): JsonResponse
+    
+    public function indexData(int $i): JsonResponse
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -442,25 +385,17 @@ class ImportController extends Controller
             ], 400);
         }
 
-        /**
-         * Set the import state to linking.
-         */
+        
         if ($import->state == Import::STATE_LINKED) {
             $this->importHelper->indexing();
         }
 
-        /**
-         * Get the first processing batch to link.
-         */
+        
         $importBatch = $import->batches->where('state', Import::STATE_LINKED)->first();
 
-        /**
-         * Set the import state to linking/completed.
-         */
+        
         if ($importBatch) {
-            /**
-             * Start the resource linking process.
-             */
+            
             try {
                 $this->importHelper->index($importBatch);
             } catch (\Exception $e) {
@@ -469,9 +404,7 @@ class ImportController extends Controller
                 ], 400);
             }
         } else {
-            /**
-             * Set the import state to completed.
-             */
+            
             $this->importHelper->completed();
         }
 
@@ -481,12 +414,10 @@ class ImportController extends Controller
         ]);
     }
 
-    /**
-     * Returns import stats.
-     */
-    public function stats(int $id, string $state = Import::STATE_PROCESSED): JsonResponse
+    
+    public function stats(int $i, string $state = Import::STATE_PROCESSED): JsonResponse
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         $stats = $this->importHelper
             ->setImport($import)
@@ -498,9 +429,7 @@ class ImportController extends Controller
         ]);
     }
 
-    /**
-     * Download sample file.
-     */
+    
     public function downloadSample(string $type, string $format)
     {
         $samplePath = config("importers.{$type}.sample_paths.{$format}");
@@ -508,22 +437,18 @@ class ImportController extends Controller
         return Storage::download($samplePath);
     }
 
-    /**
-     * Download import file.
-     */
-    public function download(int $id)
+    
+    public function download(int $i)
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         return Storage::disk('private')->download($import->file_path);
     }
 
-    /**
-     * Download import error report.
-     */
-    public function downloadErrorReport(int $id)
+    
+    public function downloadErrorReport(int $i)
     {
-        $import = $this->importRepository->findOrFail($id);
+        $import = $this->importRepository->findOrFail($i);
 
         if (! $import->error_file_path) {
             abort(404);

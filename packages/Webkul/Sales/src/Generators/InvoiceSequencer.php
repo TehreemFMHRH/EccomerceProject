@@ -6,22 +6,13 @@ use Webkul\Sales\Models\Invoice;
 
 class InvoiceSequencer extends Sequencer
 {
-    /**
-     * Create invoice sequencer instance.
-     *
-     * @return void
-     */
+    
     public function __construct()
     {
         $this->setAllConfigs();
     }
 
-    /**
-     * Set all configs.
-     *
-     * @param  string  $configKey
-     * @return void
-     */
+    
     public function setAllConfigs()
     {
         $this->prefix = core()->getConfigData('sales.invoice_settings.invoice_number.invoice_number_prefix');
@@ -35,11 +26,7 @@ class InvoiceSequencer extends Sequencer
         $this->lastId = $this->getLastId();
     }
 
-    /**
-     * Get last id.
-     *
-     * @return int
-     */
+    
     public function getLastId()
     {
         $lastOrder = Invoice::query()->orderBy('id', 'desc')->limit(1)->first();

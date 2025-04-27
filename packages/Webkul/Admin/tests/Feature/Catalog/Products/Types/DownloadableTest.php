@@ -91,14 +91,14 @@ it('should upload link the product upload link', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.catalog.products.upload_link', $product->id), [
+    $resp = postJson(route('admin.catalog.products.upload_link', $product->id), [
         'file' => $file = UploadedFile::fake()->create(fake()->word().'.pdf', 100),
     ])
         ->assertOk()
         ->assertJsonPath('file_name', $file->getClientOriginalName());
 
-    if (Storage::disk('private')->exists($response['file'])) {
-        Storage::disk('private')->delete($response['file']);
+    if (Storage::disk('private')->exists($resp['file'])) {
+        Storage::disk('private')->delete($resp['file']);
     }
 });
 
@@ -154,14 +154,14 @@ it('should upload the sample file', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.catalog.products.upload_sample', $product->id), [
+    $resp = postJson(route('admin.catalog.products.upload_sample', $product->id), [
         'file' => $file = UploadedFile::fake()->create(fake()->word().'.pdf', 100),
     ])
         ->assertOk()
         ->assertJsonPath('file_name', $file->name);
 
-    if (Storage::disk('public')->exists($response['file'])) {
-        Storage::disk('public')->delete($response['file']);
+    if (Storage::disk('public')->exists($resp['file'])) {
+        Storage::disk('public')->delete($resp['file']);
     }
 });
 
@@ -222,7 +222,7 @@ it('should update the downloadable product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.products.update', $product->id), $data = [
+    putJson(route('admin.catalog.products.update', $product->id), $dat = [
         'sku'                => $product->sku,
         'url_key'            => $product->url_key,
         'short_description'  => fake()->sentence(),
@@ -298,13 +298,13 @@ it('should update the downloadable product', function () {
                 'type'              => 'downloadable',
                 'sku'               => $product->sku,
                 'url_key'           => $product->url_key,
-                'name'              => $data['name'],
-                'short_description' => $data['short_description'],
-                'description'       => $data['description'],
-                'price'             => $data['price'],
-                'weight'            => $data['weight'],
-                'locale'            => $data['locale'],
-                'channel'           => $data['channel'],
+                'name'              => $dat['name'],
+                'short_description' => $dat['short_description'],
+                'description'       => $dat['description'],
+                'price'             => $dat['price'],
+                'weight'            => $dat['weight'],
+                'locale'            => $dat['locale'],
+                'channel'           => $dat['channel'],
             ],
         ],
     ]);

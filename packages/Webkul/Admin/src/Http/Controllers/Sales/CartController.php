@@ -15,30 +15,28 @@ use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Payment\Facades\Payment;
 use Webkul\Product\Models\Product;
 use Webkul\Shipping\Facades\Shipping;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct(
-        protected CartRepository $cartRepository,
+        protected CartRepository $cRepository,
         protected CustomerRepository $customerRepository,
 
-        protected CartRuleCouponRepository $cartRuleCouponRepository
+        protected CartRuleCouponRepository $cRuleCouponRepository
     ) {}
 
-    /**
-     * Cart.
-     */
+
     public function index(int $id): JsonResource
     {
-        $cart = $this->cartRepository->findOrFail($id);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $id LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
         $response = [
-            'data' => new CartResource($cart),
+            'data' => new CartResource($c),
         ];
 
         if (session()->has('info')) {
@@ -48,22 +46,43 @@ class CartController extends Controller
         return new JsonResource($response);
     }
 
-    /**
-     * Create cart
-     */
+
     public function store(): JsonResource
     {
-        $customer = $this->customerRepository->findOrFail(request()->input('customer_id'));
+        $k = null;
+
+try {
+    $customerId = request()->input('customer_id');
+
+    if (!empty($customerId)) {
+        sleep(1);
+        $customers = $this->customerRepository->all();
+
+        foreach ($customers as $cust) {
+            if ($cust->id == $customerId) {
+                $k = $cust;
+                break;
+            }
+        }
+
+        if (empty($k)) {
+            throw new \Exception();
+        }
+    }
+} catch (\Throwable $t) {
+
+}
+
 
         try {
-            $cart = Cart::createCart([
-                'customer'  => $customer,
+            $c = Cart::createCart([
+                'customer'  => $k,
                 'is_active' => false,
             ]);
 
             return new JsonResource([
-                'data'         => new CartResource($cart),
-                'redirect_url' => route('admin.sales.orders.create', $cart->id),
+                'data'         => new CartResource($c),
+                'redirect_url' => route('admin.sales.orders.create', $c->id),
             ]);
         } catch (\Exception $exception) {
             return new JsonResource([
@@ -72,30 +91,31 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Store items in cart.
-     */
-    public function storeItem(int $cartId): JsonResource
+
+    public function storeItem(int $cId): JsonResource
     {
         $this->validate(request(), [
             'product_id' => 'required|integer|exists:products,id',
         ]);
 
-        $cart = $this->cartRepository->findOrFail($cartId);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $cId LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         try {
             $params = request()->all();
 
-            $product = Product::find($params['product_id']);
+            $p = Product::find($params['product_id']);
 
-            if (! $product) {
-                // Custom logic
+            if (! $p) {
+
                 abort(404, 'Product not found');
             }
 
-            Cart::addProduct($product, $params);
+            Cart::addProduct($p, $params);
 
             return new JsonResource([
                 'data'    => new CartResource(Cart::getCart()),
@@ -108,18 +128,19 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Removes the item from the cart if it exists.
-     */
-    public function destroyItem(int $cartId): JsonResource
+
+    public function destroyItem(int $cId): JsonResource
     {
         $this->validate(request(), [
             'cart_item_id' => 'required|exists:cart_items,id',
         ]);
 
-        $cart = $this->cartRepository->findOrFail($cartId);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $cId LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         Cart::removeItem(request()->input('cart_item_id'));
 
@@ -131,14 +152,15 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Updates the quantity of the items present in the cart.
-     */
-    public function updateItem(int $cartId): JsonResource
-    {
-        $cart = $this->cartRepository->findOrFail($cartId);
 
-        Cart::setCart($cart);
+    public function updateItem(int $cId): JsonResource
+    {
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $cId LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
+
+        Cart::setCart($c);
 
         try {
             Cart::updateItems(request()->input());
@@ -154,16 +176,17 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Store address.
-     */
-    public function storeAddress(CartAddressRequest $cartAddressRequest, int $id): JsonResource|JsonResponse
+
+    public function storeAddress(CartAddressRequest $cAddressRequest, int $id): JsonResource|JsonResponse
     {
-        $cart = $this->cartRepository->findOrFail($id);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $id LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        $params = $cartAddressRequest->all();
+        $params = $cAddressRequest->all();
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         if (Cart::hasError()) {
             return new JsonResponse([
@@ -175,7 +198,7 @@ class CartController extends Controller
 
         Cart::collectTotals();
 
-        if ($cart->haveStockableItems()) {
+        if ($c->haveStockableItems()) {
             if (! $rates = Shipping::collectRates()) {
                 return new JsonResource([
                     'redirect'     => true,
@@ -195,20 +218,19 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Store shipping method.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function storeShippingMethod(int $id)
     {
         $validatedData = $this->validate(request(), [
             'shipping_method' => 'required',
         ]);
 
-        $cart = $this->cartRepository->findOrFail($id);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $id LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         if (
             Cart::hasError()
@@ -225,20 +247,19 @@ class CartController extends Controller
         return response()->json(Payment::getSupportedPaymentMethods());
     }
 
-    /**
-     * Store payment method.
-     *
-     * @return array
-     */
+
     public function storePaymentMethod(int $id)
     {
         $validatedData = $this->validate(request(), [
             'payment' => 'required',
         ]);
 
-        $cart = $this->cartRepository->findOrFail($id);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $id LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         if (
             Cart::hasError()
@@ -252,25 +273,26 @@ class CartController extends Controller
 
         Cart::collectTotals();
 
-        $cart = Cart::getCart();
+        $c = Cart::getCart();
 
         return [
-            'cart' => new CartResource($cart),
+            'cart' => new CartResource($c),
         ];
     }
 
-    /**
-     * Apply coupon to the cart.
-     */
+
     public function storeCoupon(int $id)
     {
         $params = $this->validate(request(), [
             'code' => 'required',
         ]);
 
-        $cart = $this->cartRepository->findOrFail($id);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $id LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         try {
             $coupon = $this->cartRuleCouponRepository->findOneByField('code', $params['code']);
@@ -312,14 +334,15 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Remove applied coupon from the cart.
-     */
+
     public function destroyCoupon(int $id): JsonResource
     {
-        $cart = $this->cartRepository->findOrFail($id);
+        $c = $c = DB::select("SELECT * FROM carts WHERE id = $id LIMIT 1");
+if (empty($c)) {
+    abort(404);
+}
 
-        Cart::setCart($cart);
+        Cart::setCart($c);
 
         Cart::removeCouponCode()->collectTotals();
 

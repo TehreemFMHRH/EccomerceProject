@@ -89,21 +89,12 @@
             },
 
             methods: {
-                /**
-                 * Registers events to update properties and trigger the download process.
-                 *
-                 * @returns {void}
-                 */
+                
                 registerEvents() {
                     this.$emitter.on('change-datagrid', this.updateProperties);
                 },
 
-                /**
-                 * Updates the available and applied properties with new values.
-                 *
-                 * @param {object} data - Object containing available and applied properties.
-                 * @returns {void}
-                 */
+                
                 updateProperties({ src, available, applied }) {
                     if (this.src !== src) {
                         return;
@@ -114,11 +105,7 @@
                     this.applied = applied;
                 },
 
-                /**
-                 * Initiates the download process for exporting data.
-                 *
-                 * @returns {void}
-                 */
+                
                 download() {
                     if (! this.available?.records?.length) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: '@lang('admin::app.export.no-records')' });
@@ -154,9 +141,7 @@
                             .then((response) => {
                                 const url = window.URL.createObjectURL(new Blob([response.data]));
 
-                                /**
-                                 * Extracting filename from content-disposition header.
-                                 */
+                                
                                 let filename = `${(Math.random() + 1).toString(36).substring(7)}.${this.format}`;
 
                                 const contentDisposition = response.headers['content-disposition'];
@@ -169,16 +154,12 @@
                                     }
                                 }
 
-                                /**
-                                 * Link generation.
-                                 */
+                                
                                 const link = document.createElement('a');
                                 link.href = url;
                                 link.setAttribute('download', filename);
 
-                                /**
-                                 * Adding a link to a document, clicking on the link, and then removing the link.
-                                 */
+                                
                                 document.body.appendChild(link);
                                 link.click();
                                 document.body.removeChild(link);

@@ -12,11 +12,7 @@ class TaxMap extends Model implements TaxMapContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $table = 'tax_categories_tax_rates';
 
     protected $fillable = [
@@ -24,9 +20,7 @@ class TaxMap extends Model implements TaxMapContract
         'tax_rate_id',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return TaxMapFactory::new();

@@ -7,18 +7,10 @@ use Webkul\DataGrid\DataGrid;
 
 class ExchangeRatesDataGrid extends DataGrid
 {
-    /**
-     * Primary column.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'currency_exchange_id';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('currency_exchange_rates')

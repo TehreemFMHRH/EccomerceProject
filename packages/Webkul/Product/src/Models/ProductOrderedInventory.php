@@ -13,47 +13,29 @@ class ProductOrderedInventory extends Model implements ProductOrderedInventoryCo
 {
     use HasFactory;
 
-    /**
-     * Timestamps.
-     *
-     * @var bool
-     */
+    
     public $timestamps = false;
 
-    /**
-     * Fillable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'qty',
         'product_id',
         'channel_id',
     ];
 
-    /**
-     * Get the channel owns the inventory.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    
     public function channel()
     {
         return $this->belongsTo(ChannelProxy::modelClass());
     }
 
-    /**
-     * Get the product that owns the product inventory.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    
     public function product()
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductOrderedInventoryFactory::new();

@@ -7,11 +7,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 
 class ForgetPasswordController extends Controller
 {
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         if (auth()->guard('admin')->check()) {
@@ -29,11 +25,7 @@ class ForgetPasswordController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         try {
@@ -41,11 +33,11 @@ class ForgetPasswordController extends Controller
                 'email' => 'required|email',
             ]);
 
-            $response = $this->broker()->sendResetLink(
+            $resp = $this->broker()->sendResetLink(
                 request(['email'])
             );
 
-            if ($response == Password::RESET_LINK_SENT) {
+            if ($resp == Password::RESET_LINK_SENT) {
                 session()->flash('success', trans('admin::app.users.forget-password.create.reset-link-sent'));
 
                 return redirect()->route('admin.forget_password.create');
@@ -63,11 +55,7 @@ class ForgetPasswordController extends Controller
         }
     }
 
-    /**
-     * Get the broker to be used during password reset.
-     *
-     * @return \Illuminate\Contracts\Auth\PasswordBroker
-     */
+    
     public function broker()
     {
         return Password::broker('admins');

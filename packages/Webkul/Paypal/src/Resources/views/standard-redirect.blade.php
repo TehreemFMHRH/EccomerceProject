@@ -15,10 +15,10 @@ $formFields = [
 <body>
     You will be redirected to the PayPal website in a few seconds.
 
-    <form action="https://www.paypal.com/cgi-bin/webscr" id="paypal_standard_checkout" method="POST">
+    <form action="https:
         <input value="Click here if you are not redirected within 10 seconds..." type="submit">
-        @foreach ($formFields as $name => $value)
-            <input type="hidden" name="{{ $name }}" value="{{ $value }}" />
+        @foreach ($formFields as $n => $va)
+            <input type="hidden" name="{{ $n }}" value="{{ $va }}" />
         @endforeach
     </form>
 

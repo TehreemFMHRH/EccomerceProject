@@ -24,33 +24,33 @@ use function Pest\Laravel\putJson;
 
 it('should search the customers via email or name', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     // Act and Assert.
     $this->loginAsAdmin();
 
     getJson(route('admin.customers.customers.search'), [
-        'query' => fake()->randomElement([$customer->name, $customer->email]),
+        'query' => fake()->randomElement([$k->name, $k->email]),
     ])
         ->assertOk()
-        ->assertJsonPath('data.0.id', $customer->id)
-        ->assertJsonPath('data.0.first_name', $customer->first_name)
-        ->assertJsonPath('data.0.last_name', $customer->last_name)
-        ->assertJsonPath('data.0.gender', $customer->gender)
-        ->assertJsonPath('data.0.status', $customer->status)
-        ->assertJsonPath('data.0.customer_group_id', $customer->customer_group_id)
-        ->assertJsonPath('data.0.email', $customer->email);
+        ->assertJsonPath('data.0.id', $k->id)
+        ->assertJsonPath('data.0.first_name', $k->first_name)
+        ->assertJsonPath('data.0.last_name', $k->last_name)
+        ->assertJsonPath('data.0.gender', $k->gender)
+        ->assertJsonPath('data.0.status', $k->status)
+        ->assertJsonPath('data.0.customer_group_id', $k->customer_group_id)
+        ->assertJsonPath('data.0.email', $k->email);
 });
 
 it('should create the customer if none exists when creating an order', function () {
     // Arrange.
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -114,13 +114,13 @@ it('should add product to the cart after search the product', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -129,7 +129,7 @@ it('should add product to the cart after search the product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.items.store', $cart->id), $data = [
+    $resp = postJson(route('admin.sales.cart.items.store', $cart->id), $dat = [
         'product_id' => $product->id,
         'quantity'   => rand(1, 10),
     ])
@@ -138,22 +138,22 @@ it('should add product to the cart after search the product', function () {
         ->assertJsonPath('data.is_guest', $cart->is_guest)
         ->assertJsonPath('data.customer_id', $cart->customer_id)
         ->assertJsonPath('data.items_count', 1)
-        ->assertJsonPath('data.items_qty', $data['quantity']);
+        ->assertJsonPath('data.items_qty', $dat['quantity']);
 
-    $this->assertPrice($price = $product->price * $data['quantity'], $response->json('data.grand_total'));
+    $this->assertPrice($r = $product->price * $dat['quantity'], $resp->json('data.grand_total'));
 
-    $this->assertPrice($price, $response->json('data.sub_total'));
+    $this->assertPrice($r, $resp->json('data.sub_total'));
 
     $this->assertModelWise([
         CartItem::class => [
             [
                 'cart_id'    => $cart->id,
-                'product_id' => $data['product_id'],
+                'product_id' => $dat['product_id'],
                 'sku'        => $product->sku,
                 'type'       => $product->type,
                 'name'       => $product->name,
                 'price'      => $product->price,
-                'total'      => $price,
+                'total'      => $r,
             ],
         ],
     ]);
@@ -175,13 +175,13 @@ it('should update the cart item after add product to the cart', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -233,7 +233,7 @@ it('should update the cart item after add product to the cart', function () {
     $this->assertModelWise([
         Cart::class => [
             [
-                'customer_id' => $customer->id,
+                'customer_id' => $k->id,
                 'items_count' => 1,
                 'items_qty'   => number_format($qty, 4),
             ],
@@ -270,13 +270,13 @@ it('should fails the validation error if billing and shipping address is not pro
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -348,13 +348,13 @@ it('should add billing address after add item to the cart', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -393,7 +393,7 @@ it('should add billing address after add item to the cart', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.addresses.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.addresses.store', $cart->id), [
         'billing' => $billingAddress = [
             ...$customerAddress,
             'use_for_shipping' => 1,
@@ -418,9 +418,9 @@ it('should add billing address after add item to the cart', function () {
         ->assertJsonPath('data.shippingMethods.free.rates.0.price', 0)
         ->assertJsonPath('data.shippingMethods.free.rates.0.base_price', 0);
 
-    $response->assertJsonPath('data.shippingMethods.flatrate.rates.0.cart_address_id', $cart->shipping_address->id);
+    $resp->assertJsonPath('data.shippingMethods.flatrate.rates.0.cart_address_id', $cart->shipping_address->id);
 
-    $response->assertJsonPath('data.shippingMethods.free.rates.0.cart_address_id', $cart->shipping_address->id);
+    $resp->assertJsonPath('data.shippingMethods.free.rates.0.cart_address_id', $cart->shipping_address->id);
 
     $this->assertModelWise([
         CartAddress::class => [
@@ -460,13 +460,13 @@ it('should add billing and shipping address after add item to the cart', functio
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -505,7 +505,7 @@ it('should add billing and shipping address after add item to the cart', functio
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.addresses.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.addresses.store', $cart->id), [
         'billing' => $billingAddress = [
             ...$customerAddress,
             'use_for_shipping' => 0,
@@ -535,9 +535,9 @@ it('should add billing and shipping address after add item to the cart', functio
         ->assertJsonPath('data.shippingMethods.free.rates.0.price', 0)
         ->assertJsonPath('data.shippingMethods.free.rates.0.base_price', 0);
 
-    $response->assertJsonPath('data.shippingMethods.flatrate.rates.0.cart_address_id', $cart->shipping_address->id);
+    $resp->assertJsonPath('data.shippingMethods.flatrate.rates.0.cart_address_id', $cart->shipping_address->id);
 
-    $response->assertJsonPath('data.shippingMethods.free.rates.0.cart_address_id', $cart->shipping_address->id);
+    $resp->assertJsonPath('data.shippingMethods.free.rates.0.cart_address_id', $cart->shipping_address->id);
 
     $this->assertModelWise([
         CartAddress::class => [
@@ -582,13 +582,13 @@ it('should the shipping rates after storing address', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -607,10 +607,10 @@ it('should the shipping rates after storing address', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -620,13 +620,13 @@ it('should the shipping rates after storing address', function () {
 
     CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_Id'  => $customer->id,
+        'customer_Id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_Id'  => $customer->id,
+        'customer_Id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -678,13 +678,13 @@ it('should store the payment method after storing the shipping method', function
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'is_active'           => 0,
         'items_count'         => null,
@@ -703,10 +703,10 @@ it('should store the payment method after storing the shipping method', function
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -716,7 +716,7 @@ it('should store the payment method after storing the shipping method', function
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
@@ -730,7 +730,7 @@ it('should store the payment method after storing the shipping method', function
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.payment_methods.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.payment_methods.store', $cart->id), [
         'payment' => [
             'description'  => 'Cash On Delivery',
             'method'       => 'cashondelivery',
@@ -741,7 +741,7 @@ it('should store the payment method after storing the shipping method', function
         ->assertJsonPath('cart.id', $cart->id)
         ->assertJsonPath('cart.is_guest', 0)
         ->assertJsonPath('cart.items_count', 1)
-        ->assertJsonPath('cart.customer_id', $customer->id)
+        ->assertJsonPath('cart.customer_id', $k->id)
         ->assertJsonPath('cart.items_count', 1)
         ->assertJsonPath('cart.items_qty', 1)
         ->assertJsonPath('cart.items.0.id', $cartItem->id)
@@ -793,11 +793,11 @@ it('should store the payment method after storing the shipping method', function
         ->assertJsonPath('cart.payment_method_title', 'Cash On Delivery')
         ->assertOk();
 
-    $this->assertPrice($product->price, $response['cart']['grand_total']);
+    $this->assertPrice($product->price, $resp['cart']['grand_total']);
 
-    $this->assertPrice($cartItem->total, $response['cart']['items']['0']['total']);
+    $this->assertPrice($cartItem->total, $resp['cart']['items']['0']['total']);
 
-    $this->assertPrice($product->price, $response['cart']['sub_total']);
+    $this->assertPrice($product->price, $resp['cart']['sub_total']);
 });
 
 it('should place order via admin', function () {
@@ -821,13 +821,13 @@ it('should place order via admin', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
         'shipping_method'     => 'free_free',
         'is_active'           => 0,
@@ -846,10 +846,10 @@ it('should place order via admin', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -916,7 +916,7 @@ it('should lists the all wishlist items related to the customer', function () {
         ->count(5)
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $wishlists = [];
 
@@ -924,17 +924,17 @@ it('should lists the all wishlist items related to the customer', function () {
         $wishlists[] = Wishlist::factory()->create([
             'channel_id'  => core()->getDefaultChannel()->id,
             'product_id'  => $product->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
         ]);
     }
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = getJson(route('admin.customers.customers.wishlist.items', $customer->id));
+    $resp = getJson(route('admin.customers.customers.wishlist.items', $k->id));
 
     foreach ($wishlists as $key => $wishlist) {
-        $response->assertJsonPath('data.'.$key.'.id', $wishlist->id)
+        $resp->assertJsonPath('data.'.$key.'.id', $wishlist->id)
             ->assertJsonPath('data.'.$key.'.product.id', $wishlist->product_id)
             ->assertJsonPath('data.'.$key.'.product.name', $wishlist->product->name)
             ->assertJsonPath('data.'.$key.'.product.sku', $wishlist->product->sku)
@@ -960,18 +960,18 @@ it('should remove item from the wishlist', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $wishlist = Wishlist::factory()->create([
         'channel_id'  => core()->getDefaultChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    deleteJson(route('admin.customers.customers.wishlist.items.delete', $customer->id), [
+    deleteJson(route('admin.customers.customers.wishlist.items.delete', $k->id), [
         'data' => [
             'item_id' => $wishlist->id,
         ],
@@ -998,33 +998,33 @@ it('should add a simple product wishlisted item to the cart', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
     $wishlist = Wishlist::factory()->create([
         'channel_id'  => core()->getDefaultChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.items.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.items.store', $cart->id), [
         'data' => [
             'item_id' => $wishlist->id,
         ],
         'product_id' => $product->id,
         'quantity'   => 1,
     ])
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.items_count', 1)
         ->assertJsonPath('data.items_qty', 1)
         ->assertJsonPath('data.items.0.id', $cart->items->first()->id)
@@ -1035,13 +1035,13 @@ it('should add a simple product wishlisted item to the cart', function () {
         ->assertJsonPath('data.have_stockable_items', true)
         ->assertJsonPath('message', trans('admin::app.sales.orders.create.cart.success-add-to-cart'));
 
-    $this->assertPrice($product->price, $response->json('data.items.0.price'));
+    $this->assertPrice($product->price, $resp->json('data.items.0.price'));
 
-    $this->assertPrice($product->price, $response->json('data.items.0.total'));
+    $this->assertPrice($product->price, $resp->json('data.items.0.total'));
 
-    $this->assertPrice($product->price, $response->json('data.grand_total'));
+    $this->assertPrice($product->price, $resp->json('data.grand_total'));
 
-    $this->assertPrice($product->price, $response->json('data.sub_total'));
+    $this->assertPrice($product->price, $resp->json('data.sub_total'));
 });
 
 it('should add a configurable product wishlisted item to the cart', function () {
@@ -1060,20 +1060,20 @@ it('should add a configurable product wishlisted item to the cart', function () 
         ->getConfigurableProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
     $wishlist = Wishlist::factory()->create([
         'channel_id'  => core()->getDefaultChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     $childProduct = $product->variants()->first();
@@ -1081,7 +1081,7 @@ it('should add a configurable product wishlisted item to the cart', function () 
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.items.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.items.store', $cart->id), [
         'data' => [
             'item_id' => $wishlist->id,
         ],
@@ -1095,7 +1095,7 @@ it('should add a configurable product wishlisted item to the cart', function () 
             24 => '7',
         ],
     ])
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.items_count', 1)
         ->assertJsonPath('data.items_qty', 1)
         ->assertJsonPath('data.items.0.id', $cart->items->first()->id)
@@ -1106,13 +1106,13 @@ it('should add a configurable product wishlisted item to the cart', function () 
         ->assertJsonPath('data.have_stockable_items', true)
         ->assertJsonPath('message', trans('admin::app.sales.orders.create.cart.success-add-to-cart'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.items.0.price'));
+    $this->assertPrice($childProduct->price, $resp->json('data.items.0.price'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.items.0.total'));
+    $this->assertPrice($childProduct->price, $resp->json('data.items.0.total'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.grand_total'));
+    $this->assertPrice($childProduct->price, $resp->json('data.grand_total'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.sub_total'));
+    $this->assertPrice($childProduct->price, $resp->json('data.sub_total'));
 });
 
 it('should return all the compare items related to the customer', function () {
@@ -1132,24 +1132,24 @@ it('should return all the compare items related to the customer', function () {
         ->count(5)
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $compares = [];
 
     foreach ($products as $product) {
         $compares[] = CompareItem::factory()->create([
             'product_id'  => $product->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
         ]);
     }
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = getJson(route('admin.customers.customers.compare.items', $customer->id));
+    $resp = getJson(route('admin.customers.customers.compare.items', $k->id));
 
     foreach ($compares as $key => $compare) {
-        $response->assertJsonPath('data.'.$key.'.id', $compare->id)
+        $resp->assertJsonPath('data.'.$key.'.id', $compare->id)
             ->assertJsonPath('data.'.$key.'.product.id', $compare->product_id)
             ->assertJsonPath('data.'.$key.'.product.name', $compare->product->name)
             ->assertJsonPath('data.'.$key.'.product.sku', $compare->product->sku)
@@ -1175,17 +1175,17 @@ it('should remove compare items from the compared list item', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $compare = CompareItem::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    deleteJson(route('admin.customers.customers.compare.items.delete', $customer->id), [
+    deleteJson(route('admin.customers.customers.compare.items.delete', $k->id), [
         'item_id' => $compare->id,
     ]);
 
@@ -1212,32 +1212,32 @@ it('show add a simple product to the cart from compared items', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
     $compare = CompareItem::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.items.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.items.store', $cart->id), [
         'data' => [
             'item_id' => $compare->id,
         ],
         'product_id' => $product->id,
         'quantity'   => 1,
     ])
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.items_count', 1)
         ->assertJsonPath('data.items_qty', 1)
         ->assertJsonPath('data.items.0.id', $cart->items->first()->id)
@@ -1248,13 +1248,13 @@ it('show add a simple product to the cart from compared items', function () {
         ->assertJsonPath('data.have_stockable_items', true)
         ->assertJsonPath('message', trans('admin::app.sales.orders.create.cart.success-add-to-cart'));
 
-    $this->assertPrice($product->price, $response->json('data.items.0.price'));
+    $this->assertPrice($product->price, $resp->json('data.items.0.price'));
 
-    $this->assertPrice($product->price, $response->json('data.items.0.total'));
+    $this->assertPrice($product->price, $resp->json('data.items.0.total'));
 
-    $this->assertPrice($product->price, $response->json('data.grand_total'));
+    $this->assertPrice($product->price, $resp->json('data.grand_total'));
 
-    $this->assertPrice($product->price, $response->json('data.sub_total'));
+    $this->assertPrice($product->price, $resp->json('data.sub_total'));
 });
 
 it('show add a configurable product to the cart from compared items', function () {
@@ -1273,19 +1273,19 @@ it('show add a configurable product to the cart from compared items', function (
         ->getConfigurableProductFactory()
         ->create();
 
-    $customer = (new CustomerFaker)->factory()->create();
+    $k = (new CustomerFaker)->factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
     $compare = CompareItem::factory()->create([
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     $childProduct = $product->variants()->first();
@@ -1293,7 +1293,7 @@ it('show add a configurable product to the cart from compared items', function (
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.sales.cart.items.store', $cart->id), [
+    $resp = postJson(route('admin.sales.cart.items.store', $cart->id), [
         'data' => [
             'item_id' => $compare->id,
         ],
@@ -1307,7 +1307,7 @@ it('show add a configurable product to the cart from compared items', function (
             24 => '7',
         ],
     ])
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.items_count', 1)
         ->assertJsonPath('data.items_qty', 1)
         ->assertJsonPath('data.items.0.id', $cart->items->first()->id)
@@ -1318,13 +1318,13 @@ it('show add a configurable product to the cart from compared items', function (
         ->assertJsonPath('data.have_stockable_items', true)
         ->assertJsonPath('message', trans('admin::app.sales.orders.create.cart.success-add-to-cart'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.items.0.price'));
+    $this->assertPrice($childProduct->price, $resp->json('data.items.0.price'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.items.0.total'));
+    $this->assertPrice($childProduct->price, $resp->json('data.items.0.total'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.grand_total'));
+    $this->assertPrice($childProduct->price, $resp->json('data.grand_total'));
 
-    $this->assertPrice($childProduct->price, $response->json('data.sub_total'));
+    $this->assertPrice($childProduct->price, $resp->json('data.sub_total'));
 });
 
 it('should return the list of the recent orders', function () {
@@ -1343,13 +1343,13 @@ it('should return the list of the recent orders', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -1366,10 +1366,10 @@ it('should return the list of the recent orders', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -1379,19 +1379,19 @@ it('should return the list of the recent orders', function () {
 
     CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -1410,17 +1410,17 @@ it('should return the list of the recent orders', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'             => $cart->id,
-        'customer_id'         => $customer->id,
-        'customer_email'      => $customer->email,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
+        'customer_id'         => $k->id,
+        'customer_email'      => $k->email,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
     ]);
 
     OrderItem::factory()->create([
         'product_id' => $product->id,
-        'order_id'   => $order->id,
+        'order_id'   => $o->id,
         'sku'        => $product->sku,
         'type'       => $product->type,
         'name'       => $product->name,
@@ -1428,29 +1428,29 @@ it('should return the list of the recent orders', function () {
 
     OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     OrderAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
     OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
     ]);
 
     // Act and assert.
     $this->loginAsAdmin();
 
-    $response = getJson(route('admin.customers.customers.orders.recent_items', $cart->customer_id))
-        ->assertJsonPath('data.0.id', $order->id)
-        ->assertJsonPath('data.0.order_id', $order->id)
+    $resp = getJson(route('admin.customers.customers.orders.recent_items', $cart->customer_id))
+        ->assertJsonPath('data.0.id', $o->id)
+        ->assertJsonPath('data.0.order_id', $o->id)
         ->assertJsonPath('data.0.product.id', $product->id)
         ->assertJsonPath('data.0.product.sku', $product->sku)
         ->assertJsonPath('data.0.product.name', $product->name);
 
-    $this->assertPrice($product->price, $response->json('data.0.product.price'));
+    $this->assertPrice($product->price, $resp->json('data.0.product.price'));
 });

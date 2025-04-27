@@ -7,33 +7,19 @@ use Webkul\DataGrid\DataGrid;
 
 class ReviewDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @var string
-     */
+    
     protected $primaryColumn = 'product_review_id';
 
-    /**
-     * Review status "approved".
-     */
+    
     const STATUS_APPROVED = 'approved';
 
-    /**
-     * Review status "pending", indicating awaiting approval or processing.
-     */
+    
     const STATUS_PENDING = 'pending';
 
-    /**
-     * Review status "disapproved", indicating rejection or denial.
-     */
+    
     const STATUS_DISAPPROVED = 'disapproved';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('product_reviews')
@@ -60,11 +46,7 @@ class ReviewDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -124,10 +106,10 @@ class ReviewDataGrid extends DataGrid
             'searchable'         => true,
             'filterable'         => true,
             'filterable_type'    => 'dropdown',
-            'filterable_options' => array_map(function ($value) {
+            'filterable_options' => array_map(function ($va) {
                 return [
-                    'label' => $value,
-                    'value' => (string) $value,
+                    'label' => $va,
+                    'value' => (string) $va,
                 ];
             }, range(1, 5)),
             'sortable'   => true,
@@ -166,11 +148,7 @@ class ReviewDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('customers.reviews.edit')) {
@@ -198,11 +176,7 @@ class ReviewDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('customers.reviews.delete')) {

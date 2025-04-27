@@ -25,8 +25,8 @@
 
                 if (module.models && module.models.length) {
                     table.append(function () {
-                        var $name = $('<td />').addClass(csscls('name')).html('Models');
-                        var $value = $('<td />').addClass(csscls('value'));
+                        var $na = $('<td />').addClass(csscls('name')).html('Models');
+                        var $va = $('<td />').addClass(csscls('value'));
                         var $span = $('<span />').addClass('phpdebugbar-text-muted');
 
                         var index = 0;
@@ -40,16 +40,16 @@
                         $models.$el
                             .removeClass(csscls('list'))
                             .addClass(csscls('table-list'))
-                            .appendTo($value);
+                            .appendTo($va);
 
-                        return $('<tr />').append($name, $value);
+                        return $('<tr />').append($na, $va);
                     });
                 }
 
                 if (module.views && module.views.length) {
                     table.append(function () {
-                        var $name = $('<td />').addClass(csscls('name')).html('Views');
-                        var $value = $('<td />').addClass(csscls('value'));
+                        var $na = $('<td />').addClass(csscls('name')).html('Views');
+                        var $va = $('<td />').addClass(csscls('value'));
 
                         var $views = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, view) {
                             li.append(view).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
@@ -59,16 +59,16 @@
                         $views.$el
                             .removeClass(csscls('list'))
                             .addClass(csscls('table-list'))
-                            .appendTo($value);
+                            .appendTo($va);
 
-                        return $('<tr />').append($name, $value);
+                        return $('<tr />').append($na, $va);
                     });
                 }
 
                 if (module.queries && module.queries.length) {
                     table.append(function () {
-                        var $name = $('<td />').addClass(csscls('name')).html('Queries');
-                        var $value = $('<td />').addClass(csscls('value'));
+                        var $na = $('<td />').addClass(csscls('name')).html('Queries');
+                        var $va = $('<td />').addClass(csscls('value'));
 
                         var $queries = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, query) {
                             $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(query.sql, 'sql')).appendTo(li);
@@ -83,9 +83,9 @@
                         $queries.$el
                             .removeClass(csscls('list'))
                             .addClass(csscls('table-list'))
-                            .appendTo($value);
+                            .appendTo($va);
 
-                        return $('<tr />').append($name, $value);
+                        return $('<tr />').append($na, $va);
                     });
                 }
 

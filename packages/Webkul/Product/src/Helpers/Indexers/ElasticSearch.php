@@ -11,58 +11,28 @@ use Webkul\Product\Models\Product;
 
 class ElasticSearch extends AbstractIndexer
 {
-    /**
-     * @var int
-     */
+    
     private $batchSize;
 
-    /**
-     * Attributes
-     *
-     * @var array
-     */
+    
     protected $attributes;
 
-    /**
-     * Channels
-     *
-     * @var array
-     */
+    
     protected $channels;
 
-    /**
-     * Customer Groups
-     *
-     * @var array
-     */
+    
     protected $customerGroups;
 
-    /**
-     * Product instance.
-     *
-     * @var \Webkul\Product\Contracts\Product
-     */
+    
     protected $product;
 
-    /**
-     * Channel instance.
-     *
-     * @var \Webkul\Core\Contracts\Channel
-     */
+    
     protected $channel;
 
-    /**
-     * Locale instance.
-     *
-     * @var \Webkul\Core\Contracts\Locale
-     */
+    
     protected $locale;
 
-    /**
-     * Create a new indexer instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected ChannelRepository $channelRepository,
         protected CustomerGroupRepository $customerGroupRepository,
@@ -72,12 +42,7 @@ class ElasticSearch extends AbstractIndexer
         $this->batchSize = self::BATCH_SIZE;
     }
 
-    /**
-     * Set current product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Helpers\Indexers\ElasticSearch\Product
-     */
+    
     public function setProduct($product)
     {
         $this->product = $product;
@@ -85,12 +50,7 @@ class ElasticSearch extends AbstractIndexer
         return $this;
     }
 
-    /**
-     * Set Channel
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Helpers\Indexers\ElasticSearch\Product
-     */
+    
     public function setChannel($channel)
     {
         $this->channel = $channel;
@@ -98,12 +58,7 @@ class ElasticSearch extends AbstractIndexer
         return $this;
     }
 
-    /**
-     * Set Locale
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Helpers\Indexers\ElasticSearch\Product
-     */
+    
     public function setLocale($locale)
     {
         $this->locale = $locale;
@@ -111,11 +66,7 @@ class ElasticSearch extends AbstractIndexer
         return $this;
     }
 
-    /**
-     * Reindex every products
-     *
-     * @return void
-     */
+    
     public function reindexFull()
     {
         while (true) {
@@ -151,11 +102,7 @@ class ElasticSearch extends AbstractIndexer
         request()->query->remove('cursor');
     }
 
-    /**
-     * Reindex products by batch size
-     *
-     * @return void
-     */
+    
     public function reindexBatch($products)
     {
         $refreshIndices = ['body' => []];
@@ -198,19 +145,14 @@ class ElasticSearch extends AbstractIndexer
         }
     }
 
-    /**
-     * Delete product indices
-     *
-     * @param  array  $indices
-     * @return void
-     */
+    
     public function deleteIndices($indices)
     {
         foreach ($indices as $indexName => $productIds) {
-            foreach ($productIds as $id) {
+            foreach ($productIds as $i) {
                 $params = [
                     'index' => $indexName,
-                    'id'    => $id,
+                    'id'    => $i,
                 ];
 
                 try {
@@ -221,21 +163,13 @@ class ElasticSearch extends AbstractIndexer
         }
     }
 
-    /**
-     * Refresh product indices
-     *
-     * @return void
-     */
+    
     public function getIndexName()
     {
         return 'products_'.$this->channel->code.'_'.$this->locale->code.'_index';
     }
 
-    /**
-     * Returns filterable attribute values
-     *
-     * @return void
-     */
+    
     public function getIndices()
     {
         $properties = array_merge([
@@ -289,11 +223,7 @@ class ElasticSearch extends AbstractIndexer
         return $properties;
     }
 
-    /**
-     * Returns attributes to index
-     *
-     * @return void
-     */
+    
     public function getAttributes()
     {
         if ($this->attributes) {
@@ -319,13 +249,7 @@ class ElasticSearch extends AbstractIndexer
         return $this->attributes;
     }
 
-    /**
-     * Returns filterable attribute values
-     *
-     * @param  \Webkul\Attribute\Contracts\Attribute  $attribute
-     * @param  \Webkul\Product\Contracts\ProductAttributeValue
-     * @return void
-     */
+    
     public function getAttributeValue($attribute)
     {
         $attributeValues = $this->product->attribute_values
@@ -350,11 +274,7 @@ class ElasticSearch extends AbstractIndexer
         return $attributeValues->first();
     }
 
-    /**
-     * Returns all channels
-     *
-     * @return Collection
-     */
+    
     public function getChannels()
     {
         if ($this->channels) {
@@ -364,11 +284,7 @@ class ElasticSearch extends AbstractIndexer
         return $this->channels = $this->channelRepository->all();
     }
 
-    /**
-     * Returns all customer groups
-     *
-     * @return Collection
-     */
+    
     public function getCustomerGroups()
     {
         if ($this->customerGroups) {

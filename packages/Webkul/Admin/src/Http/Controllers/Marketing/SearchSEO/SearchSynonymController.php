@@ -12,18 +12,10 @@ use Webkul\Marketing\Repositories\SearchSynonymRepository;
 
 class SearchSynonymController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(public SearchSynonymRepository $searchSynonymRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -33,9 +25,7 @@ class SearchSynonymController extends Controller
         return view('admin::marketing.search-seo.search-synonyms.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -57,26 +47,22 @@ class SearchSynonymController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request()->id;
+        $i = request()->id;
 
         $this->validate(request(), [
             'name'  => 'required',
             'terms' => 'required',
         ]);
 
-        Event::dispatch('marketing.search_seo.search_synonyms.update.before', $id);
+        Event::dispatch('marketing.search_seo.search_synonyms.update.before', $i);
 
         $searchSynonym = $this->searchSynonymRepository->update(request()->only([
             'name',
             'terms',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('marketing.search_seo.search_synonyms.update.after', $searchSynonym);
 
@@ -85,20 +71,15 @@ class SearchSynonymController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function destroy($id)
+    
+    public function destroy($i)
     {
         try {
-            Event::dispatch('marketing.search_seo.search_synonyms.delete.before', $id);
+            Event::dispatch('marketing.search_seo.search_synonyms.delete.before', $i);
 
-            $this->searchSynonymRepository->delete($id);
+            $this->searchSynonymRepository->delete($i);
 
-            Event::dispatch('marketing.search_seo.search_synonyms.delete.after', $id);
+            Event::dispatch('marketing.search_seo.search_synonyms.delete.after', $i);
 
             return response()->json([
                 'message' => trans('admin::app.marketing.search-seo.search-synonyms.index.edit.delete-success'),
@@ -111,9 +92,7 @@ class SearchSynonymController extends Controller
         ], 500);
     }
 
-    /**
-     * Mass delete the search terms.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $searchSynonymIds = $massDestroyRequest->input('indices');

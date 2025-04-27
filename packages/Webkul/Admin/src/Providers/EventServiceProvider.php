@@ -13,11 +13,7 @@ use Webkul\Admin\Listeners\Shipment;
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * The event handler mappings for the application.
-     *
-     * @var array
-     */
+    
     protected $listen = [
         'customer.create.after' => [
             [Customer::class, 'afterCreated'],

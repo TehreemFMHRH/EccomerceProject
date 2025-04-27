@@ -7,16 +7,10 @@ use Webkul\Marketing\Models\SearchTerm;
 
 class SearchTermsFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = SearchTerm::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition()
     {
         $terms = ['jackets', 'phone', 'computers', 'electronics'];

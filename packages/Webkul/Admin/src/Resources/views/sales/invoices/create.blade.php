@@ -29,7 +29,7 @@
             <!-- Invoice Create drawer -->
             <x-admin::form
                 method="POST"
-                :action="route('admin.sales.invoices.store', $order->id)"
+                :action="route('admin.sales.invoices.store', $o->id)"
             >
                 <x-admin::drawer ref="invoice">
                     <!-- Drawer Header -->
@@ -55,7 +55,7 @@
                     <!-- Drawer Content -->
                     <x-slot:content class="!p-0">
                         <div class="grid p-4 !pt-0">
-                            @foreach ($order->items as $item)
+                            @foreach ($o->items as $item)
                                 @if ($item->qty_to_invoice)
                                     <div class="flex justify-between gap-2.5 border-b border-slate-300 py-4 dark:border-gray-800">
                                         <div class="flex gap-2.5">

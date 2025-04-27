@@ -7,22 +7,18 @@ use Webkul\GDPR\Contracts\GDPRDataRequest;
 
 class GDPRDataRequestRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+
     public function model()
     {
         return GDPRDataRequest::class;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(array $data, $id)
-    {
-        $gdprRequest = $this->findOrFail($id);
 
-        $gdprRequest->update($data);
+    public function update(array $dat, $i)
+    {
+        $gdprRequest = $this->findOrFail($i);
+
+        $gdprRequest->update($dat);
 
         return $gdprRequest;
     }

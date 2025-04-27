@@ -52,10 +52,10 @@ it('should display the cart items for a guest user', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -68,7 +68,7 @@ it('should display the cart items for a guest user', function () {
     cart()->collectTotals();
 
     // Act and Assert.
-    $response = get(route('shop.api.checkout.cart.index'))
+    $resp = get(route('shop.api.checkout.cart.index'))
         ->assertOk()
         ->assertJsonPath('data.id', $cart->id)
         ->assertJsonPath('data.is_guest', $cart->is_guest)
@@ -78,27 +78,27 @@ it('should display the cart items for a guest user', function () {
 
     $cart->refresh();
 
-    $response->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
+    $resp->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
 
-    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $response['data']['tax_total']);
+    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $resp['data']['tax_total']);
 
-    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $response['data']['discount_amount']);
+    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $resp['data']['discount_amount']);
 
-    $this->assertPrice($cart->grand_total, $response['data']['grand_total']);
+    $this->assertPrice($cart->grand_total, $resp['data']['grand_total']);
 
-    $this->assertPrice($cart->sub_total, $response['data']['sub_total']);
+    $this->assertPrice($cart->sub_total, $resp['data']['sub_total']);
 
     foreach ($cart->items as $key => $cartItem) {
-        $response->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
-        $response->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
-        $response->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
-        $response->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
-        $response->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
-        $response->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
-        $response->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
-        $response->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
+        $resp->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
+        $resp->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
+        $resp->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
+        $resp->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
+        $resp->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
+        $resp->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
+        $resp->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
+        $resp->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
     }
 });
 
@@ -118,13 +118,13 @@ it('should display the cart items for a customer', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -141,10 +141,10 @@ it('should display the cart items for a customer', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -157,9 +157,9 @@ it('should display the cart items for a customer', function () {
     cart()->collectTotals();
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
-    $response = get(route('shop.api.checkout.cart.index'))
+    $resp = get(route('shop.api.checkout.cart.index'))
         ->assertOk()
         ->assertJsonPath('data.id', $cart->id)
         ->assertJsonPath('data.is_guest', $cart->is_guest)
@@ -169,27 +169,27 @@ it('should display the cart items for a customer', function () {
 
     $cart->refresh();
 
-    $response->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
+    $resp->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
 
-    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $response['data']['tax_total']);
+    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $resp['data']['tax_total']);
 
-    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $response['data']['discount_amount']);
+    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $resp['data']['discount_amount']);
 
-    $this->assertPrice($cart->grand_total, $response['data']['grand_total']);
+    $this->assertPrice($cart->grand_total, $resp['data']['grand_total']);
 
-    $this->assertPrice($cart->sub_total, $response['data']['sub_total']);
+    $this->assertPrice($cart->sub_total, $resp['data']['sub_total']);
 
     foreach ($cart->items as $key => $cartItem) {
-        $response->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
-        $response->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
-        $response->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
-        $response->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
-        $response->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
-        $response->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
-        $response->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
-        $response->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
+        $resp->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
+        $resp->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
+        $resp->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
+        $resp->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
+        $resp->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
+        $resp->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
+        $resp->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
+        $resp->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
     }
 });
 
@@ -229,10 +229,10 @@ it('should fails the validation error when the cart item id not provided when re
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -262,13 +262,13 @@ it('should fails the validation error when the cart item id not provided when re
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -285,10 +285,10 @@ it('should fails the validation error when the cart item id not provided when re
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -299,7 +299,7 @@ it('should fails the validation error when the cart item id not provided when re
     cart()->setCart($cart);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     deleteJson(route('shop.api.checkout.cart.destroy'))
         ->assertJsonValidationErrorFor('cart_item_id')
@@ -342,10 +342,10 @@ it('should fails the validation error when the wrong cart item id provided when 
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -377,13 +377,13 @@ it('should fails the validation error when the wrong cart item id provided when 
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -400,10 +400,10 @@ it('should fails the validation error when the wrong cart item id provided when 
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -411,7 +411,7 @@ it('should fails the validation error when the wrong cart item id provided when 
         'additional'        => $additional,
     ]);
 
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     // Act and Assert.
     deleteJson(route('shop.api.checkout.cart.destroy'), [
@@ -457,10 +457,10 @@ it('should remove only one product item from the cart for the guest user', funct
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -505,13 +505,13 @@ it('should remove only one product item from the cart for the customer', functio
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -528,10 +528,10 @@ it('should remove only one product item from the cart for the customer', functio
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -544,7 +544,7 @@ it('should remove only one product item from the cart for the customer', functio
     cart()->setCart($cart);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     deleteJson(route('shop.api.checkout.cart.destroy', [
         'cart_item_id' => $cartItem->id,
@@ -608,10 +608,10 @@ it('should only remove one product from the cart for now the cart will contains 
         'sku'               => $product1->sku,
         'quantity'          => $additional1['quantity'],
         'name'              => $product1->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product1->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product1->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional1['quantity'],
-        'base_total'        => $price * $additional1['quantity'],
+        'base_total'        => $r * $additional1['quantity'],
         'weight'            => $product1->weight ?? 0,
         'total_weight'      => ($product1->weight ?? 0) * $additional1['quantity'],
         'base_total_weight' => ($product1->weight ?? 0) * $additional1['quantity'],
@@ -625,10 +625,10 @@ it('should only remove one product from the cart for now the cart will contains 
         'sku'               => $product2->sku,
         'quantity'          => $additional2['quantity'],
         'name'              => $product2->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product2->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product2->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional2['quantity'],
-        'base_total'        => $price * $additional2['quantity'],
+        'base_total'        => $r * $additional2['quantity'],
         'weight'            => $product2->weight ?? 0,
         'total_weight'      => ($product2->weight ?? 0) * $additional2['quantity'],
         'base_total_weight' => ($product2->weight ?? 0) * $additional2['quantity'],
@@ -641,7 +641,7 @@ it('should only remove one product from the cart for now the cart will contains 
     cart()->setCart($cart);
 
     // Act and Assert.
-    $response = deleteJson(route('shop.api.checkout.cart.destroy'), [
+    $resp = deleteJson(route('shop.api.checkout.cart.destroy'), [
         'cart_item_id' => $cartItem1->id,
     ])
         ->assertOk()
@@ -656,27 +656,27 @@ it('should only remove one product from the cart for now the cart will contains 
 
     $cartItem2->refresh();
 
-    $response->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
+    $resp->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
 
-    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $response['data']['tax_total']);
+    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $resp['data']['tax_total']);
 
-    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $response['data']['discount_amount']);
+    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $resp['data']['discount_amount']);
 
-    $this->assertPrice($cart->grand_total, $response['data']['grand_total']);
+    $this->assertPrice($cart->grand_total, $resp['data']['grand_total']);
 
-    $this->assertPrice($cart->sub_total, $response['data']['sub_total']);
+    $this->assertPrice($cart->sub_total, $resp['data']['sub_total']);
 
     foreach ($cart->items as $key => $cartItem) {
-        $response->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
-        $response->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
-        $response->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
-        $response->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
-        $response->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
-        $response->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
-        $response->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
-        $response->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
+        $resp->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
+        $resp->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
+        $resp->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
+        $resp->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
+        $resp->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
+        $resp->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
+        $resp->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
+        $resp->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
     }
 
     $this->assertDatabaseMissing('cart_items', [
@@ -717,13 +717,13 @@ it('should only remove one product from the cart for now the cart will contains 
 
     [$product1, $product2] = $products;
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -747,10 +747,10 @@ it('should only remove one product from the cart for now the cart will contains 
         'sku'               => $product1->sku,
         'quantity'          => $additional1['quantity'],
         'name'              => $product1->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product1->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product1->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional1['quantity'],
-        'base_total'        => $price * $additional1['quantity'],
+        'base_total'        => $r * $additional1['quantity'],
         'weight'            => $product1->weight ?? 0,
         'total_weight'      => ($product1->weight ?? 0) * $additional1['quantity'],
         'base_total_weight' => ($product1->weight ?? 0) * $additional1['quantity'],
@@ -764,10 +764,10 @@ it('should only remove one product from the cart for now the cart will contains 
         'sku'               => $product2->sku,
         'quantity'          => $additional2['quantity'],
         'name'              => $product2->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product2->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product2->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional2['quantity'],
-        'base_total'        => $price * $additional2['quantity'],
+        'base_total'        => $r * $additional2['quantity'],
         'weight'            => $product2->weight ?? 0,
         'total_weight'      => ($product2->weight ?? 0) * $additional2['quantity'],
         'base_total_weight' => ($product2->weight ?? 0) * $additional2['quantity'],
@@ -782,7 +782,7 @@ it('should only remove one product from the cart for now the cart will contains 
     // Act and Assert.
     $this->loginAsCustomer();
 
-    $response = deleteJson(route('shop.api.checkout.cart.destroy'), [
+    $resp = deleteJson(route('shop.api.checkout.cart.destroy'), [
         'cart_item_id' => $cartItem1->id,
     ])
         ->assertOk()
@@ -797,27 +797,27 @@ it('should only remove one product from the cart for now the cart will contains 
 
     $cartItem2->refresh();
 
-    $response->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
+    $resp->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
 
-    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $response['data']['tax_total']);
+    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $resp['data']['tax_total']);
 
-    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $response['data']['discount_amount']);
+    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $resp['data']['discount_amount']);
 
-    $this->assertPrice($cart->grand_total, $response['data']['grand_total']);
+    $this->assertPrice($cart->grand_total, $resp['data']['grand_total']);
 
-    $this->assertPrice($cart->sub_total, $response['data']['sub_total']);
+    $this->assertPrice($cart->sub_total, $resp['data']['sub_total']);
 
     foreach ($cart->items as $key => $cartItem) {
-        $response->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
-        $response->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
-        $response->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
-        $response->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
-        $response->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
-        $response->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
-        $response->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
-        $response->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
-        $response->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
+        $resp->assertJsonPath('data.items.'.$key.'.id', $cartItem->id);
+        $resp->assertJsonPath('data.items.'.$key.'.quantity', $cartItem->quantity);
+        $resp->assertJsonPath('data.items.'.$key.'.type', $cartItem->type);
+        $resp->assertJsonPath('data.items.'.$key.'.name', $cartItem->name);
+        $resp->assertJsonPath('data.items.'.$key.'.price', $cartItem->price);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_price', core()->formatPrice($cartItem->price));
+        $resp->assertJsonPath('data.items.'.$key.'.total', $cartItem->total);
+        $resp->assertJsonPath('data.items.'.$key.'.formatted_total', core()->formatPrice($cartItem->total));
+        $resp->assertJsonPath('data.items.'.$key.'.options', $cartItem->options ?? []);
+        $resp->assertJsonPath('data.items.'.$key.'.product_url_key', $cartItem->product->url_key);
     }
 
     $this->assertDatabaseMissing('cart_items', [
@@ -885,10 +885,10 @@ it('should remove all products from the cart for a guest user', function () {
         'sku'               => $product1->sku,
         'quantity'          => $additional1['quantity'],
         'name'              => $product1->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product1->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product1->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional1['quantity'],
-        'base_total'        => $price * $additional1['quantity'],
+        'base_total'        => $r * $additional1['quantity'],
         'weight'            => $product1->weight ?? 0,
         'total_weight'      => ($product1->weight ?? 0) * $additional1['quantity'],
         'base_total_weight' => ($product1->weight ?? 0) * $additional1['quantity'],
@@ -902,10 +902,10 @@ it('should remove all products from the cart for a guest user', function () {
         'sku'               => $product2->sku,
         'quantity'          => $additional2['quantity'],
         'name'              => $product2->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product2->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product2->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional2['quantity'],
-        'base_total'        => $price * $additional2['quantity'],
+        'base_total'        => $r * $additional2['quantity'],
         'weight'            => $product2->weight ?? 0,
         'total_weight'      => ($product2->weight ?? 0) * $additional2['quantity'],
         'base_total_weight' => ($product2->weight ?? 0) * $additional2['quantity'],
@@ -950,13 +950,13 @@ it('should remove all products from the cart for a customer', function () {
 
     [$product1, $product2] = $products;
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -980,10 +980,10 @@ it('should remove all products from the cart for a customer', function () {
         'sku'               => $product1->sku,
         'quantity'          => $additional1['quantity'],
         'name'              => $product1->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product1->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product1->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional1['quantity'],
-        'base_total'        => $price * $additional1['quantity'],
+        'base_total'        => $r * $additional1['quantity'],
         'weight'            => $product1->weight ?? 0,
         'total_weight'      => ($product1->weight ?? 0) * $additional1['quantity'],
         'base_total_weight' => ($product1->weight ?? 0) * $additional1['quantity'],
@@ -997,10 +997,10 @@ it('should remove all products from the cart for a customer', function () {
         'sku'               => $product2->sku,
         'quantity'          => $additional2['quantity'],
         'name'              => $product2->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product2->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product2->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional2['quantity'],
-        'base_total'        => $price * $additional2['quantity'],
+        'base_total'        => $r * $additional2['quantity'],
         'weight'            => $product2->weight ?? 0,
         'total_weight'      => ($product2->weight ?? 0) * $additional2['quantity'],
         'base_total_weight' => ($product2->weight ?? 0) * $additional2['quantity'],
@@ -1074,10 +1074,10 @@ it('should update cart quantities for guest user', function () {
         'sku'               => $product1->sku,
         'quantity'          => $additional1['quantity'],
         'name'              => $product1->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product1->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product1->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional1['quantity'],
-        'base_total'        => $price * $additional1['quantity'],
+        'base_total'        => $r * $additional1['quantity'],
         'weight'            => $product1->weight ?? 0,
         'total_weight'      => ($product1->weight ?? 0) * $additional1['quantity'],
         'base_total_weight' => ($product1->weight ?? 0) * $additional1['quantity'],
@@ -1091,10 +1091,10 @@ it('should update cart quantities for guest user', function () {
         'sku'               => $product2->sku,
         'quantity'          => $additional2['quantity'],
         'name'              => $product2->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product2->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product2->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional2['quantity'],
-        'base_total'        => $price * $additional2['quantity'],
+        'base_total'        => $r * $additional2['quantity'],
         'weight'            => $product2->weight ?? 0,
         'total_weight'      => ($product2->weight ?? 0) * $additional2['quantity'],
         'base_total_weight' => ($product2->weight ?? 0) * $additional2['quantity'],
@@ -1107,8 +1107,8 @@ it('should update cart quantities for guest user', function () {
     cart()->setCart($cart);
 
     // Act and Assert.
-    $response = putJson(route('shop.api.checkout.cart.update'), [
-        'qty' => $data = [
+    $resp = putJson(route('shop.api.checkout.cart.update'), [
+        'qty' => $dat = [
             $cartItem1->id => rand(2, 10),
             $cartItem2->id => rand(2, 10),
         ],
@@ -1118,7 +1118,7 @@ it('should update cart quantities for guest user', function () {
         ->assertJsonPath('data.is_guest', $cart->is_guest)
         ->assertJsonPath('data.customer_id', $cart->customer_id)
         ->assertJsonPath('data.items_count', 2)
-        ->assertJsonPath('data.items_qty', array_sum($data))
+        ->assertJsonPath('data.items_qty', array_sum($dat))
         ->assertJsonPath('message', trans('shop::app.checkout.cart.index.quantity-update'));
 
     $cart->refresh();
@@ -1127,15 +1127,15 @@ it('should update cart quantities for guest user', function () {
 
     $cartItem2->refresh();
 
-    $response->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
+    $resp->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
 
-    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $response['data']['tax_total']);
+    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $resp['data']['tax_total']);
 
-    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $response['data']['discount_amount']);
+    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $resp['data']['discount_amount']);
 
-    $this->assertPrice($cart->grand_total, $response['data']['grand_total']);
+    $this->assertPrice($cart->grand_total, $resp['data']['grand_total']);
 
-    $this->assertPrice($cart->sub_total, $response['data']['sub_total']);
+    $this->assertPrice($cart->sub_total, $resp['data']['sub_total']);
 
     $cart->refresh();
 
@@ -1179,13 +1179,13 @@ it('should update cart quantities for customer', function () {
 
     [$product1, $product2] = $products;
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -1209,10 +1209,10 @@ it('should update cart quantities for customer', function () {
         'sku'               => $product1->sku,
         'quantity'          => $additional1['quantity'],
         'name'              => $product1->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product1->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product1->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional1['quantity'],
-        'base_total'        => $price * $additional1['quantity'],
+        'base_total'        => $r * $additional1['quantity'],
         'weight'            => $product1->weight ?? 0,
         'total_weight'      => ($product1->weight ?? 0) * $additional1['quantity'],
         'base_total_weight' => ($product1->weight ?? 0) * $additional1['quantity'],
@@ -1226,10 +1226,10 @@ it('should update cart quantities for customer', function () {
         'sku'               => $product2->sku,
         'quantity'          => $additional2['quantity'],
         'name'              => $product2->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product2->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product2->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional2['quantity'],
-        'base_total'        => $price * $additional2['quantity'],
+        'base_total'        => $r * $additional2['quantity'],
         'weight'            => $product2->weight ?? 0,
         'total_weight'      => ($product2->weight ?? 0) * $additional2['quantity'],
         'base_total_weight' => ($product2->weight ?? 0) * $additional2['quantity'],
@@ -1244,8 +1244,8 @@ it('should update cart quantities for customer', function () {
     // Act and Assert.
     $this->loginAsCustomer();
 
-    $response = putJson(route('shop.api.checkout.cart.update'), [
-        'qty' => $data = [
+    $resp = putJson(route('shop.api.checkout.cart.update'), [
+        'qty' => $dat = [
             $cartItem1->id => rand(2, 10),
             $cartItem2->id => rand(2, 10),
         ],
@@ -1255,7 +1255,7 @@ it('should update cart quantities for customer', function () {
         ->assertJsonPath('data.is_guest', $cart->is_guest)
         ->assertJsonPath('data.customer_id', $cart->customer_id)
         ->assertJsonPath('data.items_count', 2)
-        ->assertJsonPath('data.items_qty', array_sum($data))
+        ->assertJsonPath('data.items_qty', array_sum($dat))
         ->assertJsonPath('message', trans('shop::app.checkout.cart.index.quantity-update'));
 
     $cart->refresh();
@@ -1264,15 +1264,15 @@ it('should update cart quantities for customer', function () {
 
     $cartItem2->refresh();
 
-    $response->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
+    $resp->assertJsonPath('data.formatted_discount_amount', core()->currency($cart->discount_amount));
 
-    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $response['data']['tax_total']);
+    $this->assertPrice(! empty($cart->tax_total) ? $cart->tax_total : 0, $resp['data']['tax_total']);
 
-    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $response['data']['discount_amount']);
+    $this->assertPrice(! empty($cart->discount_amount) ? $cart->discount_amount : 0, $resp['data']['discount_amount']);
 
-    $this->assertPrice($cart->grand_total, $response['data']['grand_total']);
+    $this->assertPrice($cart->grand_total, $resp['data']['grand_total']);
 
-    $this->assertPrice($cart->sub_total, $response['data']['sub_total']);
+    $this->assertPrice($cart->sub_total, $resp['data']['sub_total']);
 
     $this->assertModelWise([
         CartItem::class => [
@@ -1350,32 +1350,32 @@ it('should add a simple product to the cart for guest user', function () {
     ]))->getSimpleProductFactory()->create();
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id' => $product->id,
-        'quantity'   => $quantity = rand(1, 10),
+        'quantity'   => $q = rand(1, 10),
     ]))
         ->assertOk()
         ->assertJsonPath('data.items_count', 1)
         ->assertJsonPath('data.is_guest', 1)
         ->assertJsonPath('data.customer_id', null)
-        ->assertJsonPath('data.items_qty', $quantity)
+        ->assertJsonPath('data.items_qty', $q)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0)
         ->assertJsonPath('data.coupon_code', null)
         ->assertJsonPath('data.items.0.type', $product->type)
         ->assertJsonPath('data.items.0.name', $product->name)
-        ->assertJsonPath('data.items.0.quantity', $quantity)
+        ->assertJsonPath('data.items.0.quantity', $q)
         ->assertJsonPath('data.billing_address', null)
         ->assertJsonPath('data.shipping_address', null)
         ->assertJsonPath('data.have_stockable_items', true)
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'));
 
-    $this->assertPrice($product->price, $response['data']['items'][0]['price']);
+    $this->assertPrice($product->price, $resp['data']['items'][0]['price']);
 
-    $this->assertPrice($product->price * $quantity, $response['data']['grand_total']);
+    $this->assertPrice($product->price * $q, $resp['data']['grand_total']);
 
-    $this->assertPrice($product->price * $quantity, $response['data']['sub_total']);
+    $this->assertPrice($product->price * $q, $resp['data']['sub_total']);
 });
 
 it('should add a simple product to the cart for customer', function () {
@@ -1400,34 +1400,34 @@ it('should add a simple product to the cart for customer', function () {
     ]))->getSimpleProductFactory()->create();
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id' => $product->id,
-        'quantity'   => $quantity = rand(1, 10),
+        'quantity'   => $q = rand(1, 10),
     ]))
         ->assertOk()
         ->assertJsonPath('data.items_count', 1)
         ->assertJsonPath('data.is_guest', 0)
-        ->assertJsonPath('data.customer_id', $customer->id)
-        ->assertJsonPath('data.items_qty', $quantity)
+        ->assertJsonPath('data.customer_id', $k->id)
+        ->assertJsonPath('data.items_qty', $q)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0)
         ->assertJsonPath('data.coupon_code', null)
         ->assertJsonPath('data.items.0.type', $product->type)
         ->assertJsonPath('data.items.0.name', $product->name)
-        ->assertJsonPath('data.items.0.quantity', $quantity)
+        ->assertJsonPath('data.items.0.quantity', $q)
         ->assertJsonPath('data.billing_address', null)
         ->assertJsonPath('data.shipping_address', null)
         ->assertJsonPath('data.have_stockable_items', true)
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'));
 
-    $this->assertPrice($product->price, $response['data']['items'][0]['price']);
+    $this->assertPrice($product->price, $resp['data']['items'][0]['price']);
 
-    $this->assertPrice($product->price * $quantity, $response['data']['grand_total']);
+    $this->assertPrice($product->price * $q, $resp['data']['grand_total']);
 
-    $this->assertPrice($product->price * $quantity, $response['data']['sub_total']);
+    $this->assertPrice($product->price * $q, $resp['data']['sub_total']);
 });
 
 it('should fails the validation error when the product id not provided add a bundle product to the cart', function () {
@@ -1527,7 +1527,7 @@ it('should add a bundle product to the cart for guest user', function () {
     }
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id'        => $product->id,
         'quantity'          => 1,
         'is_buy_now'        => '0',
@@ -1553,9 +1553,9 @@ it('should add a bundle product to the cart for guest user', function () {
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'));
 
-    $this->assertPrice($grandTotal, $response['data']['grand_total']);
+    $this->assertPrice($grandTotal, $resp['data']['grand_total']);
 
-    $this->assertPrice($grandTotal, $response['data']['sub_total']);
+    $this->assertPrice($grandTotal, $resp['data']['sub_total']);
 });
 
 it('should add a bundle product to the cart for customer', function () {
@@ -1597,9 +1597,9 @@ it('should add a bundle product to the cart for customer', function () {
     }
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id'        => $product->id,
         'quantity'          => 1,
         'is_buy_now'        => '0',
@@ -1615,7 +1615,7 @@ it('should add a bundle product to the cart for customer', function () {
         ->assertJsonPath('data.items.0.type', $product->type)
         ->assertJsonPath('data.items.0.name', $product->name)
         ->assertJsonPath('data.is_guest', 0)
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0)
         ->assertJsonPath('data.coupon_code', null)
@@ -1625,9 +1625,9 @@ it('should add a bundle product to the cart for customer', function () {
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'));
 
-    $this->assertPrice($grandTotal, $response['data']['grand_total']);
+    $this->assertPrice($grandTotal, $resp['data']['grand_total']);
 
-    $this->assertPrice($grandTotal, $response['data']['sub_total']);
+    $this->assertPrice($grandTotal, $resp['data']['sub_total']);
 });
 
 it('should fails the validation when the product id not provided when add a configurable product to the cart', function () {
@@ -1700,7 +1700,7 @@ it('should add a configurable product to the cart for guest user', function () {
     $childProduct = $product->variants()->first();
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.store'), [
+    $resp = postJson(route('shop.api.checkout.cart.store'), [
         'selected_configurable_option' => $childProduct->id,
         'product_id'                   => $product->id,
         'is_buy_now'                   => '0',
@@ -1728,9 +1728,9 @@ it('should add a configurable product to the cart for guest user', function () {
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'));
 
-    $this->assertPrice($childProduct->price, $response['data']['grand_total']);
+    $this->assertPrice($childProduct->price, $resp['data']['grand_total']);
 
-    $this->assertPrice($childProduct->price, $response['data']['sub_total']);
+    $this->assertPrice($childProduct->price, $resp['data']['sub_total']);
 });
 
 it('should add a configurable product to the cart for customer', function () {
@@ -1757,9 +1757,9 @@ it('should add a configurable product to the cart for customer', function () {
     $childProduct = $product->variants()->first();
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
-    $response = postJson(route('shop.api.checkout.cart.store'), [
+    $resp = postJson(route('shop.api.checkout.cart.store'), [
         'selected_configurable_option' => $childProduct->id,
         'product_id'                   => $product->id,
         'is_buy_now'                   => '0',
@@ -1781,15 +1781,15 @@ it('should add a configurable product to the cart for customer', function () {
         ->assertJsonPath('data.items.0.name', $product->name)
         ->assertJsonPath('data.is_guest', 0)
         ->assertJsonPath('data.have_stockable_items', true)
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.coupon_code', null)
         ->assertJsonPath('data.billing_address', null)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0);
 
-    $this->assertPrice($childProduct->price, $response['data']['grand_total']);
+    $this->assertPrice($childProduct->price, $resp['data']['grand_total']);
 
-    $this->assertPrice($childProduct->price, $response['data']['sub_total']);
+    $this->assertPrice($childProduct->price, $resp['data']['sub_total']);
 });
 
 it('should fails the validation error when the product id not provided when add a downloadable product to the cart', function () {
@@ -1854,7 +1854,7 @@ it('should add a downloadable product to the cart for guest user', function () {
     ]))->getDownloadableProductFactory()->create();
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id' => $product->id,
         'quantity'   => 1,
         'is_buy_now' => '0',
@@ -1878,9 +1878,9 @@ it('should add a downloadable product to the cart for guest user', function () {
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0);
 
-    $this->assertPrice($product->price, $response['data']['items'][0]['price']);
+    $this->assertPrice($product->price, $resp['data']['items'][0]['price']);
 
-    $this->assertPrice($product->price, $response['data']['grand_total']);
+    $this->assertPrice($product->price, $resp['data']['grand_total']);
 });
 
 it('should add a downloadable product to the cart for customer', function () {
@@ -1905,9 +1905,9 @@ it('should add a downloadable product to the cart for customer', function () {
     ]))->getDownloadableProductFactory()->create();
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id' => $product->id,
         'quantity'   => 1,
         'is_buy_now' => '0',
@@ -1925,15 +1925,15 @@ it('should add a downloadable product to the cart for customer', function () {
         ->assertJsonPath('data.items.0.name', $product->name)
         ->assertJsonPath('data.is_guest', 0)
         ->assertJsonPath('data.have_stockable_items', false)
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.coupon_code', null)
         ->assertJsonPath('data.billing_address', null)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0);
 
-    $this->assertPrice($product->price, $response['data']['items'][0]['price']);
+    $this->assertPrice($product->price, $resp['data']['items'][0]['price']);
 
-    $this->assertPrice($product->price, $response['data']['grand_total']);
+    $this->assertPrice($product->price, $resp['data']['grand_total']);
 });
 
 it('should fails the validation error when the product id not provided when add a grouped product to the cart', function () {
@@ -1963,15 +1963,15 @@ it('should fails the validation error when the product id not provided when add 
 
     $groupedProducts = $product->grouped_products()->with('associated_product')->get();
 
-    $data = [
+    $dat = [
         'quantities'  => [],
         'prices'      => [],
     ];
 
     foreach ($groupedProducts as $groupedProduct) {
-        $data['quantities'][$groupedProduct->associated_product_id] = $groupedProduct->qty;
+        $dat['quantities'][$groupedProduct->associated_product_id] = $groupedProduct->qty;
 
-        $data['prices'][] = $groupedProduct->associated_product->price * $groupedProduct->qty;
+        $dat['prices'][] = $groupedProduct->associated_product->price * $groupedProduct->qty;
     }
 
     // Act and Assert.
@@ -1979,7 +1979,7 @@ it('should fails the validation error when the product id not provided when add 
         'quantity'   => 1,
         'is_buy_now' => '0',
         'rating'     => '0',
-        'qty'        => $data['quantities'],
+        'qty'        => $dat['quantities'],
     ])
         ->assertJsonValidationErrorFor('product_id')
         ->assertUnprocessable();
@@ -2012,28 +2012,28 @@ it('should add a grouped product to the cart for guest user', function () {
 
     $groupedProducts = $product->grouped_products()->with('associated_product')->get();
 
-    $data = [
+    $dat = [
         'quantities'  => [],
         'prices'      => [],
     ];
 
     foreach ($groupedProducts as $groupedProduct) {
-        $data['quantities'][$groupedProduct->associated_product_id] = $groupedProduct->qty;
+        $dat['quantities'][$groupedProduct->associated_product_id] = $groupedProduct->qty;
 
-        $data['prices'][] = $groupedProduct->associated_product->price * $groupedProduct->qty;
+        $dat['prices'][] = $groupedProduct->associated_product->price * $groupedProduct->qty;
     }
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.store'), [
+    $resp = postJson(route('shop.api.checkout.cart.store'), [
         'product_id' => $product->id,
         'quantity'   => 1,
         'is_buy_now' => '0',
         'rating'     => '0',
-        'qty'        => $data['quantities'],
+        'qty'        => $dat['quantities'],
     ])
         ->assertOk()
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'))
-        ->assertJsonPath('data.items_qty', array_sum($data['quantities']))
+        ->assertJsonPath('data.items_qty', array_sum($dat['quantities']))
         ->assertJsonPath('data.items_count', 4)
         ->assertJsonPath('data.shipping_address', null)
         ->assertJsonPath('data.payment_method', null)
@@ -2046,14 +2046,14 @@ it('should add a grouped product to the cart for guest user', function () {
         ->assertJsonPath('data.discount_amount', 0);
 
     foreach ($groupedProducts as $key => $groupedProduct) {
-        $response->assertJsonPath('data.items.'.$key.'.quantity', $groupedProduct->qty)
+        $resp->assertJsonPath('data.items.'.$key.'.quantity', $groupedProduct->qty)
             ->assertJsonPath('data.items.'.$key.'.type', $groupedProduct->associated_product->type)
             ->assertJsonPath('data.items.'.$key.'.name', $groupedProduct->associated_product->name);
     }
 
-    $this->assertEquals(round(array_sum($data['prices']), 2), round($response['data']['grand_total'], 2), '', 0.00000001);
+    $this->assertEquals(round(array_sum($dat['prices']), 2), round($resp['data']['grand_total'], 2), '', 0.00000001);
 
-    $this->assertEquals(round(array_sum($data['prices']), 2), round($response['data']['sub_total'], 2), '', 0.00000001);
+    $this->assertEquals(round(array_sum($dat['prices']), 2), round($resp['data']['sub_total'], 2), '', 0.00000001);
 });
 
 it('should add a grouped product to the cart for customer', function () {
@@ -2083,50 +2083,50 @@ it('should add a grouped product to the cart for customer', function () {
 
     $groupedProducts = $product->grouped_products()->with('associated_product')->get();
 
-    $data = [
+    $dat = [
         'quantities'  => [],
         'prices'      => [],
     ];
 
     foreach ($groupedProducts as $groupedProduct) {
-        $data['quantities'][$groupedProduct->associated_product_id] = $groupedProduct->qty;
+        $dat['quantities'][$groupedProduct->associated_product_id] = $groupedProduct->qty;
 
-        $data['prices'][] = $groupedProduct->associated_product->price * $groupedProduct->qty;
+        $dat['prices'][] = $groupedProduct->associated_product->price * $groupedProduct->qty;
     }
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
-    $response = postJson(route('shop.api.checkout.cart.store'), [
+    $resp = postJson(route('shop.api.checkout.cart.store'), [
         'product_id' => $product->id,
         'quantity'   => 1,
         'is_buy_now' => '0',
         'rating'     => '0',
-        'qty'        => $data['quantities'],
+        'qty'        => $dat['quantities'],
     ])
         ->assertOk()
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'))
-        ->assertJsonPath('data.items_qty', array_sum($data['quantities']))
+        ->assertJsonPath('data.items_qty', array_sum($dat['quantities']))
         ->assertJsonPath('data.items_count', 4)
         ->assertJsonPath('data.shipping_address', null)
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('data.is_guest', 0)
         ->assertJsonPath('data.have_stockable_items', true)
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.coupon_code', null)
         ->assertJsonPath('data.billing_address', null)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0);
 
     foreach ($groupedProducts as $key => $groupedProduct) {
-        $response->assertJsonPath('data.items.'.$key.'.quantity', $groupedProduct->qty)
+        $resp->assertJsonPath('data.items.'.$key.'.quantity', $groupedProduct->qty)
             ->assertJsonPath('data.items.'.$key.'.type', $groupedProduct->associated_product->type)
             ->assertJsonPath('data.items.'.$key.'.name', $groupedProduct->associated_product->name);
     }
 
-    $this->assertEquals(round(array_sum($data['prices']), 2), round($response['data']['grand_total'], 2), '', 0.00000001);
+    $this->assertEquals(round(array_sum($dat['prices']), 2), round($resp['data']['grand_total'], 2), '', 0.00000001);
 
-    $this->assertEquals(round(array_sum($data['prices']), 2), round($response['data']['sub_total'], 2), '', 0.00000001);
+    $this->assertEquals(round(array_sum($dat['prices']), 2), round($resp['data']['sub_total'], 2), '', 0.00000001);
 });
 
 it('should fails the validation error when the product id not provided when add a virtual product to the cart', function () {
@@ -2188,15 +2188,15 @@ it('should add a virtual product to the cart for guest user', function () {
     ]))->getVirtualProductFactory()->create();
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id' => $product->id,
-        'quantity'   => $quantity = rand(1, 10),
+        'quantity'   => $q = rand(1, 10),
     ]))
         ->assertOk()
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'))
-        ->assertJsonPath('data.items_qty', $quantity)
+        ->assertJsonPath('data.items_qty', $q)
         ->assertJsonPath('data.items_count', 1)
-        ->assertJsonPath('data.items.0.quantity', $quantity)
+        ->assertJsonPath('data.items.0.quantity', $q)
         ->assertJsonPath('data.items.0.type', $product->type)
         ->assertJsonPath('data.items.0.name', $product->name)
         ->assertJsonPath('data.shipping_address', null)
@@ -2209,9 +2209,9 @@ it('should add a virtual product to the cart for guest user', function () {
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0);
 
-    $this->assertPrice($product->price, $response['data']['items'][0]['price']);
+    $this->assertPrice($product->price, $resp['data']['items'][0]['price']);
 
-    $this->assertPrice($product->price * $quantity, $response['data']['grand_total']);
+    $this->assertPrice($product->price * $q, $resp['data']['grand_total']);
 });
 
 it('should add a virtual product to the cart for customer', function () {
@@ -2236,32 +2236,32 @@ it('should add a virtual product to the cart for customer', function () {
     ]))->getVirtualProductFactory()->create();
 
     // Act and Assert.
-    $customer = $this->loginAsCustomer();
+    $k = $this->loginAsCustomer();
 
-    $response = postJson(route('shop.api.checkout.cart.store', [
+    $resp = postJson(route('shop.api.checkout.cart.store', [
         'product_id' => $product->id,
-        'quantity'   => $quantity = rand(1, 10),
+        'quantity'   => $q = rand(1, 10),
     ]))
         ->assertOk()
         ->assertJsonPath('message', trans('shop::app.checkout.cart.item-add-to-cart'))
-        ->assertJsonPath('data.items_qty', $quantity)
+        ->assertJsonPath('data.items_qty', $q)
         ->assertJsonPath('data.items_count', 1)
-        ->assertJsonPath('data.items.0.quantity', $quantity)
+        ->assertJsonPath('data.items.0.quantity', $q)
         ->assertJsonPath('data.items.0.type', $product->type)
         ->assertJsonPath('data.items.0.name', $product->name)
         ->assertJsonPath('data.shipping_address', null)
         ->assertJsonPath('data.payment_method', null)
         ->assertJsonPath('data.is_guest', 0)
         ->assertJsonPath('data.have_stockable_items', false)
-        ->assertJsonPath('data.customer_id', $customer->id)
+        ->assertJsonPath('data.customer_id', $k->id)
         ->assertJsonPath('data.coupon_code', null)
         ->assertJsonPath('data.billing_address', null)
         ->assertJsonPath('data.tax_total', 0)
         ->assertJsonPath('data.discount_amount', 0);
 
-    $this->assertPrice($product->price, $response['data']['items'][0]['price']);
+    $this->assertPrice($product->price, $resp['data']['items'][0]['price']);
 
-    $this->assertPrice($product->price * $quantity, $response['data']['grand_total']);
+    $this->assertPrice($product->price * $q, $resp['data']['grand_total']);
 });
 
 it('should check including tax rate when add a product to the cart based on shipping address', function () {
@@ -2322,7 +2322,7 @@ it('should check including tax rate when add a product to the cart based on ship
     $inclTax = $product->price - ($product->price / (1 + ($taxRate->tax_rate / 100)));
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
+    $resp = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
         'country'  => $taxRate->country,
         'state'    => $taxRate->state,
         'postcode' => fake()->postcode(),
@@ -2337,17 +2337,17 @@ it('should check including tax rate when add a product to the cart based on ship
         ->assertJsonPath('data.cart.items.0.quantity', 1)
         ->assertJsonPath('data.cart.items.0.type', $product->type);
 
-    $this->assertPrice($inclTax, $response->json('data.cart.tax_total'));
+    $this->assertPrice($inclTax, $resp->json('data.cart.tax_total'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.sub_total_incl_tax'));
+    $this->assertPrice($product->price, $resp->json('data.cart.sub_total_incl_tax'));
 
-    $this->assertPrice($product->price - $inclTax, $response->json('data.cart.sub_total'));
+    $this->assertPrice($product->price - $inclTax, $resp->json('data.cart.sub_total'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.grand_total'));
+    $this->assertPrice($product->price, $resp->json('data.cart.grand_total'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.items.0.price_incl_tax'));
+    $this->assertPrice($product->price, $resp->json('data.cart.items.0.price_incl_tax'));
 
-    $this->assertPrice($product->price - $inclTax, $response->json('data.cart.items.0.price'));
+    $this->assertPrice($product->price - $inclTax, $resp->json('data.cart.items.0.price'));
 });
 
 it('should check including tax rate when add a product to the cart based on billing address', function () {
@@ -2428,7 +2428,7 @@ it('should check including tax rate when add a product to the cart based on bill
     $inclTax = $product->price - ($product->price / (1 + ($taxRate->tax_rate / 100)));
 
     // Act and Assert.
-    $response = getJson(route('shop.checkout.onepage.summary'))
+    $resp = getJson(route('shop.checkout.onepage.summary'))
         ->assertOk()
         ->assertJsonPath('data.id', $cart->id)
         ->assertJsonPath('data.formatted_tax_total', core()->formatPrice($inclTax))
@@ -2439,17 +2439,17 @@ it('should check including tax rate when add a product to the cart based on bill
         ->assertJsonPath('data.items.0.quantity', 1)
         ->assertJsonPath('data.items.0.type', $product->type);
 
-    $this->assertPrice($inclTax, $response->json('data.tax_total'));
+    $this->assertPrice($inclTax, $resp->json('data.tax_total'));
 
-    $this->assertPrice($product->price, $response->json('data.sub_total_incl_tax'));
+    $this->assertPrice($product->price, $resp->json('data.sub_total_incl_tax'));
 
-    $this->assertPrice($product->price - $inclTax, $response->json('data.sub_total'));
+    $this->assertPrice($product->price - $inclTax, $resp->json('data.sub_total'));
 
-    $this->assertPrice($product->price, $response->json('data.grand_total'));
+    $this->assertPrice($product->price, $resp->json('data.grand_total'));
 
-    $this->assertPrice($product->price, $response->json('data.items.0.price_incl_tax'));
+    $this->assertPrice($product->price, $resp->json('data.items.0.price_incl_tax'));
 
-    $this->assertPrice($product->price - $inclTax, $response->json('data.items.0.price'));
+    $this->assertPrice($product->price - $inclTax, $resp->json('data.items.0.price'));
 });
 
 it('should check including tax rate when add a product to the cart based on shipping origin', function () {
@@ -2544,13 +2544,13 @@ it('should check including tax rate when add a product to the cart based on ship
     $inclTax = $product->price - ($product->price / (1 + ($taxRate->tax_rate / 100)));
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
+    $resp = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
         'country'  => $taxRate->country,
         'state'    => $taxRate->state,
         'postcode' => '123456',
     ]);
 
-    $response->assertOk()
+    $resp->assertOk()
         ->assertJsonPath('data.cart.id', $cart->id)
         ->assertJsonPath('data.cart.formatted_tax_total', core()->formatPrice($inclTax))
         ->assertJsonPath('data.cart.formatted_sub_total_incl_tax', core()->formatPrice($product->price))
@@ -2560,17 +2560,17 @@ it('should check including tax rate when add a product to the cart based on ship
         ->assertJsonPath('data.cart.items.0.quantity', 1)
         ->assertJsonPath('data.cart.items.0.type', $product->type);
 
-    $this->assertPrice($inclTax, $response->json('data.cart.tax_total'));
+    $this->assertPrice($inclTax, $resp->json('data.cart.tax_total'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.sub_total_incl_tax'));
+    $this->assertPrice($product->price, $resp->json('data.cart.sub_total_incl_tax'));
 
-    $this->assertPrice($product->price - $inclTax, $response->json('data.cart.sub_total'));
+    $this->assertPrice($product->price - $inclTax, $resp->json('data.cart.sub_total'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.grand_total'));
+    $this->assertPrice($product->price, $resp->json('data.cart.grand_total'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.items.0.price_incl_tax'));
+    $this->assertPrice($product->price, $resp->json('data.cart.items.0.price_incl_tax'));
 
-    $this->assertPrice($product->price - $inclTax, $response->json('data.cart.items.0.price'));
+    $this->assertPrice($product->price - $inclTax, $resp->json('data.cart.items.0.price'));
 });
 
 it('should check excluding tax rate when add a product to the cart based on billing address', function () {
@@ -2651,7 +2651,7 @@ it('should check excluding tax rate when add a product to the cart based on bill
     $exclTax = ($taxRate->tax_rate / 100) * $product->price;
 
     // Act and Assert.
-    $response = getJson(route('shop.checkout.onepage.summary'))
+    $resp = getJson(route('shop.checkout.onepage.summary'))
         ->assertOk()
         ->assertJsonPath('data.id', $cart->id)
         ->assertJsonPath('data.formatted_tax_total', core()->formatPrice($exclTax))
@@ -2662,17 +2662,17 @@ it('should check excluding tax rate when add a product to the cart based on bill
         ->assertJsonPath('data.items.0.quantity', 1)
         ->assertJsonPath('data.items.0.type', $product->type);
 
-    $this->assertPrice($exclTax, $response->json('data.tax_total'));
+    $this->assertPrice($exclTax, $resp->json('data.tax_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.sub_total_incl_tax'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.sub_total_incl_tax'));
 
-    $this->assertPrice($product->price, $response->json('data.sub_total'));
+    $this->assertPrice($product->price, $resp->json('data.sub_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.grand_total'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.grand_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.items.0.price_incl_tax'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.items.0.price_incl_tax'));
 
-    $this->assertPrice($product->price, $response->json('data.items.0.price'));
+    $this->assertPrice($product->price, $resp->json('data.items.0.price'));
 });
 
 it('should check excluding tax rate when add a product to the cart based on shipping address', function () {
@@ -2733,7 +2733,7 @@ it('should check excluding tax rate when add a product to the cart based on ship
     $exclTax = ($taxRate->tax_rate / 100) * $product->price;
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
+    $resp = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
         'country'  => $taxRate->country,
         'state'    => $taxRate->state,
         'postcode' => fake()->postcode(),
@@ -2748,17 +2748,17 @@ it('should check excluding tax rate when add a product to the cart based on ship
         ->assertJsonPath('data.cart.items.0.quantity', 1)
         ->assertJsonPath('data.cart.items.0.type', $product->type);
 
-    $this->assertPrice($exclTax, $response->json('data.cart.tax_total'));
+    $this->assertPrice($exclTax, $resp->json('data.cart.tax_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.cart.sub_total_incl_tax'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.cart.sub_total_incl_tax'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.sub_total'));
+    $this->assertPrice($product->price, $resp->json('data.cart.sub_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.cart.grand_total'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.cart.grand_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.cart.items.0.price_incl_tax'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.cart.items.0.price_incl_tax'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.items.0.price'));
+    $this->assertPrice($product->price, $resp->json('data.cart.items.0.price'));
 });
 
 it('should check excluding tax rate when add a product to the cart based on shipping origin', function () {
@@ -2853,7 +2853,7 @@ it('should check excluding tax rate when add a product to the cart based on ship
     $exclTax = ($taxRate->tax_rate / 100) * $product->price;
 
     // Act and Assert.
-    $response = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
+    $resp = postJson(route('shop.api.checkout.cart.estimate_shipping'), [
         'country'  => $taxRate->country,
         'state'    => $taxRate->state,
         'postcode' => '123456',
@@ -2868,15 +2868,15 @@ it('should check excluding tax rate when add a product to the cart based on ship
         ->assertJsonPath('data.cart.items.0.quantity', 1)
         ->assertJsonPath('data.cart.items.0.type', $product->type);
 
-    $this->assertPrice($exclTax, $response->json('data.cart.tax_total'));
+    $this->assertPrice($exclTax, $resp->json('data.cart.tax_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.cart.sub_total_incl_tax'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.cart.sub_total_incl_tax'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.sub_total'));
+    $this->assertPrice($product->price, $resp->json('data.cart.sub_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.cart.grand_total'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.cart.grand_total'));
 
-    $this->assertPrice($product->price + $exclTax, $response->json('data.cart.items.0.price_incl_tax'));
+    $this->assertPrice($product->price + $exclTax, $resp->json('data.cart.items.0.price_incl_tax'));
 
-    $this->assertPrice($product->price, $response->json('data.cart.items.0.price'));
+    $this->assertPrice($product->price, $resp->json('data.cart.items.0.price'));
 });

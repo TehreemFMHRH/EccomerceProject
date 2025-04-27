@@ -13,11 +13,7 @@ use Webkul\Product\Models\Product as ProductModel;
 
 class Reporting
 {
-    /**
-     * Create a controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected Cart $cartReporting,
         protected Sale $saleReporting,
@@ -26,11 +22,7 @@ class Reporting
         protected Visitor $visitorReporting
     ) {}
 
-    /**
-     * Returns the sales statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTotalSalesStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -70,11 +62,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the sales statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getAverageSalesStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -114,11 +102,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the total orders statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTotalOrdersStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -147,9 +131,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the purchase funnel statistics.
-     */
+    
     public function getPurchaseFunnelStats(): array
     {
         $startDate = $this->visitorReporting->getStartDate();
@@ -179,11 +161,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the abandoned carts statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getAbandonedCartsStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -229,11 +207,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the sales statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getRefundsStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -273,11 +247,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the tax collected statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTaxCollectedStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -334,11 +304,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the shipping collected statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getShippingCollectedStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -397,11 +363,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the shipping collected statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTopPaymentMethods($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -452,11 +414,7 @@ class Reporting
         return $paymentMethods;
     }
 
-    /**
-     * Returns the total customers statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTotalCustomersStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -485,9 +443,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the total customers statistics.
-     */
+    
     public function getCustomersTrafficStats(): array
     {
         return [
@@ -501,11 +457,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the customers with most sales
-     *
-     * @param  string  $type
-     */
+    
     public function getCustomersWithMostSales($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -539,24 +491,20 @@ class Reporting
 
         $customers = $this->customerReporting->getCustomersWithMostSales(5);
 
-        $customers->map(function ($customer) use ($totalSales) {
+        $customers->map(function ($k) use ($totalSales) {
             if (! $totalSales['current']) {
-                $customer->progress = 0;
+                $k->progress = 0;
             } else {
-                $customer->progress = ($customer->total * 100) / $totalSales['current'];
+                $k->progress = ($k->total * 100) / $totalSales['current'];
             }
 
-            $customer->formatted_total = core()->formatBasePrice($customer->total);
+            $k->formatted_total = core()->formatBasePrice($k->total);
         });
 
         return $customers;
     }
 
-    /**
-     * Returns the customers with most orders
-     *
-     * @param  string  $type
-     */
+    
     public function getCustomersWithMostOrders($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -584,22 +532,18 @@ class Reporting
 
         $customers = $this->customerReporting->getCustomersWithMostOrders(5);
 
-        $customers->map(function ($customer) use ($totalOrders) {
+        $customers->map(function ($k) use ($totalOrders) {
             if (! $totalOrders['current']) {
-                $customer->progress = 0;
+                $k->progress = 0;
             } else {
-                $customer->progress = ($customer->orders * 100) / $totalOrders['current'];
+                $k->progress = ($k->orders * 100) / $totalOrders['current'];
             }
         });
 
         return $customers;
     }
 
-    /**
-     * Returns the customers with most reviews
-     *
-     * @param  string  $type
-     */
+    
     public function getCustomersWithMostReviews($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -627,22 +571,18 @@ class Reporting
 
         $customers = $this->customerReporting->getCustomersWithMostReviews(5);
 
-        $customers->map(function ($customer) use ($totalReviews) {
+        $customers->map(function ($k) use ($totalReviews) {
             if (! $totalReviews['current']) {
-                $customer->progress = 0;
+                $k->progress = 0;
             } else {
-                $customer->progress = ($customer->reviews * 100) / $totalReviews['current'];
+                $k->progress = ($k->reviews * 100) / $totalReviews['current'];
             }
         });
 
         return $customers;
     }
 
-    /**
-     * Returns the top customers
-     *
-     * @param  string  $type
-     */
+    
     public function getTopCustomerGroups($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -678,11 +618,7 @@ class Reporting
         return $groups;
     }
 
-    /**
-     * Returns the total sold quantities statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTotalSoldQuantitiesStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -711,11 +647,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns the total products added to wishlist statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTotalProductsAddedToWishlistStats($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -744,11 +676,7 @@ class Reporting
         ];
     }
 
-    /**
-     * Returns top selling products by revenue statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTopSellingProductsByRevenue($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -794,11 +722,7 @@ class Reporting
         return $products->toArray();
     }
 
-    /**
-     * Returns top selling products by quantity statistics.
-     *
-     * @param  string  $type
-     */
+    
     public function getTopSellingProductsByQuantity($type = 'graph'): array
     {
         if ($type == 'table') {
@@ -839,11 +763,7 @@ class Reporting
         return $products->toArray();
     }
 
-    /**
-     * Returns the products with most reviews
-     *
-     * @param  string  $type
-     */
+    
     public function getProductsWithMostReviews($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -882,11 +802,7 @@ class Reporting
         return $products;
     }
 
-    /**
-     * Returns the products with most visits
-     *
-     * @param  string  $type
-     */
+    
     public function getProductsWithMostVisits($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -925,11 +841,7 @@ class Reporting
         return $products;
     }
 
-    /**
-     * Returns the last search terms
-     *
-     * @param  string  $type
-     */
+    
     public function getLastSearchTerms($type = 'graph'): EloquentCollection|array
     {
         if ($type == 'table') {
@@ -965,19 +877,13 @@ class Reporting
         return $this->productReporting->getLastSearchTerms(5);
     }
 
-    /**
-     * Returns the top search terms
-     *
-     * @param  string  $type
-     */
+    
     public function getTopSearchTerms($type = 'graph'): EloquentCollection|array
     {
         return $this->productReporting->getTopSearchTerms(5);
     }
 
-    /**
-     * Returns date range
-     */
+    
     public function getDateRange(): array
     {
         return [
@@ -986,21 +892,13 @@ class Reporting
         ];
     }
 
-    /**
-     * Get the start date.
-     *
-     * @return \Carbon\Carbon
-     */
+    
     public function getStartDate(): Carbon
     {
         return $this->saleReporting->getStartDate();
     }
 
-    /**
-     * Get the end date.
-     *
-     * @return \Carbon\Carbon
-     */
+    
     public function getEndDate(): Carbon
     {
         return $this->saleReporting->getEndDate();

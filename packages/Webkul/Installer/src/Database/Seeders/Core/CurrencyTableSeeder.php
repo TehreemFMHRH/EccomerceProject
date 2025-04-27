@@ -7,11 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class CurrencyTableSeeder extends Seeder
 {
-    /**
-     * Currency symbols.
-     *
-     * @var array
-     */
+    
     protected $currencySymbols = [
         'AED' => 'د.إ',
         'ARS' => '$',
@@ -81,12 +77,7 @@ class CurrencyTableSeeder extends Seeder
         'ZMW' => 'ZK',
     ];
 
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('channels')->delete();

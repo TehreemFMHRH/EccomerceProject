@@ -12,18 +12,10 @@ class ProductGroupedProduct extends Model implements ProductGroupedProductContra
 {
     use HasFactory;
 
-    /**
-     * Set timestamp false.
-     *
-     * @var bool
-     */
+    
     public $timestamps = false;
 
-    /**
-     * Add fillable property to the model.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'qty',
         'sort_order',
@@ -31,36 +23,30 @@ class ProductGroupedProduct extends Model implements ProductGroupedProductContra
         'associated_product_id',
     ];
 
-    /**
-     * Get the product that owns the image.
-     */
+    
     public function product()
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Get the product that owns the image.
-     */
+    
     public function associated_product()
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductGroupedProductFactory::new();
     }
 
-    private function saveGroupedProducts($data, $product)
+    private function saveGroupedProducts($dat, $product)
     {
         $previousGroupedProductIds = $product->grouped_products()->pluck('id');
 
-        if (isset($data['links'])) {
-            foreach ($data['links'] as $linkId => $linkInputs) {
+        if (isset($dat['links'])) {
+            foreach ($dat['links'] as $linkId => $linkInputs) {
                 if (Str::contains($linkId, 'link_')) {
                     $groupedProduct = $this->where([
                         'product_id'            => $product->id,

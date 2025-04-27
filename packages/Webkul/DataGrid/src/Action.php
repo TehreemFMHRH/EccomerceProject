@@ -2,14 +2,10 @@
 
 namespace Webkul\DataGrid;
 
-/**
- * Initial implementation of the action class. Stay tuned for more features coming soon.
- */
+
 class Action
 {
-    /**
-     * Create a column instance.
-     */
+    
     public function __construct(
         public string $index,
         public string $icon,
@@ -18,9 +14,7 @@ class Action
         public mixed $url,
     ) {}
 
-    /**
-     * Convert to an array.
-     */
+    
     public function toArray()
     {
         return [

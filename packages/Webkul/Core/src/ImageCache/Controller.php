@@ -9,28 +9,13 @@ use Intervention\Image\ImageCacheController;
 
 class Controller extends ImageCacheController
 {
-    /**
-     * Cache template.
-     *
-     * @var string
-     */
+    
     protected $template;
 
-    /**
-     * Logo.
-     *
-     * @var string
-     */
+    
     const BAGISTO_LOGO = 'https://updates.bagisto.com/bagisto.png';
 
-    /**
-     * Get HTTP response of either original image file or
-     * template applied file.
-     *
-     * @param  string  $template
-     * @param  string  $filename
-     * @return Illuminate\Http\Response
-     */
+    
     public function getResponse($template, $filename)
     {
         switch (strtolower($template)) {
@@ -45,13 +30,7 @@ class Controller extends ImageCacheController
         }
     }
 
-    /**
-     * Get HTTP response of template applied image file
-     *
-     * @param  string  $template
-     * @param  string  $filename
-     * @return Illuminate\Http\Response
-     */
+    
     public function getImage($template, $filename)
     {
         $this->template = $template;
@@ -66,22 +45,16 @@ class Controller extends ImageCacheController
             $path = $this->getImagePath($filename);
         }
 
-        /**
-         * Image manipulation based on callback
-         */
+        
         $manager = new ImageManager(Config::get('image'));
 
         try {
             $content = $manager->cache(function ($image) use ($template, $path) {
                 if ($template instanceof Closure) {
-                    /**
-                     * Build from closure callback template
-                     */
+                    
                     $template($image->make($path));
                 } elseif (is_object($template)) {
-                    /**
-                     * Build from filter template
-                     */
+                    
                     $image->make($path)->filter($template);
                 } else {
                     $image->make($path);
@@ -98,22 +71,13 @@ class Controller extends ImageCacheController
         return $this->buildResponse($content);
     }
 
-    /**
-     * Builds HTTP response from given image data
-     *
-     * @param  string  $content
-     * @return Illuminate\Http\Response
-     */
+    
     protected function buildResponse($content)
     {
-        /**
-         * Define mime type
-         */
+        
         $mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $content);
 
-        /**
-         * Respond with 304 not modified if browser has the image cached
-         */
+        
         $eTag = md5($content);
 
         $notModified = isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $eTag;
@@ -124,9 +88,7 @@ class Controller extends ImageCacheController
 
         $maxAge = ($this->template == 'logo' ? 10080 : config('imagecache.lifetime')) * 60;
 
-        /**
-         * Return http response
-         */
+        
         return new IlluminateResponse($content, $statusCode, [
             'Content-Type'   => $mime,
             'Cache-Control'  => 'max-age='.$maxAge.', public',

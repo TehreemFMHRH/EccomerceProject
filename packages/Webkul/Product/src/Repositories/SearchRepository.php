@@ -5,21 +5,16 @@ namespace Webkul\Product\Repositories;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Core\Traits\Sanitizer;
 
-class SearchRepository extends ProductRepository
+class SearchRepository
 {
     use Sanitizer;
 
-    /**
-     * Upload provided image
-     *
-     * @param  array  $data
-     * @return string
-     */
-    public function uploadSearchImage($data)
+
+    public function uploadSearchImage($dat)
     {
         $path = request()->file('image')->store('product-search');
 
-        $this->sanitizeSVG($path, $data['image']->getMimeType());
+        $this->sanitizeSVG($path, $dat['image']->getMimeType());
 
         return Storage::url($path);
     }

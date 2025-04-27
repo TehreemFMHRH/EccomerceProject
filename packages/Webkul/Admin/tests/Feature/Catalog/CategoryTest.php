@@ -5,7 +5,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Category\Models\Category;
 use Webkul\Category\Models\CategoryTranslation;
 use Webkul\Faker\Helpers\Category as CategoryFaker;
-
+use illuminate\Support\Facades\DB;
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\get;
 use function Pest\Laravel\getJson;
@@ -13,7 +13,7 @@ use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
 it('should show category page', function () {
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     get(route('admin.catalog.categories.index'))
@@ -22,34 +22,34 @@ it('should show category page', function () {
 });
 
 it('should show category edit page', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $a = (new CategoryFaker)->factory()->create();
+
+
     $this->loginAsAdmin();
 
-    get(route('admin.catalog.categories.edit', $category->id))
+    get(route('admin.catalog.categories.edit', $a->id))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.categories.edit.title'));
 });
 
 it('should return listing items of categories', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $a = (new CategoryFaker)->factory()->create();
+
+
     $this->loginAsAdmin();
 
     getJson(route('admin.catalog.categories.index'), [
         'X-Requested-With' => 'XMLHttpRequest',
     ])
         ->assertOk()
-        ->assertJsonPath('records.0.category_id', $category->id)
+        ->assertJsonPath('records.0.category_id', $a->id)
         ->assertJsonPath('meta.total', 2);
 });
 
 it('should fail the validation with errors of logo path is not an array and image', function () {
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.store'), [
@@ -64,10 +64,12 @@ it('should fail the validation with errors of logo path is not an array and imag
 });
 
 it('should fails the image validation error when provided tempered logo and banner', function () {
-    // Arrange.
-    $attributes = Attribute::where('is_filterable', 1)->pluck('id')->toArray();
 
-    // Act and Assert.
+    $results = DB::select("SELECT id FROM attributes WHERE is_filterable = 1");
+    $attributes = array_map(function($row) { return $row->id; }, $results);
+
+
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.store'), [
@@ -89,13 +91,15 @@ it('should fails the image validation error when provided tempered logo and bann
 });
 
 it('should create a category', function () {
-    // Arrange.
-    $attributes = Attribute::where('is_filterable', 1)->pluck('id')->toArray();
 
-    // Act and Assert.
+    $results = DB::select("SELECT id FROM attributes WHERE is_filterable = 1");
+$attributes = array_map(function($row) { return $row->id; }, $results);
+
+
+
     $this->loginAsAdmin();
 
-    postJson(route('admin.catalog.categories.store'), $data = [
+    postJson(route('admin.catalog.categories.store'), $dat = [
         'slug'        => fake()->slug(),
         'name'        => fake()->name(),
         'position'    => rand(1, 5),
@@ -114,16 +118,16 @@ it('should create a category', function () {
     $this->assertModelWise([
         CategoryTranslation::class => [
             [
-                'slug'        => $data['slug'],
-                'name'        => $data['name'],
-                'description' => $data['description'],
+                'slug'        => $dat['slug'],
+                'name'        => $dat['name'],
+                'description' => $dat['description'],
             ],
         ],
     ]);
 });
 
 it('should fail the validation with errors when certain inputs are not provided when store in category', function () {
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.store'))
@@ -135,7 +139,7 @@ it('should fail the validation with errors when certain inputs are not provided 
 });
 
 it('should fail the validation with errors of description if display mode products_and_description when store', function () {
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.store'), [
@@ -150,7 +154,7 @@ it('should fail the validation with errors of description if display mode produc
 });
 
 it('should fail the validation with errors slug is already taken', function () {
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.store'), [
@@ -164,15 +168,15 @@ it('should fail the validation with errors slug is already taken', function () {
 });
 
 it('should fail the validation with errors when certain inputs are not provided when update in category', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
+
+    $a = (new CategoryFaker)->factory()->create();
 
     $localeCode = core()->getRequestedLocaleCode();
 
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.categories.update', $category->id))
+    putJson(route('admin.catalog.categories.update', $a->id))
         ->assertJsonValidationErrorFor($localeCode.'.name')
         ->assertJsonValidationErrorFor($localeCode.'.slug')
         ->assertJsonValidationErrorFor('position')
@@ -181,15 +185,15 @@ it('should fail the validation with errors when certain inputs are not provided 
 });
 
 it('should fail the validation with errors when certain inputs are not provided and display mode products and description when update in category', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
+
+    $a = (new CategoryFaker)->factory()->create();
 
     $localeCode = core()->getRequestedLocaleCode();
 
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.categories.update', $category->id), [
+    putJson(route('admin.catalog.categories.update', $a->id), [
         'display_mode' => 'products_and_description',
     ])
         ->assertJsonValidationErrorFor($localeCode.'.name')
@@ -201,19 +205,21 @@ it('should fail the validation with errors when certain inputs are not provided 
 });
 
 it('should fails the validation with certain provided inputs', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    $attributes = Attribute::where('is_filterable', 1)->pluck('id')->toArray();
+    $a = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $results = DB::select("SELECT id FROM attributes WHERE is_filterable = 1");
+$attributes = array_map(function($row) { return $row->id; }, $results);
+
+
+
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.categories.update', $category->id), [
+    putJson(route('admin.catalog.categories.update', $a->id), [
         'en' => [
-            'name'        => $name = fake()->name(),
-            'slug'        => $category->slug,
-            'description' => $description = substr(fake()->paragraph(), 0, 50),
+            'name'        => $n = fake()->name(),
+            'slug'        => $a->slug,
+            'description' => $d = substr(fake()->paragraph(), 0, 50),
         ],
         'locale'      => config('app.locale'),
         'attributes'  => $attributes,
@@ -231,19 +237,21 @@ it('should fails the validation with certain provided inputs', function () {
 });
 
 it('should update a category', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    $attributes = Attribute::where('is_filterable', 1)->pluck('id')->toArray();
+    $a = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $results = DB::select("SELECT id FROM attributes WHERE is_filterable = 1");
+$attributes = array_map(function($row) { return $row->id; }, $results);
+
+
+
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.categories.update', $category->id), [
-        'en' => $data = [
+    putJson(route('admin.catalog.categories.update', $a->id), [
+        'en' => $dat = [
             'name'        => fake()->name(),
             'description' => substr(fake()->paragraph(), 0, 50),
-            'slug'        => $category->slug,
+            'slug'        => $a->slug,
         ],
         'locale'      => config('app.locale'),
         'attributes'  => $attributes,
@@ -261,35 +269,35 @@ it('should update a category', function () {
     $this->assertModelWise([
         CategoryTranslation::class => [
             [
-                'name'        => $data['name'],
-                'slug'        => $category->slug,
-                'description' => $data['description'],
+                'name'        => $dat['name'],
+                'slug'        => $a->slug,
+                'description' => $dat['description'],
             ],
         ],
     ]);
 });
 
 it('should delete a category', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $a = (new CategoryFaker)->factory()->create();
+
+
     $this->loginAsAdmin();
 
-    deleteJson(route('admin.catalog.categories.delete', $category->id))
+    deleteJson(route('admin.catalog.categories.delete', $a->id))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.categories.delete-success'));
 
     $this->assertDatabaseMissing('categories', [
-        'id' => $category->id,
+        'id' => $a->id,
     ]);
 });
 
 it('should delete mass categories', function () {
-    // Arrange.
+
     $categories = (new CategoryFaker)->create(5);
 
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.mass_delete', [
@@ -298,18 +306,18 @@ it('should delete mass categories', function () {
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.categories.delete-success'));
 
-    foreach ($categories as $category) {
+    foreach ($categories as $a) {
         $this->assertDatabaseMissing('categories', [
-            'id' => $category->id,
+            'id' => $a->id,
         ]);
     }
 });
 
 it('should update mass categories', function () {
-    // Arrange.
+
     $categories = (new CategoryFaker)->create(5);
 
-    // Act and Assert.
+
     $this->loginAsAdmin();
 
     postJson(route('admin.catalog.categories.mass_update', [
@@ -319,11 +327,11 @@ it('should update mass categories', function () {
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.categories.update-success'));
 
-    foreach ($categories as $category) {
+    foreach ($categories as $a) {
         $this->assertModelWise([
             Category::class => [
                 [
-                    'id'     => $category->id,
+                    'id'     => $a->id,
                     'status' => 1,
                 ],
             ],
@@ -332,28 +340,28 @@ it('should update mass categories', function () {
 });
 
 it('should search categories with mega search', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $a = (new CategoryFaker)->factory()->create();
+
+
     $this->loginAsAdmin();
 
     getJson(route('admin.catalog.categories.search', [
-        'query' => $category->name,
+        'query' => $a->name,
     ]))
         ->assertOk()
-        ->assertJsonPath('data.0.id', $category->id)
+        ->assertJsonPath('data.0.id', $a->id)
         ->assertJsonPath('total', 1);
 });
 
 it('should show the tree view of categories', function () {
-    // Arrange.
-    $category = (new CategoryFaker)->factory()->create();
 
-    // Act and Assert.
+    $a = (new CategoryFaker)->factory()->create();
+
+
     $this->loginAsAdmin();
 
     getJson(route('admin.catalog.categories.tree'))
         ->assertOk()
-        ->assertJsonPath('data.0.id', $category->id);
+        ->assertJsonPath('data.0.id', $a->id);
 });

@@ -9,9 +9,7 @@ use Webkul\Category\Models\Category as BaseCategory;
 
 class Category extends BaseCategory implements Sitemapable
 {
-    /**
-     * To get the sitemap tag for the category.
-     */
+    
     public function toSitemapTag(): Url|string|array
     {
         if (

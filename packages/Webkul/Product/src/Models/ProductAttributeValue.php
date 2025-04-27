@@ -14,18 +14,10 @@ class ProductAttributeValue extends Model implements ProductAttributeValueContra
 {
     use HasFactory;
 
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
+    
     public $timestamps = false;
 
-    /**
-     * Attribute type fields.
-     *
-     * @var array
-     */
+    
     public static $attributeTypeFields = [
         'text'        => 'text_value',
         'textarea'    => 'text_value',
@@ -40,11 +32,7 @@ class ProductAttributeValue extends Model implements ProductAttributeValueContra
         'checkbox'    => 'text_value',
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'product_id',
         'attribute_id',
@@ -60,25 +48,19 @@ class ProductAttributeValue extends Model implements ProductAttributeValueContra
         'json_value',
     ];
 
-    /**
-     * Get the attribute that owns the attribute value.
-     */
+    
     public function attribute(): BelongsTo
     {
         return $this->belongsTo(AttributeProxy::modelClass());
     }
 
-    /**
-     * Get the product that owns the attribute value.
-     */
+    
     public function product(): BelongsTo
     {
         return $this->belongsTo(ProductProxy::modelClass());
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ProductAttributeValueFactory::new();

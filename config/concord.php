@@ -2,17 +2,10 @@
 
 return [
 
-    /**
-     * The path of the convention file.
-     */
+    
     'convention' => Webkul\Core\CoreConvention::class,
 
-    /**
-     * Example:
-     *
-     * VendorA\ModuleX\Providers\ModuleServiceProvider::class,
-     * VendorB\ModuleY\Providers\ModuleServiceProvider::class,
-     */
+    
     'modules' => [
         \Webkul\Admin\Providers\ModuleServiceProvider::class,
         \Webkul\Attribute\Providers\ModuleServiceProvider::class,

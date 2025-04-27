@@ -7,26 +7,13 @@ use Webkul\Product\Facades\ProductVideo;
 
 class ConfigurableOption
 {
-    /**
-     * Allowed Products.
-     *
-     * @return array
-     */
+    
     protected $allowedVariants = [];
 
-    /**
-     * Super Attributes
-     *
-     * @return array
-     */
+    
     protected $superAttributes = [];
 
-    /**
-     * Returns the allowed variants.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getAllowedVariants($product)
     {
         if (count($this->allowedVariants)) {
@@ -53,12 +40,7 @@ class ConfigurableOption
         return $this->allowedVariants;
     }
 
-    /**
-     * Returns the allowed variants JSON.
-     *
-     * @param  \Webkul\Product\Models\Product  $product
-     * @return array
-     */
+    
     public function getConfigurationConfig($product)
     {
         $options = $this->getOptions($product, $this->getAllowedVariants($product));
@@ -74,12 +56,7 @@ class ConfigurableOption
         return array_merge($config, $product->getTypeInstance()->getProductPrices());
     }
 
-    /**
-     * Get allowed attributes.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Illuminate\Support\Collection
-     */
+    
     public function getAllowAttributes($product)
     {
         if (isset($this->superAttributes[$product->id])) {
@@ -91,13 +68,7 @@ class ConfigurableOption
             ->get();
     }
 
-    /**
-     * Get configurable product options.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $currentProduct
-     * @param  array  $allowedProducts
-     * @return array
-     */
+    
     public function getOptions($currentProduct, $allowedProducts)
     {
         $options = [];
@@ -119,12 +90,7 @@ class ConfigurableOption
         return $options;
     }
 
-    /**
-     * Get product attributes.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getAttributesData($product, array $options = [])
     {
         $attributes = [];
@@ -144,13 +110,7 @@ class ConfigurableOption
         return $attributes;
     }
 
-    /**
-     * Get attribute options data.
-     *
-     * @param  \Webkul\Attribute\Contracts\Attribute  $attribute
-     * @param  array  $options
-     * @return array
-     */
+    
     protected function getAttributeOptionsData($attribute, $options)
     {
         $attributeOptionsData = [];
@@ -173,12 +133,7 @@ class ConfigurableOption
         return $attributeOptionsData;
     }
 
-    /**
-     * Get product prices for configurable variations.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     protected function getVariantPrices($product)
     {
         $prices = [];
@@ -190,12 +145,7 @@ class ConfigurableOption
         return $prices;
     }
 
-    /**
-     * Get product images for configurable variations.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     protected function getVariantImages($product)
     {
         $images = [];
@@ -207,12 +157,7 @@ class ConfigurableOption
         return $images;
     }
 
-    /**
-     * Get product videos for configurable variations.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     protected function getVariantVideos($product)
     {
         $videos = [];

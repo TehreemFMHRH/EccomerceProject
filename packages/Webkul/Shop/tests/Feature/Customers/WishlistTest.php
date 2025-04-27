@@ -33,16 +33,16 @@ it('should returns the wishlist index page', function () {
         ],
     ]))->getSimpleProductFactory()->create();
 
-    $customer = ModelsCustomer::factory()->create();
+    $k = ModelsCustomer::factory()->create();
 
     Wishlist::factory()->create([
         'channel_id'  => core()->getCurrentChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     get(route('shop.customers.account.wishlist.index'))
         ->assertOk()
@@ -74,7 +74,7 @@ it('should returns all the wishlisted items', function () {
         ],
     ]))->getSimpleProductFactory()->count(2)->create();
 
-    $customer = ModelsCustomer::factory()->create();
+    $k = ModelsCustomer::factory()->create();
 
     $wishLists = [];
 
@@ -82,12 +82,12 @@ it('should returns all the wishlisted items', function () {
         $wishLists[] = Wishlist::factory()->create([
             'channel_id'  => core()->getCurrentChannel()->id,
             'product_id'  => $product->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
         ]);
     }
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     get(route('shop.api.customers.account.wishlist.index'))
         ->assertOk();
@@ -172,16 +172,16 @@ it('should move wishlisted product to the cart', function () {
         ],
     ]))->getSimpleProductFactory()->create();
 
-    $customer = ModelsCustomer::factory()->create();
+    $k = ModelsCustomer::factory()->create();
 
     $wishList = Wishlist::factory()->create([
         'channel_id'  => core()->getCurrentChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and Assert.
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     postJson(route('shop.api.customers.account.wishlist.move_to_cart', $wishList->id))
         ->assertOk()
@@ -213,7 +213,7 @@ it('should remove all wishlisted items', function () {
         ],
     ]))->getSimpleProductFactory()->count(2)->create();
 
-    $customer = ModelsCustomer::factory()->create();
+    $k = ModelsCustomer::factory()->create();
 
     $wishLists = [];
 
@@ -221,13 +221,13 @@ it('should remove all wishlisted items', function () {
         $wishLists[] = Wishlist::factory()->create([
             'channel_id'  => core()->getCurrentChannel()->id,
             'product_id'  => $product->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
         ]);
     }
 
     // Act and Assert.
 
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     deleteJson(route('shop.api.customers.account.wishlist.destroy_all'))
         ->assertOk()
@@ -259,16 +259,16 @@ it('should remove specified wishlisted item', function () {
         ],
     ]))->getSimpleProductFactory()->create();
 
-    $customer = ModelsCustomer::factory()->create();
+    $k = ModelsCustomer::factory()->create();
 
     $wishList = Wishlist::factory()->create([
         'channel_id'  => core()->getCurrentChannel()->id,
         'product_id'  => $product->id,
-        'customer_id' => $customer->id,
+        'customer_id' => $k->id,
     ]);
 
     // Act and  Assert
-    $this->loginAsCustomer($customer);
+    $this->loginAsCustomer($k);
 
     deleteJson(route('shop.api.customers.account.wishlist.destroy', $wishList->id))
         ->assertOk()

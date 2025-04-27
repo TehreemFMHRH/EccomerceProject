@@ -14,9 +14,7 @@ class CustomerSocialAccount extends Model implements CustomerSocialAccountContra
         'provider_id',
     ];
 
-    /**
-     * Get the customer that belongs to the social aoount.
-     */
+    
     public function customer()
     {
         return $this->belongsTo(CustomerProxy::modelClass());

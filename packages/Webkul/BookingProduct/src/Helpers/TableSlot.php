@@ -6,11 +6,7 @@ use Carbon\Carbon;
 
 class TableSlot extends Booking
 {
-    /**
-     * Return the item if it has a quantity.
-     *
-     * @param  \Webkul\Checkout\Contracts\CartItem  $cartItem
-     */
+    
     public function isItemHaveQuantity($cartItem): bool
     {
         $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);

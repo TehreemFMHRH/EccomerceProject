@@ -8,11 +8,7 @@ use Webkul\Sales\Contracts\Shipment as ShipmentContract;
 
 class Shipment extends Base
 {
-    /**
-     * After order is created
-     *
-     * @return void
-     */
+    
     public function afterCreated(ShipmentContract $shipment)
     {
         try {

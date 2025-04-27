@@ -6,27 +6,13 @@ use Illuminate\Support\Facades\Event;
 
 class ViewRenderEventManager
 {
-    /**
-     * Contains all themes
-     *
-     * @var array
-     */
+    
     protected $templates = [];
 
-    /**
-     * Paramters passed with event
-     *
-     * @var array
-     */
+    
     protected $params;
 
-    /**
-     * Fires event for rendering template
-     *
-     * @param  string  $eventName
-     * @param  array|null  $params
-     * @return string
-     */
+    
     public function handleRenderEvent($eventName, $params = null)
     {
         $this->params = $params ?? [];
@@ -36,42 +22,25 @@ class ViewRenderEventManager
         return $this->templates;
     }
 
-    /**
-     *  get params
-     *
-     * @return array
-     */
+    
     public function getParams()
     {
         return $this->params;
     }
 
-    /**
-     *  get param
-     *
-     * @return mixed
-     */
-    public function getParam($name)
+    
+    public function getParam($na)
     {
-        return optional($this->params)[$name];
+        return optional($this->params)[$na];
     }
 
-    /**
-     * Add templates for render
-     *
-     * @param  string  $template
-     * @return void
-     */
+    
     public function addTemplate($template)
     {
         array_push($this->templates, $template);
     }
 
-    /**
-     * Renders templates
-     *
-     * @return string
-     */
+    
     public function render()
     {
         $string = '';

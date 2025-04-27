@@ -8,38 +8,22 @@ use Webkul\Marketing\Repositories\URLRewriteRepository;
 
 class Category
 {
-    /**
-     * Permanent redirect code
-     *
-     * @var int
-     */
+    
     const PERMANENT_REDIRECT_CODE = 301;
 
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CategoryRepository $categoryRepository,
         protected URLRewriteRepository $urlRewriteRepository
     ) {}
 
-    /**
-     * After category is created
-     *
-     * @param  \Webkul\Category\Contracts\Category  $category
-     * @return void
-     */
-    public function afterCreate($category)
+    
+    public function afterCreate($a)
     {
-        /**
-         * Delete category and product url rewrites
-         * if already exists for the request path
-         */
+        
         $urlRewrites = $this->urlRewriteRepository->findWhere([
             ['entity_type', 'IN', ['category', 'product']],
-            'request_path' => $category->slug,
+            'request_path' => $a->slug,
         ]);
 
         foreach ($urlRewrites as $urlRewrite) {
@@ -51,23 +35,16 @@ class Category
         }
     }
 
-    /**
-     * Before category is updated
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function beforeUpdate($id)
+    
+    public function beforeUpdate($i)
     {
         $locale = request()->input('locale');
 
-        $category = $this->categoryRepository->find($id);
+        $a = $this->categoryRepository->find($i);
 
-        $translations = $category->translate($locale);
+        $translations = $a->translate($locale);
 
-        /**
-         * If url key is empty for requested locale then return
-         */
+        
         if (empty($translations['slug'])) {
             return;
         }
@@ -78,10 +55,7 @@ class Category
             return;
         }
 
-        /**
-         * Delete category and product url rewrites
-         * if already exists for the request path
-         */
+        
         $urlRewrites = $this->urlRewriteRepository->findWhere([
             ['entity_type', 'IN', ['category', 'product']],
             'target_path' => $translations['slug'],
@@ -109,20 +83,13 @@ class Category
         Event::dispatch('marketing.search_seo.url_rewrites.create.after', $urlRewrite);
     }
 
-    /**
-     * Before category is deleted
-     *
-     * @param  int  $id
-     * @return void
-     */
-    public function beforeDelete($id)
+    
+    public function beforeDelete($i)
     {
-        $category = $this->categoryRepository->find($id);
+        $a = $this->categoryRepository->find($i);
 
-        /**
-         * Delete all url rewrites for all locales
-         */
-        $translations = $category->getTranslationsArray();
+        
+        $translations = $a->getTranslationsArray();
 
         foreach ($translations as $locale => $translation) {
             $urlRewrites = $this->urlRewriteRepository->findWhere([

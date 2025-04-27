@@ -11,18 +11,10 @@ use Webkul\CatalogRule\Repositories\CatalogRuleRepository;
 
 class CatalogRuleController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CatalogRuleRepository $catalogRuleRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,21 +24,13 @@ class CatalogRuleController extends Controller
         return view('admin::marketing.promotions.catalog-rules.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::marketing.promotions.catalog-rules.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(CatalogRuleRequest $catalogRuleRequest)
     {
         Event::dispatch('promotions.catalog_rule.create.before');
@@ -60,30 +44,22 @@ class CatalogRuleController extends Controller
         return redirect()->route('admin.marketing.promotions.catalog_rules.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $catalogRule = $this->catalogRuleRepository->findOrFail($id);
+        $catalogRule = $this->catalogRuleRepository->findOrFail($i);
 
         return view('admin::marketing.promotions.catalog-rules.edit', compact('catalogRule'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CatalogRuleRequest $catalogRuleRequest, int $id)
+    
+    public function update(CatalogRuleRequest $catalogRuleRequest, int $i)
     {
-        $this->catalogRuleRepository->findOrFail($id);
+        $this->catalogRuleRepository->findOrFail($i);
 
-        Event::dispatch('promotions.catalog_rule.update.before', $id);
+        Event::dispatch('promotions.catalog_rule.update.before', $i);
 
-        $catalogRule = $this->catalogRuleRepository->update($catalogRuleRequest->all(), $id);
+        $catalogRule = $this->catalogRuleRepository->update($catalogRuleRequest->all(), $i);
 
         Event::dispatch('promotions.catalog_rule.update.after', $catalogRule);
 
@@ -92,19 +68,17 @@ class CatalogRuleController extends Controller
         return redirect()->route('admin.marketing.promotions.catalog_rules.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $this->catalogRuleRepository->findOrFail($id);
+        $this->catalogRuleRepository->findOrFail($i);
 
         try {
-            Event::dispatch('promotions.catalog_rule.delete.before', $id);
+            Event::dispatch('promotions.catalog_rule.delete.before', $i);
 
-            $this->catalogRuleRepository->delete($id);
+            $this->catalogRuleRepository->delete($i);
 
-            Event::dispatch('promotions.catalog_rule.delete.after', $id);
+            Event::dispatch('promotions.catalog_rule.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.marketing.promotions.catalog-rules.delete-success'),

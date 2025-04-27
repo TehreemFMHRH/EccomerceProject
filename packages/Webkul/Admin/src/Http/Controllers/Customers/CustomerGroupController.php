@@ -11,18 +11,10 @@ use Webkul\Customer\Repositories\CustomerGroupRepository;
 
 class CustomerGroupController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerGroupRepository $customerGroupRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,9 +24,7 @@ class CustomerGroupController extends Controller
         return view('admin::customers.groups.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -44,14 +34,14 @@ class CustomerGroupController extends Controller
 
         Event::dispatch('customer.customer_group.create.before');
 
-        $data = array_merge(request()->only([
+        $dat = array_merge(request()->only([
             'code',
             'name',
         ]), [
             'is_user_defined' => 1,
         ]);
 
-        $customerGroup = $this->customerGroupRepository->create($data);
+        $customerGroup = $this->customerGroupRepository->create($dat);
 
         Event::dispatch('customer.customer_group.create.after', $customerGroup);
 
@@ -60,24 +50,22 @@ class CustomerGroupController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request()->input('id');
+        $i = request()->input('id');
 
         $this->validate(request(), [
-            'code' => ['required', 'unique:customer_groups,code,'.$id, new Code],
+            'code' => ['required', 'unique:customer_groups,code,'.$i, new Code],
             'name' => 'required',
         ]);
 
-        Event::dispatch('customer.customer_group.update.before', $id);
+        Event::dispatch('customer.customer_group.update.before', $i);
 
         $customerGroup = $this->customerGroupRepository->update(request()->only([
             'code',
             'name',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('customer.customer_group.update.after', $customerGroup);
 
@@ -86,12 +74,10 @@ class CustomerGroupController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $customerGroup = $this->customerGroupRepository->findOrFail($id);
+        $customerGroup = $this->customerGroupRepository->findOrFail($i);
 
         if (! $customerGroup->is_user_defined) {
             return new JsonResponse([
@@ -106,11 +92,11 @@ class CustomerGroupController extends Controller
         }
 
         try {
-            Event::dispatch('customer.customer_group.delete.before', $id);
+            Event::dispatch('customer.customer_group.delete.before', $i);
 
-            $this->customerGroupRepository->delete($id);
+            $this->customerGroupRepository->delete($i);
 
-            Event::dispatch('customer.customer_group.delete.after', $id);
+            Event::dispatch('customer.customer_group.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.customers.groups.index.edit.delete-success'),

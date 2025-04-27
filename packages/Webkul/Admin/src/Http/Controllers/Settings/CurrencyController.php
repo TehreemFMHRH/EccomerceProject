@@ -11,18 +11,10 @@ use Webkul\Core\Rules\Code;
 
 class CurrencyController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CurrencyRepository $currencyRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -34,9 +26,7 @@ class CurrencyController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(): JsonResponse
     {
         $this->validate(request(), [
@@ -59,22 +49,18 @@ class CurrencyController extends Controller
         ]);
     }
 
-    /**
-     * Currency details.
-     */
-    public function edit(int $id): JsonResponse
+    
+    public function edit(int $i): JsonResponse
     {
-        $currency = $this->currencyRepository->findOrFail($id);
+        $currency = $this->currencyRepository->findOrFail($i);
 
         return new JsonResponse($currency);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(): JsonResponse
     {
-        $id = request('id');
+        $i = request('id');
 
         $this->validate(request(), [
             'name' => 'required',
@@ -87,19 +73,17 @@ class CurrencyController extends Controller
             'group_separator',
             'decimal_separator',
             'currency_position',
-        ]), $id);
+        ]), $i);
 
         return new JsonResponse([
             'message' => trans('admin::app.settings.currencies.index.update-success'),
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
-        $this->currencyRepository->findOrFail($id);
+        $this->currencyRepository->findOrFail($i);
 
         if ($this->currencyRepository->count() == 1) {
             return new JsonResponse([
@@ -108,7 +92,7 @@ class CurrencyController extends Controller
         }
 
         try {
-            $this->currencyRepository->delete($id);
+            $this->currencyRepository->delete($i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.currencies.index.delete-success'),

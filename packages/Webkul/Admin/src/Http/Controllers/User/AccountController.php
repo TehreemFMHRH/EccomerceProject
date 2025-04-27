@@ -9,11 +9,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 
 class AccountController extends Controller
 {
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function edit()
     {
         $user = auth()->guard('admin')->user();
@@ -21,11 +17,7 @@ class AccountController extends Controller
         return view('admin::account.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update()
     {
         $user = auth()->guard('admin')->user();
@@ -38,7 +30,7 @@ class AccountController extends Controller
             'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp',
         ]);
 
-        $data = request()->only([
+        $dat = request()->only([
             'name',
             'email',
             'password',
@@ -47,7 +39,7 @@ class AccountController extends Controller
             'image',
         ]);
 
-        if (! Hash::check($data['current_password'], $user->password)) {
+        if (! Hash::check($dat['current_password'], $user->password)) {
             session()->flash('warning', trans('admin::app.account.edit.invalid-password'));
 
             return redirect()->back();
@@ -55,29 +47,29 @@ class AccountController extends Controller
 
         $isPasswordChanged = false;
 
-        if (! $data['password']) {
-            unset($data['password']);
+        if (! $dat['password']) {
+            unset($dat['password']);
         } else {
             $isPasswordChanged = true;
 
-            $data['password'] = bcrypt($data['password']);
+            $dat['password'] = bcrypt($dat['password']);
         }
 
         if (request()->hasFile('image')) {
-            $data['image'] = current(request()->file('image'))->store('admins/'.$user->id);
+            $dat['image'] = current(request()->file('image'))->store('admins/'.$user->id);
         } else {
-            if (! isset($data['image'])) {
-                if (! empty($data['image'])) {
+            if (! isset($dat['image'])) {
+                if (! empty($dat['image'])) {
                     Storage::delete($user->image);
                 }
 
-                $data['image'] = null;
+                $dat['image'] = null;
             } else {
-                $data['image'] = $user->image;
+                $dat['image'] = $user->image;
             }
         }
 
-        $user->update($data);
+        $user->update($dat);
 
         if ($isPasswordChanged) {
             Event::dispatch('admin.password.update.after', $user);

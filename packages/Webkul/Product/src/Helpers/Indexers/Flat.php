@@ -9,16 +9,10 @@ use Webkul\Product\Models\Product;
 
 class Flat extends AbstractIndexer
 {
-    /**
-     * @var int
-     */
+    
     private $batchSize;
 
-    /**
-     * Attribute codes that can be fill during flat creation.
-     *
-     * @var string[]
-     */
+    
     protected $fillableAttributeCodes = [
         'sku',
         'name',
@@ -27,30 +21,16 @@ class Flat extends AbstractIndexer
         'status',
     ];
 
-    /**
-     * @var array
-     */
+    
     protected $flatColumns = [];
 
-    /**
-     * Channels
-     *
-     * @var array
-     */
+    
     protected $channels = [];
 
-    /**
-     * Family Attributes
-     *
-     * @var array
-     */
+    
     protected $familyAttributes = [];
 
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
 
         protected ProductFlatRepository $productFlatRepository
@@ -60,11 +40,7 @@ class Flat extends AbstractIndexer
         $this->flatColumns = Schema::getColumnListing('product_flat');
     }
 
-    /**
-     * Reindex all products
-     *
-     * @return void
-     */
+    
     public function reindexFull()
     {
         while (true) {
@@ -90,11 +66,7 @@ class Flat extends AbstractIndexer
         request()->query->remove('cursor');
     }
 
-    /**
-     * Reindex products by batch size
-     *
-     * @return void
-     */
+    
     public function reindexBatch($products)
     {
         foreach ($products as $product) {
@@ -102,12 +74,7 @@ class Flat extends AbstractIndexer
         }
     }
 
-    /**
-     * Refresh product flat indices
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function refresh($product)
     {
         $this->updateOrCreate($product);
@@ -121,12 +88,7 @@ class Flat extends AbstractIndexer
         }
     }
 
-    /**
-     * Creates product flat
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function updateOrCreate($product)
     {
         $familyAttributes = $this->getCachedFamilyAttributes($product);
@@ -194,10 +156,7 @@ class Flat extends AbstractIndexer
         }
     }
 
-    /**
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return mixed
-     */
+    
     public function getCachedFamilyAttributes($product)
     {
         if (array_key_exists($product->attribute_family_id, $this->familyAttributes)) {

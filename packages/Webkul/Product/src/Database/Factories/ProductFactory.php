@@ -7,18 +7,10 @@ use Webkul\Product\Models\Product;
 
 class ProductFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Product::class;
 
-    /**
-     * States.
-     *
-     * @var string[]
-     */
+    
     protected $states = [
         'simple',
         'configurable',
@@ -28,9 +20,7 @@ class ProductFactory extends Factory
         'bundle',
     ];
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [
@@ -39,9 +29,7 @@ class ProductFactory extends Factory
         ];
     }
 
-    /**
-     * Simple state.
-     */
+    
     public function simple(): ProductFactory
     {
         return $this->state(function (array $attributes) {
@@ -51,9 +39,7 @@ class ProductFactory extends Factory
         });
     }
 
-    /**
-     * Virtual state.
-     */
+    
     public function virtual(): ProductFactory
     {
         return $this->state(function (array $attributes) {
@@ -63,9 +49,7 @@ class ProductFactory extends Factory
         });
     }
 
-    /**
-     * Grouped state.
-     */
+    
     public function grouped(): ProductFactory
     {
         return $this->state(function (array $attributes) {
@@ -75,9 +59,7 @@ class ProductFactory extends Factory
         });
     }
 
-    /**
-     * Configurable state.
-     */
+    
     public function configurable(): ProductFactory
     {
         return $this->state(function (array $attributes) {
@@ -87,9 +69,7 @@ class ProductFactory extends Factory
         });
     }
 
-    /**
-     * Downloadable state.
-     */
+    
     public function downloadable(): ProductFactory
     {
         return $this->state(function (array $attributes) {
@@ -99,9 +79,7 @@ class ProductFactory extends Factory
         });
     }
 
-    /**
-     * Bundle state.
-     */
+    
     public function bundle(): ProductFactory
     {
         return $this->state(function (array $attributes) {

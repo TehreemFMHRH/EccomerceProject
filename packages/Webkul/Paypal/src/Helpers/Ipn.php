@@ -7,36 +7,19 @@ use Webkul\Sales\Repositories\OrderRepository;
 
 class Ipn
 {
-    /**
-     * IPN post data.
-     *
-     * @var array
-     */
+    
     protected $post;
 
-    /**
-     * Order $order
-     *
-     * @var \Webkul\Sales\Contracts\Order
-     */
-    protected $order;
+    
+    protected $o;
 
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderRepository $orderRepository,
         protected InvoiceRepository $invoiceRepository
     ) {}
 
-    /**
-     * This function processes the IPN sent from PayPal.
-     *
-     * @param  array  $post
-     * @return null|void|\Exception
-     */
+    
     public function processIpn($post)
     {
         $this->post = $post;
@@ -62,11 +45,7 @@ class Ipn
         }
     }
 
-    /**
-     * Load order via IPN invoice ID.
-     *
-     * @return void
-     */
+    
     protected function getOrder()
     {
         if (empty($this->order)) {
@@ -74,11 +53,7 @@ class Ipn
         }
     }
 
-    /**
-     * Process the order and create invoice.
-     *
-     * @return void
-     */
+    
     protected function processOrder()
     {
         if ($this->post['payment_status'] === 'Completed') {
@@ -94,11 +69,7 @@ class Ipn
         }
     }
 
-    /**
-     * Prepare invoice data from order.
-     *
-     * @return array
-     */
+    
     protected function prepareInvoiceData()
     {
         $invoiceData = ['order_id' => $this->order->id];
@@ -110,11 +81,7 @@ class Ipn
         return $invoiceData;
     }
 
-    /**
-     * Post back to PayPal (or another provider) to verify IPN.
-     *
-     * @return bool
-     */
+    
     protected function postBack()
     {
         $method = $this->post['payment_method'] ?? null;
@@ -141,11 +108,11 @@ class Ipn
             CURLOPT_HEADER         => false,
         ]);
 
-        $response = curl_exec($request);
-        $status   = curl_getinfo($request, CURLINFO_HTTP_CODE);
+        $resp = curl_exec($request);
+        $st   = curl_getinfo($request, CURLINFO_HTTP_CODE);
 
         curl_close($request);
 
-        return $status == 200 && $response === 'VERIFIED';
+        return $st == 200 && $resp === 'VERIFIED';
     }
 }

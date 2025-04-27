@@ -9,11 +9,7 @@ use Webkul\Product\DataTypes\CartItemValidationResult;
 
 class EventTicket extends Booking
 {
-    /**
-     * Returns event date
-     *
-     * @param  \Webkul\BookingProduct\Contracts\BookingProduct  $bookingProduct
-     */
+    
     public function getEventDate($bookingProduct): string
     {
         $from = Carbon::createFromTimeString($bookingProduct->available_from)->format('d F, Y h:i A');
@@ -23,11 +19,7 @@ class EventTicket extends Booking
         return $from.' - '.$to;
     }
 
-    /**
-     * Returns tickets
-     *
-     * @param  \Webkul\BookingProduct\Contracts\BookingProduct  $bookingProduct
-     */
+    
     public function getTickets($bookingProduct)
     {
         if (! $bookingProduct->event_tickets()->count()) {
@@ -37,11 +29,7 @@ class EventTicket extends Booking
         return $this->formatPrice($bookingProduct->event_tickets);
     }
 
-    /**
-     * Format ticket price.
-     *
-     * @param  array  $tickets
-     */
+    
     public function formatPrice($tickets)
     {
         foreach ($tickets as $index => $ticket) {
@@ -63,11 +51,7 @@ class EventTicket extends Booking
         return $tickets;
     }
 
-    /**
-     * Return the item if it has a quantity.
-     *
-     * @param  \Webkul\Checkout\Contracts\CartItem|array  $cartItem
-     */
+    
     public function isItemHaveQuantity($cartItem): bool
     {
         $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
@@ -81,11 +65,7 @@ class EventTicket extends Booking
         return true;
     }
 
-    /**
-     * Returns the quantity of booked product.
-     *
-     * @param  array  $data
-     */
+    
     public function getBookedQuantity($data): int
     {
         $result = $this->bookingRepository->getModel()
@@ -98,9 +78,7 @@ class EventTicket extends Booking
         return ! is_null($result->total_qty_booked) ? $result->total_qty_booked : 0;
     }
 
-    /**
-     * Add booking additional prices to cart item.
-     */
+    
     public function addAdditionalPrices(array $products): array
     {
         foreach ($products as $key => $product) {
@@ -123,9 +101,7 @@ class EventTicket extends Booking
         return $products;
     }
 
-    /**
-     * Validate cart item product price.
-     */
+    
     public function validateCartItem(CartItem $item): CartItemValidationResult
     {
         $result = new CartItemValidationResult;
@@ -169,9 +145,7 @@ class EventTicket extends Booking
         return $result;
     }
 
-    /**
-     * Determines whether a single ticket is in Sale, i.e. has a valid sale price.
-     */
+    
     public function isInSale($ticket): bool
     {
         return $ticket->special_price !== null

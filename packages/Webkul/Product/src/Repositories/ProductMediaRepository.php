@@ -11,48 +11,28 @@ use Webkul\Core\Eloquent\Repository;
 
 class ProductMediaRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     *
-     * @return string
-     */
+    
     public function model()
     {
-        /**
-         * This repository is extended to `ProductImageRepository` and `ProductVideoRepository`
-         * repository.
-         *
-         * And currently no model is assigned to this repo.
-         */
+        
     }
 
-    /**
-     * Get product directory.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     */
+    
     public function getProductDirectory($product): string
     {
         return 'product/'.$product->id;
     }
 
-    /**
-     * Upload.
-     *
-     * @param  array  $data
-     * @param  \Webkul\Product\Contracts\Product  $product
-     */
-    public function upload($data, $product, string $uploadFileType): void
+    
+    public function upload($dat, $product, string $uploadFileType): void
     {
-        /**
-         * Previous model ids for filtering.
-         */
+        
         $previousIds = $this->resolveFileTypeQueryBuilder($product, $uploadFileType)->pluck('id');
 
         $position = 0;
 
-        if (! empty($data[$uploadFileType]['files'])) {
-            foreach ($data[$uploadFileType]['files'] as $indexOrModelId => $file) {
+        if (! empty($dat[$uploadFileType]['files'])) {
+            foreach ($dat[$uploadFileType]['files'] as $indexOrModelId => $file) {
                 if ($file instanceof UploadedFile) {
                     if (Str::contains($file->getMimeType(), 'image')) {
                         $manager = new ImageManager;
@@ -95,14 +75,7 @@ class ProductMediaRepository extends Repository
         }
     }
 
-    /**
-     * Resolve file type query builder.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return mixed
-     *
-     * @throws \Exception
-     */
+    
     private function resolveFileTypeQueryBuilder($product, string $uploadFileType)
     {
         if ($uploadFileType === 'images') {

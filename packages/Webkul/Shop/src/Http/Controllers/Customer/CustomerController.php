@@ -14,127 +14,111 @@ use Webkul\Shop\Http\Requests\Customer\ProfileRequest;
 
 class CustomerController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected ProductReviewRepository $productReviewRepository,
         protected SubscribersListRepository $subscriptionRepository
     ) {}
 
-    /**
-     * Taking the customer to profile details page.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
-        $customer = $this->customerRepository->find(auth()->guard('customer')->user()->id);
+        $k = $this->customerRepository->find(auth()->guard('customer')->user()->id);
 
         return view('shop::customers.account.profile.index', compact('customer'));
     }
 
-    /**
-     * For loading the edit form page.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function edit()
     {
-        $customer = $this->customerRepository->find(auth()->guard('customer')->user()->id);
+        $k = $this->customerRepository->find(auth()->guard('customer')->user()->id);
 
         return view('shop::customers.account.profile.edit', compact('customer'));
     }
 
-    /**
-     * Edit function for editing customer profile.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(ProfileRequest $profileRequest)
     {
         $isPasswordChanged = false;
 
-        $data = $profileRequest->validated();
+        $dat = $profileRequest->validated();
 
-        if (empty($data['date_of_birth'])) {
-            unset($data['date_of_birth']);
+        if (empty($dat['date_of_birth'])) {
+            unset($dat['date_of_birth']);
         }
 
         if (
             core()->getCurrentChannel()->theme === 'default'
-            && ! isset($data['image'])
+            && ! isset($dat['image'])
         ) {
-            $data['image']['image_0'] = '';
+            $dat['image']['image_0'] = '';
         }
 
-        $data['subscribed_to_news_letter'] = isset($data['subscribed_to_news_letter']);
+        $dat['subscribed_to_news_letter'] = isset($dat['subscribed_to_news_letter']);
 
-        if (! empty($data['current_password'])) {
-            if (Hash::check($data['current_password'], auth()->guard('customer')->user()->password)) {
+        if (! empty($dat['current_password'])) {
+            if (Hash::check($dat['current_password'], auth()->guard('customer')->user()->password)) {
                 $isPasswordChanged = true;
 
-                $data['password'] = bcrypt($data['new_password']);
+                $dat['password'] = bcrypt($dat['new_password']);
             } else {
                 session()->flash('warning', trans('shop::app.customers.account.profile.index.unmatched'));
 
                 return redirect()->back();
             }
         } else {
-            unset($data['new_password']);
+            unset($dat['new_password']);
         }
 
         Event::dispatch('customer.update.before');
 
-        if ($customer = $this->customerRepository->update($data, auth()->guard('customer')->user()->id)) {
+        if ($k = $this->customerRepository->update($dat, auth()->guard('customer')->user()->id)) {
             if ($isPasswordChanged) {
-                Event::dispatch('customer.password.update.after', $customer);
+                Event::dispatch('customer.password.update.after', $k);
             }
 
-            Event::dispatch('customer.update.after', $customer);
+            Event::dispatch('customer.update.after', $k);
 
-            if ($data['subscribed_to_news_letter']) {
-                $subscription = $this->subscriptionRepository->findOneWhere(['email' => $data['email']]);
+            if ($dat['subscribed_to_news_letter']) {
+                $subscription = $this->subscriptionRepository->findOneWhere(['email' => $dat['email']]);
 
                 if ($subscription) {
                     $this->subscriptionRepository->update([
-                        'customer_id'   => $customer->id,
+                        'customer_id'   => $k->id,
                         'is_subscribed' => 1,
                     ], $subscription->id);
                 } else {
                     $this->subscriptionRepository->create([
-                        'email'         => $data['email'],
-                        'customer_id'   => $customer->id,
+                        'email'         => $dat['email'],
+                        'customer_id'   => $k->id,
                         'channel_id'    => core()->getCurrentChannel()->id,
                         'is_subscribed' => 1,
                         'token'         => $token = uniqid(),
                     ]);
                 }
             } else {
-                $subscription = $this->subscriptionRepository->findOneWhere(['email' => $data['email']]);
+                $subscription = $this->subscriptionRepository->findOneWhere(['email' => $dat['email']]);
 
                 if ($subscription) {
                     $this->subscriptionRepository->update([
-                        'customer_id'   => $customer->id,
+                        'customer_id'   => $k->id,
                         'is_subscribed' => 0,
                     ], $subscription->id);
                 }
             }
 
             if (request()->hasFile('image')) {
-                $this->customerRepository->uploadImages($data, $customer);
+                $this->customerRepository->uploadImages($dat, $k);
             } else {
-                if (isset($data['image'])) {
-                    if (! empty($data['image'])) {
-                        Storage::delete((string) $customer->image);
+                if (isset($dat['image'])) {
+                    if (! empty($dat['image'])) {
+                        Storage::delete((string) $k->image);
                     }
 
-                    $customer->image = null;
+                    $k->image = null;
 
-                    $customer->save();
+                    $k->save();
                 }
             }
 
@@ -148,12 +132,7 @@ class CustomerController extends Controller
         return redirect()->back('shop.customers.account.profile.edit');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy()
     {
         $this->validate(request(), [
@@ -187,11 +166,7 @@ class CustomerController extends Controller
         }
     }
 
-    /**
-     * Load the view for the customer account panel, showing approved reviews.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function reviews()
     {
         $reviews = $this->productReviewRepository->getCustomerReview();
@@ -199,11 +174,7 @@ class CustomerController extends Controller
         return view('shop::customers.account.reviews.index', compact('reviews'));
     }
 
-    /**
-     * Taking the customer to account details page.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function account()
     {
         return view('shop::customers.account.index');

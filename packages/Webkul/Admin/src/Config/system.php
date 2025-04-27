@@ -3,9 +3,7 @@
 use Webkul\Sales\Models\Order;
 
 return [
-    /**
-     * General.
-     */
+    
     [
         'key'  => 'general',
         'name' => 'admin::app.configuration.index.general.title',
@@ -576,9 +574,7 @@ return [
         ],
     ],
 
-    /**
-     * Catalog.
-     */
+    
     [
         'key'  => 'catalog',
         'name' => 'admin::app.configuration.index.catalog.title',
@@ -1027,9 +1023,7 @@ return [
         ],
     ],
 
-    /**
-     * Customer.
-     */
+    
     [
         'key'  => 'customer',
         'name' => 'admin::app.configuration.index.customer.title',
@@ -1260,9 +1254,7 @@ return [
         ],
     ],
 
-    /**
-     * Emails.
-     */
+    
     [
         'key'  => 'emails',
         'name' => 'admin::app.configuration.index.email.title',
@@ -1406,9 +1398,7 @@ return [
         ],
     ],
 
-    /**
-     * Sales.
-     */
+    
     [
         'key'  => 'sales',
         'name' => 'admin::app.configuration.index.sales.title',

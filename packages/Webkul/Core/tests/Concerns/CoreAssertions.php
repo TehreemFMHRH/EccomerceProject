@@ -18,9 +18,7 @@ use Webkul\Sales\Models\Order;
 
 trait CoreAssertions
 {
-    /**
-     * Assert model wise.
-     */
+    
     public function assertModelWise(array $modelWiseAssertions): void
     {
         foreach ($modelWiseAssertions as $modelClassName => $modelAssertions) {
@@ -30,9 +28,7 @@ trait CoreAssertions
         }
     }
 
-    /**
-     * Assert that two numbers are equal with optional decimal precision.
-     */
+    
     public function assertPrice(float $expected, float $actual, ?int $decimal = null): void
     {
         $decimal = $decimal ?? core()->getCurrentChannel()->decimal;
@@ -44,77 +40,73 @@ trait CoreAssertions
         $this->assertEquals($expectedFormatted, $actualFormatted);
     }
 
-    /**
-     * Prepare order for assertion.
-     */
-    public function prepareOrder(Order $order): array
+    
+    public function prepareOrder(Order $o): array
     {
         return [
-            'status'                        => $order->status,
-            'channel_name'                  => $order->channel_name,
-            'is_guest'                      => $order->is_guest,
-            'customer_email'                => $order->customer_email,
-            'customer_first_name'           => $order->customer_first_name,
-            'customer_last_name'            => $order->customer_last_name,
-            'shipping_method'               => $order->shipping_method,
-            'shipping_title'                => $order->shipping_title,
-            'shipping_description'          => $order->shipping_description,
-            'coupon_code'                   => $order->coupon_code,
-            'is_gift'                       => $order->is_gift,
-            'total_item_count'              => $order->total_item_count,
-            'total_qty_ordered'             => $order->total_qty_ordered,
-            'base_currency_code'            => $order->base_currency_code,
-            'channel_currency_code'         => $order->channel_currency_code,
-            'order_currency_code'           => $order->order_currency_code,
-            'grand_total'                   => $order->grand_total,
-            'base_grand_total'              => $order->base_grand_total,
-            'grand_total_invoiced'          => $order->grand_total_invoiced,
-            'base_grand_total_invoiced'     => $order->base_grand_total_invoiced,
-            'grand_total_refunded'          => $order->grand_total_refunded,
-            'base_grand_total_refunded'     => $order->base_grand_total_refunded,
-            'sub_total'                     => $order->sub_total,
-            'base_sub_total'                => $order->base_sub_total,
-            'sub_total_invoiced'            => $order->sub_total_invoiced,
-            'grand_total_refunded'          => $order->grand_total_refunded,
-            'base_grand_total_refunded'     => $order->base_grand_total_refunded,
-            'sub_total'                     => $order->sub_total,
-            'base_sub_total'                => $order->base_sub_total,
-            'sub_total_invoiced'            => $order->sub_total_invoiced,
-            'base_sub_total_invoiced'       => $order->base_sub_total_invoiced,
-            'sub_total_refunded'            => $order->sub_total_refunded,
-            'discount_percent'              => $order->discount_percent,
-            'discount_amount'               => $order->discount_amount,
-            'base_discount_amount'          => $order->base_discount_amount,
-            'discount_invoiced'             => $order->discount_invoiced,
-            'base_discount_invoiced'        => $order->base_discount_invoiced,
-            'discount_refunded'             => $order->discount_refunded,
-            'base_discount_refunded'        => $order->base_discount_refunded,
-            'tax_amount'                    => $order->tax_amount,
-            'base_tax_amount'               => $order->base_tax_amount,
-            'tax_amount_invoiced'           => $order->tax_amount_invoiced,
-            'base_tax_amount_invoiced'      => $order->base_tax_amount_invoiced,
-            'tax_amount_refunded'           => $order->tax_amount_refunded,
-            'base_tax_amount_refunded'      => $order->base_tax_amount_refunded,
-            'shipping_amount'               => $order->shipping_amount,
-            'base_shipping_amount'          => $order->base_shipping_amount,
-            'shipping_invoiced'             => $order->shipping_invoiced,
-            'base_shipping_invoiced'        => $order->base_shipping_invoiced,
-            'shipping_refunded'             => $order->shipping_refunded,
-            'base_shipping_refunded'        => $order->base_shipping_refunded,
-            'shipping_discount_amount'      => $order->shipping_discount_amount,
-            'base_shipping_discount_amount' => $order->base_shipping_discount_amount,
-            'customer_id'                   => $order->customer_id,
-            'customer_type'                 => $order->customer_type,
-            'channel_id'                    => $order->channel_id,
-            'channel_type'                  => $order->channel_type,
-            'cart_id'                       => $order->cart_id,
-            'applied_cart_rule_ids'         => $order->applied_cart_rule_ids,
+            'status'                        => $o->status,
+            'channel_name'                  => $o->channel_name,
+            'is_guest'                      => $o->is_guest,
+            'customer_email'                => $o->customer_email,
+            'customer_first_name'           => $o->customer_first_name,
+            'customer_last_name'            => $o->customer_last_name,
+            'shipping_method'               => $o->shipping_method,
+            'shipping_title'                => $o->shipping_title,
+            'shipping_description'          => $o->shipping_description,
+            'coupon_code'                   => $o->coupon_code,
+            'is_gift'                       => $o->is_gift,
+            'total_item_count'              => $o->total_item_count,
+            'total_qty_ordered'             => $o->total_qty_ordered,
+            'base_currency_code'            => $o->base_currency_code,
+            'channel_currency_code'         => $o->channel_currency_code,
+            'order_currency_code'           => $o->order_currency_code,
+            'grand_total'                   => $o->grand_total,
+            'base_grand_total'              => $o->base_grand_total,
+            'grand_total_invoiced'          => $o->grand_total_invoiced,
+            'base_grand_total_invoiced'     => $o->base_grand_total_invoiced,
+            'grand_total_refunded'          => $o->grand_total_refunded,
+            'base_grand_total_refunded'     => $o->base_grand_total_refunded,
+            'sub_total'                     => $o->sub_total,
+            'base_sub_total'                => $o->base_sub_total,
+            'sub_total_invoiced'            => $o->sub_total_invoiced,
+            'grand_total_refunded'          => $o->grand_total_refunded,
+            'base_grand_total_refunded'     => $o->base_grand_total_refunded,
+            'sub_total'                     => $o->sub_total,
+            'base_sub_total'                => $o->base_sub_total,
+            'sub_total_invoiced'            => $o->sub_total_invoiced,
+            'base_sub_total_invoiced'       => $o->base_sub_total_invoiced,
+            'sub_total_refunded'            => $o->sub_total_refunded,
+            'discount_percent'              => $o->discount_percent,
+            'discount_amount'               => $o->discount_amount,
+            'base_discount_amount'          => $o->base_discount_amount,
+            'discount_invoiced'             => $o->discount_invoiced,
+            'base_discount_invoiced'        => $o->base_discount_invoiced,
+            'discount_refunded'             => $o->discount_refunded,
+            'base_discount_refunded'        => $o->base_discount_refunded,
+            'tax_amount'                    => $o->tax_amount,
+            'base_tax_amount'               => $o->base_tax_amount,
+            'tax_amount_invoiced'           => $o->tax_amount_invoiced,
+            'base_tax_amount_invoiced'      => $o->base_tax_amount_invoiced,
+            'tax_amount_refunded'           => $o->tax_amount_refunded,
+            'base_tax_amount_refunded'      => $o->base_tax_amount_refunded,
+            'shipping_amount'               => $o->shipping_amount,
+            'base_shipping_amount'          => $o->base_shipping_amount,
+            'shipping_invoiced'             => $o->shipping_invoiced,
+            'base_shipping_invoiced'        => $o->base_shipping_invoiced,
+            'shipping_refunded'             => $o->shipping_refunded,
+            'base_shipping_refunded'        => $o->base_shipping_refunded,
+            'shipping_discount_amount'      => $o->shipping_discount_amount,
+            'base_shipping_discount_amount' => $o->base_shipping_discount_amount,
+            'customer_id'                   => $o->customer_id,
+            'customer_type'                 => $o->customer_type,
+            'channel_id'                    => $o->channel_id,
+            'channel_type'                  => $o->channel_type,
+            'cart_id'                       => $o->cart_id,
+            'applied_cart_rule_ids'         => $o->applied_cart_rule_ids,
         ];
     }
 
-    /**
-     * Prepare order using cart for assertion.
-     */
+    
     public function prepareOrderUsingCart(Cart $cart): array
     {
         return [
@@ -142,9 +134,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare Order Item for assertion.
-     */
+    
     public function prepareOrderItem(OrderItem $orderItem): array
     {
         return [
@@ -176,9 +166,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare order items for assertion.
-     */
+    
     public function prepareOrderItemUsingCartItem(CartItem $cartItem)
     {
         return [
@@ -203,9 +191,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare Order Payment for Assertion.
-     */
+    
     public function prepareOrderPaymentUsingCartPayment(CartPayment $cartPayment): array
     {
         return [
@@ -227,9 +213,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare the cart for assertion.
-     */
+    
     public function prepareCart(Cart $cart): array
     {
         return [
@@ -264,9 +248,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare cart item for assertion.
-     */
+    
     public function prepareCartItem(CartItem $cartItem): array
     {
         return [
@@ -301,9 +283,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare cart payment for assertion.
-     */
+    
     public function prepareCartPayment(CartPayment $cartPayment): array
     {
         return [
@@ -313,9 +293,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare cart shipping rate for assertion.
-     */
+    
     public function prepareCartShippingRate(CartShippingRate $cartShippingRate): array
     {
         return [
@@ -328,34 +306,30 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare address for assertion.
-     */
-    public function prepareAddress(mixed $address, ?string $type = null): array
+    
+    public function prepareAddress(mixed $addr, ?string $type = null): array
     {
         return [
-            'additional'        => $address->additional,
-            'address'           => $address->address,
-            'address_type'      => $type ?? $address->address_type,
-            'city'              => $address->city,
-            'company_name'      => $address->company_name,
-            'country'           => $address->country,
-            'default_address'   => $address->default_address,
-            'email'             => $address->email,
-            'first_name'        => $address->first_name,
-            'gender'            => $address->gender,
-            'last_name'         => $address->last_name,
-            'phone'             => $address->phone,
-            'postcode'          => $address->postcode,
-            'state'             => $address->state,
-            'vat_id'            => $address->vat_id,
-            'customer_id'       => ! $type ? $address->customer_id : null,
+            'additional'        => $addr->additional,
+            'address'           => $addr->address,
+            'address_type'      => $type ?? $addr->address_type,
+            'city'              => $addr->city,
+            'company_name'      => $addr->company_name,
+            'country'           => $addr->country,
+            'default_address'   => $addr->default_address,
+            'email'             => $addr->email,
+            'first_name'        => $addr->first_name,
+            'gender'            => $addr->gender,
+            'last_name'         => $addr->last_name,
+            'phone'             => $addr->phone,
+            'postcode'          => $addr->postcode,
+            'state'             => $addr->state,
+            'vat_id'            => $addr->vat_id,
+            'customer_id'       => ! $type ? $addr->customer_id : null,
         ];
     }
 
-    /**
-     * Assert order payment for assertion.
-     */
+    
     public function prepareOrderPayment(OrderPayment $orderPayment): array
     {
         return [
@@ -365,18 +339,16 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Prepare invoice for assertion.
-     */
-    public function prepareInvoice(Order $order, OrderItem $orderItem): array
+    
+    public function prepareInvoice(Order $o, OrderItem $orderItem): array
     {
         return [
-            'order_id'              => $order->id,
+            'order_id'              => $o->id,
             'state'                 => 'paid',
             'total_qty'             => 1,
-            'base_currency_code'    => $order->base_currency_code,
-            'channel_currency_code' => $order->channel_currency_code,
-            'order_currency_code'   => $order->order_currency_code,
+            'base_currency_code'    => $o->base_currency_code,
+            'channel_currency_code' => $o->channel_currency_code,
+            'order_currency_code'   => $o->order_currency_code,
             'email_sent'            => 1,
             'discount_amount'       => 0,
             'base_discount_amount'  => 0,
@@ -387,9 +359,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Assert invoice item for assertion.
-     */
+    
     public function prepareInvoiceItem(InvoiceItem $invoiceItem): array
     {
         return [
@@ -415,9 +385,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Assert Cart Rule for assertion.
-     */
+    
     public function prepareCartRule(CartRule $cartRule): array
     {
         return [
@@ -445,9 +413,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Assert cart rule customer group for assertion.
-     */
+    
     public function prepareCartRuleCustomerGroup(CartRule $cartRule): void
     {
         foreach ($cartRule->cart_rule_customer_groups as $cartRuleCustomerGroup) {
@@ -458,9 +424,7 @@ trait CoreAssertions
         }
     }
 
-    /**
-     * Assert cart rule for assertion.
-     */
+    
     public function prepareCartRuleChannel(CartRule $cartRule): void
     {
         foreach ($cartRule->cart_rule_channels as $cartRuleChannel) {
@@ -471,9 +435,7 @@ trait CoreAssertions
         }
     }
 
-    /**
-     * Assert Cart Rule Coupon for assertion.
-     */
+    
     public function prepareCartRuleCoupon(CartRuleCoupon $cartRuleCoupon): array
     {
         return [
@@ -487,9 +449,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Assert cart rule coupon for assertion.
-     */
+    
     public function prepareCatalogRule(CatalogRule $catalogRule): array
     {
         return [
@@ -507,9 +467,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Assert Catalog Rule Coupon for assertion.
-     */
+    
     public function prepareCatalogRuleCoupon(CatalogRule $catalogRule): array
     {
         return [
@@ -527,9 +485,7 @@ trait CoreAssertions
         ];
     }
 
-    /**
-     * Assert Catalog Rule Channel for assertion.
-     */
+    
     public function prepareCatalogRuleChannel(CatalogRule $catalogRule): void
     {
         foreach ($catalogRule->channels as $catalogRuleChannel) {
@@ -540,9 +496,7 @@ trait CoreAssertions
         }
     }
 
-    /**
-     * Assert Catalog Rule Customer Group for assertion.
-     */
+    
     public function prepareCatalogRuleCustomerGroup(CatalogRule $catalogRule): void
     {
         foreach ($catalogRule->customer_groups as $customerGroup) {

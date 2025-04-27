@@ -8,36 +8,22 @@ use Illuminate\Support\Str;
 
 abstract class AbstractReporting
 {
-    /**
-     * The channel ids.
-     */
+    
     protected array $channelIds;
 
-    /**
-     * The starting date for a given period.
-     */
+    
     protected Carbon $startDate;
 
-    /**
-     * The ending date for a given period.
-     */
+    
     protected Carbon $endDate;
 
-    /**
-     * The starting date for the previous period.
-     */
+    
     protected Carbon $lastStartDate;
 
-    /**
-     * The ending date for the previous period.
-     */
+    
     protected Carbon $lastEndDate;
 
-    /**
-     * Create a helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct()
     {
         $this->setChannel(request()->query('channel'));
@@ -47,9 +33,7 @@ abstract class AbstractReporting
         $this->setEndDate(request()->date('end'));
     }
 
-    /**
-     * Sets the channel IDs and codes.
-     */
+    
     public function setChannel(?string $code = null): self
     {
         $this->channelIds = core()->getAllChannels()
@@ -64,12 +48,7 @@ abstract class AbstractReporting
         return $this;
     }
 
-    /**
-     * Set the start date or default to 30 days ago if not provided.
-     *
-     * @param  \Carbon\Carbon|null  $startDate
-     * @return void
-     */
+    
     public function setStartDate(?Carbon $startDate = null): self
     {
         $this->startDate = $startDate ? $startDate->startOfDay() : now()->subDays(30)->startOfDay();
@@ -79,13 +58,7 @@ abstract class AbstractReporting
         return $this;
     }
 
-    /**
-     * Sets the end date to the provided date's end of day, or to the current
-     * date if not provided or if the provided date is in the future.
-     *
-     * @param  \Carbon\Carbon|null  $endDate
-     * @return void
-     */
+    
     public function setEndDate(?Carbon $endDate = null): self
     {
         $this->endDate = ($endDate && $endDate->endOfDay() <= now()) ? $endDate->endOfDay() : now();
@@ -95,29 +68,19 @@ abstract class AbstractReporting
         return $this;
     }
 
-    /**
-     * Get the start date.
-     *
-     * @return \Carbon\Carbon
-     */
+    
     public function getStartDate(): Carbon
     {
         return $this->startDate;
     }
 
-    /**
-     * Get the end date.
-     *
-     * @return \Carbon\Carbon
-     */
+    
     public function getEndDate(): Carbon
     {
         return $this->endDate;
     }
 
-    /**
-     * Sets the start date for the last period.
-     */
+    
     private function setLastStartDate(): void
     {
         if (! isset($this->startDate)) {
@@ -131,40 +94,25 @@ abstract class AbstractReporting
         $this->lastStartDate = $this->startDate->clone()->subDays($this->startDate->diffInDays($this->endDate));
     }
 
-    /**
-     * Sets the end date for the last period.
-     */
+    
     private function setLastEndDate(): void
     {
         $this->lastEndDate = $this->startDate->clone();
     }
 
-    /**
-     * Get the last start date.
-     *
-     * @return \Carbon\Carbon
-     */
+    
     public function getLastStartDate(): Carbon
     {
         return $this->lastStartDate;
     }
 
-    /**
-     * Get the last end date.
-     *
-     * @return \Carbon\Carbon
-     */
+    
     public function getLastEndDate(): Carbon
     {
         return $this->lastEndDate;
     }
 
-    /**
-     * Calculate the percentage change between previous and current values.
-     *
-     * @param  float|int  $previous
-     * @param  float|int  $current
-     */
+    
     public function getPercentageChange($previous, $current): float|int
     {
         if (! $previous) {
@@ -174,22 +122,13 @@ abstract class AbstractReporting
         return ($current - $previous) / $previous * 100;
     }
 
-    /**
-     * Returns time intervals.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @param  string  $period
-     * @return array
-     */
+    
     public function getTimeInterval($startDate, $endDate, $period)
     {
         if ($period == 'auto') {
             $totalMonths = $startDate->diffInMonths($endDate) + 1;
 
-            /**
-             * If the difference between the start and end date is more than 5 months
-             */
+            
             $intervals = $this->getMonthsInterval($startDate, $endDate);
 
             if (! empty($intervals)) {
@@ -199,9 +138,7 @@ abstract class AbstractReporting
                 ];
             }
 
-            /**
-             * If the difference between the start and end date is more than 6 weeks
-             */
+            
             $intervals = $this->getWeeksInterval($startDate, $endDate);
 
             if (! empty($intervals)) {
@@ -211,9 +148,7 @@ abstract class AbstractReporting
                 ];
             }
 
-            /**
-             * If the difference between the start and end date is less than 6 weeks
-             */
+            
             return [
                 'group_column' => 'DAYOFYEAR(created_at)',
                 'intervals'    => $this->getDaysInterval($startDate, $endDate),
@@ -249,22 +184,14 @@ abstract class AbstractReporting
         }
     }
 
-    /**
-     * Returns time intervals.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @return array
-     */
+    
     public function getMonthsInterval($startDate, $endDate)
     {
         $intervals = [];
 
         $totalMonths = $startDate->diffInMonths($endDate) + 1;
 
-        /**
-         * If the difference between the start and end date is less than 5 months
-         */
+        
         if ($totalMonths <= 5) {
             return $intervals;
         }
@@ -290,13 +217,7 @@ abstract class AbstractReporting
         return $intervals;
     }
 
-    /**
-     * Returns time intervals.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @return array
-     */
+    
     public function getWeeksInterval($startDate, $endDate)
     {
         $intervals = [];
@@ -307,9 +228,7 @@ abstract class AbstractReporting
 
         $totalWeeks = $startWeekDay->diffInWeeks($endWeekDay);
 
-        /**
-         * If the difference between the start and end date is less than 6 weeks
-         */
+        
         if ($totalWeeks <= 6) {
             return $intervals;
         }
@@ -337,13 +256,7 @@ abstract class AbstractReporting
         return $intervals;
     }
 
-    /**
-     * Returns time intervals.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @return array
-     */
+    
     public function getDaysInterval($startDate, $endDate)
     {
         $intervals = [];

@@ -6,12 +6,7 @@ use Closure;
 
 class Locale
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
-     */
+    
     public function handle($request, Closure $next)
     {
         if ($localeCode = $request->query('locale')) {

@@ -10,16 +10,10 @@ use Webkul\Shop\Mail\Mailable;
 
 class SubscriptionNotification extends Mailable
 {
-    /**
-     * Create a mailable instance
-     *
-     * @return void
-     */
+    
     public function __construct(public SubscribersList $subscribersList) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -30,9 +24,7 @@ class SubscriptionNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

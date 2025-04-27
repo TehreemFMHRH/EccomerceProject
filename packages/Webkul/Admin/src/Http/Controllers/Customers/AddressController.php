@@ -12,36 +12,26 @@ use Webkul\Customer\Models\Customer;
 
 class AddressController extends Controller
 {
-    /**
-     * Fetch address by customer id.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function index(int $id)
+    
+    public function index(int $i)
     {
-        $customer = Customer::find($id);
+        $k = Customer::find($i);
 
         return view('admin::customers.addresses.index', compact('customer'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create(int $id)
+    
+    public function create(int $i)
     {
-        $customer = Customer::find($id);
+        $k = Customer::find($i);
 
         return view('admin::customers.addresses.create', compact('customer'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(int $id, AddressRequest $request): JsonResponse
+    
+    public function store(int $i, AddressRequest $request): JsonResponse
     {
-        $data = array_merge($request->only([
+        $dat = array_merge($request->only([
             'customer_id',
             'company_name',
             'vat_id',
@@ -61,36 +51,30 @@ class AddressController extends Controller
 
         Event::dispatch('customer.addresses.create.before');
 
-        $address = CustomerAddress::create(array_merge($data, [
-            'customer_id' => $id,
+        $addr = CustomerAddress::create(array_merge($dat, [
+            'customer_id' => $i,
         ]));
 
-        Event::dispatch('customer.addresses.create.after', $address);
+        Event::dispatch('customer.addresses.create.after', $addr);
 
         return new JsonResponse([
             'message' => trans('admin::app.customers.customers.view.address.create-success'),
-            'data'    => new AddressResource($address),
+            'data'    => new AddressResource($addr),
         ]);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $address = CustomerAddress::find($id);
+        $addr = CustomerAddress::find($i);
 
         return view('admin::customers.addresses.edit', compact('address'));
     }
 
-    /**
-     * Edit's the pre made resource of customer called address.
-     */
-    public function update(int $id, AddressRequest $request): JsonResponse
+    
+    public function update(int $i, AddressRequest $request): JsonResponse
     {
-        $data = array_merge($request->only([
+        $dat = array_merge($request->only([
             'customer_id',
             'company_name',
             'vat_id',
@@ -108,55 +92,46 @@ class AddressController extends Controller
             'address' => implode(PHP_EOL, array_filter(request()->input('address'))),
         ]);
 
-        Event::dispatch('customer.addresses.update.before', $id);
+        Event::dispatch('customer.addresses.update.before', $i);
 
-        $address = CustomerAddress::update($data, [$id]);
+        $addr = CustomerAddress::update($dat, [$i]);
 
-        Event::dispatch('customer.addresses.update.after', $address);
+        Event::dispatch('customer.addresses.update.after', $addr);
 
         return new JsonResponse([
             'message' => trans('admin::app.customers.customers.view.address.update-success'),
-            'data'    => new AddressResource($address),
+            'data'    => new AddressResource($addr),
         ]);
     }
 
-    /**
-     * To change the default address or make the default address,
-     * by default when first address is created will be the default address.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function makeDefault($id)
+    
+    public function makeDefault($i)
     {
-        if ($default = CustomerAddress::findOneWhere(['customer_id' => $id, 'default_address' => 1])) {
+        if ($default = CustomerAddress::findOneWhere(['customer_id' => $i, 'default_address' => 1])) {
             $default->update(['default_address' => 0]);
         }
 
-        $address = CustomerAddress::findOneWhere([
+        $addr = CustomerAddress::findOneWhere([
             'id'              => request('set_as_default'),
-            'customer_id'     => $id,
+            'customer_id'     => $i,
         ]);
 
-        $address->update(['default_address' => 1]);
+        $addr->update(['default_address' => 1]);
 
         return new JsonResponse([
             'message' => trans('admin::app.customers.customers.view.address.set-default-success'),
-            'data'    => $address,
+            'data'    => $addr,
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(int $id)
+    
+    public function destroy(int $i)
     {
-        Event::dispatch('customer.addresses.delete.before', $id);
+        Event::dispatch('customer.addresses.delete.before', $i);
 
-        CustomerAddress::delete($id);
+        CustomerAddress::delete($i);
 
-        Event::dispatch('customer.addresses.delete.after', $id);
+        Event::dispatch('customer.addresses.delete.after', $i);
 
         return new JsonResponse([
             'message' => trans('admin::app.customers.customers.view.address.address-delete-success'),

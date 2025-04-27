@@ -11,11 +11,7 @@ use Webkul\Tax\Repositories\TaxCategoryRepository;
 
 class CatalogRuleRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected AttributeRepository $attributeRepository,
@@ -26,72 +22,55 @@ class CatalogRuleRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify model class name.
-     */
+
     public function model(): string
     {
         return 'Webkul\CatalogRule\Contracts\CatalogRule';
     }
 
-    /**
-     * Create.
-     *
-     * @return \Webkul\CatalogRule\Contracts\CatalogRule
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
-        $data = $this->transformFormData($data);
+        $dat = $this->transformFormData($dat);
 
-        $catalogRule = parent::create($data);
+        $catalogRule = parent::create($dat);
 
-        $catalogRule->channels()->sync($data['channels']);
+        $catalogRule->channels()->sync($dat['channels']);
 
-        $catalogRule->customer_groups()->sync($data['customer_groups']);
+        $catalogRule->customer_groups()->sync($dat['customer_groups']);
 
         return $catalogRule;
     }
 
-    /**
-     * Update.
-     *
-     * @param  int  $id
-     * @return \Webkul\CatalogRule\Contracts\CatalogRule
-     */
-    public function update(array $data, $id)
+
+    public function update(array $dat, $i)
     {
-        $data = $this->transformFormData($data);
+        $dat = $this->transformFormData($dat);
 
-        $catalogRule = $this->find($id);
+        $catalogRule = $this->find($i);
 
-        parent::update($data, $id);
+        parent::update($dat, $i);
 
-        $catalogRule->channels()->sync($data['channels']);
+        $catalogRule->channels()->sync($dat['channels']);
 
-        $catalogRule->customer_groups()->sync($data['customer_groups']);
+        $catalogRule->customer_groups()->sync($dat['customer_groups']);
 
         return $catalogRule;
     }
 
-    /**
-     * Transform form data.
-     */
-    public function transformFormData(array $data): array
+
+    public function transformFormData(array $dat): array
     {
         return [
-            ...$data,
-            'starts_from' => ! empty($data['starts_from']) ? $data['starts_from'] : null,
-            'ends_till'   => ! empty($data['ends_till']) ? $data['ends_till'] : null,
-            'status'      => isset($data['status']),
-            'conditions'  => $data['conditions'] ?? [],
+            ...$dat,
+            'starts_from' => ! empty($dat['starts_from']) ? $dat['starts_from'] : null,
+            'ends_till'   => ! empty($dat['ends_till']) ? $dat['ends_till'] : null,
+            'status'      => isset($dat['status']),
+            'conditions'  => $dat['conditions'] ?? [],
         ];
     }
 
-    /**
-     * Returns attributes for catalog rule conditions.
-     *
-     * @return array
-     */
+
     public function getConditionAttributes()
     {
         $attributes = [
@@ -146,11 +125,7 @@ class CatalogRuleRepository extends Repository
         return $attributes;
     }
 
-    /**
-     * Returns all tax categories.
-     *
-     * @return array
-     */
+
     public function getTaxCategories()
     {
         $taxCategories = [];
@@ -165,11 +140,7 @@ class CatalogRuleRepository extends Repository
         return $taxCategories;
     }
 
-    /**
-     * Returns all attribute families.
-     *
-     * @return array
-     */
+
     public function getAttributeFamilies()
     {
         $attributeFamilies = [];

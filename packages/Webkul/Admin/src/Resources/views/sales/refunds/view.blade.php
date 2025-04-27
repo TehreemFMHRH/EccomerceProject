@@ -1,4 +1,4 @@
-@php $order = $refund->order; @endphp
+@php $o = $refund->order; @endphp
 
 <x-admin::layouts>
     <!-- Page Title -->
@@ -15,10 +15,8 @@
 
             <!-- Back Button -->
             <div class="flex items-center gap-x-2.5">
-                <a
-                    href="{{ route('admin.sales.refunds.index') }}"
-                    class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
-                >
+                <a href="{{ route('admin.sales.refunds.index') }}"
+                    class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800">
                     @lang('admin::app.account.edit.back-btn')
                 </a>
             </div>
@@ -38,18 +36,19 @@
                 <!-- Products List -->
                 <div class="grid">
                     @foreach ($refund->items as $item)
-                        <div class="flex justify-between gap-2.5 border-b border-slate-300 px-4 py-6 dark:border-gray-800">
+                        <div
+                            class="flex justify-between gap-2.5 border-b border-slate-300 px-4 py-6 dark:border-gray-800">
                             <div class="flex gap-2.5">
                                 @if ($item->product?->base_image_url)
-                                    <img
-                                        class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded"
-                                        src="{{ $item->product->base_image_url }}"
-                                    >
+                                    <img class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded"
+                                        src="{{ $item->product->base_image_url }}">
                                 @else
-                                    <div class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
+                                    <div
+                                        class="relative h-[60px] max-h-[60px] w-full max-w-[60px] rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
                                         <img src="{{ bagisto_asset('images/product-placeholders/front.svg') }}">
 
-                                        <p class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
+                                        <p
+                                            class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
                                             @lang('admin::app.sales.invoices.view.product-image')
                                         </p>
                                     </div>
@@ -66,19 +65,15 @@
                                         @if (isset($item->additional['attributes']))
                                             @foreach ($item->additional['attributes'] as $attribute)
                                                 <p class="text-gray-600 dark:text-gray-300">
-                                                    @if (
-                                                        ! isset($attribute['attribute_type'])
-                                                        || $attribute['attribute_type'] !== 'file'
-                                                    )
-                                                        {{ $attribute['attribute_name'] }} : {{ $attribute['option_label'] }}
+                                                    @if (!isset($attribute['attribute_type']) || $attribute['attribute_type'] !== 'file')
+                                                        {{ $attribute['attribute_name'] }} :
+                                                        {{ $attribute['option_label'] }}
                                                     @else
                                                         {{ $attribute['attribute_name'] }} :
 
-                                                        <a
-                                                            href="{{ Storage::url($attribute['option_label']) }}"
+                                                        <a href="{{ Storage::url($attribute['option_label']) }}"
                                                             class="text-blue-600 hover:underline"
-                                                            download="{{ File::basename($attribute['option_label']) }}"
-                                                        >
+                                                            download="{{ File::basename($attribute['option_label']) }}">
                                                             {{ File::basename($attribute['option_label']) }}
                                                         </a>
                                                     @endif
@@ -102,7 +97,8 @@
                             <!-- Product Price Section -->
                             <div class="grid place-content-start gap-1">
                                 <div class="">
-                                    <p class="flex items-center justify-end gap-x-1 text-base font-semibold text-gray-800 dark:text-white">
+                                    <p
+                                        class="flex items-center justify-end gap-x-1 text-base font-semibold text-gray-800 dark:text-white">
                                         {{ core()->formatBasePrice($item->base_total + $item->base_tax_amount - $item->base_discount_amount) }}
                                     </p>
                                 </div>
@@ -296,10 +292,7 @@
         <!-- Right sub-component -->
         <div class="flex w-[360px] max-w-full flex-col gap-2 max-sm:w-full">
             <!-- Account Information -->
-            @if (
-                $order->billing_address
-                || $order->shipping_address
-            )
+            @if ($o->billing_address || $o->shipping_address)
                 <x-admin::accordion>
                     <x-slot:header>
                         <p class="p-2.5 text-base font-semibold text-gray-600 dark:text-gray-300">
@@ -322,7 +315,7 @@
                         </div>
 
                         <!-- Billing Address -->
-                        @if ($order->billing_address)
+                        @if ($o->billing_address)
                             <span class="block w-full border-b dark:border-gray-800"></span>
 
                             <!-- Billing Address -->
@@ -332,11 +325,11 @@
                                 </p>
                             </div>
 
-                            @include ('admin::sales.address', ['address' => $order->billing_address])
+                            @include ('admin::sales.address', ['address' => $o->billing_address])
                         @endif
 
                         <!-- Shipping Address -->
-                        @if ($order->shipping_address)
+                        @if ($o->shipping_address)
                             <span class="mt-4 block w-full border-b dark:border-gray-800"></span>
 
                             <div class="flex items-center justify-between">
@@ -345,7 +338,7 @@
                                 </p>
                             </div>
 
-                            @include ('admin::sales.address', ['address' => $order->shipping_address])
+                            @include ('admin::sales.address', ['address' => $o->shipping_address])
                         @endif
                     </x-slot>
                 </x-admin::accordion>
@@ -373,32 +366,29 @@
                         <!-- Order Info Right Section  -->
                         <div class="flex flex-col gap-y-1.5">
                             <p class="font-semibold text-gray-600 dark:text-gray-300">
-                                <a
-                                    href="{{ route('admin.sales.orders.view', $order->id) }}"
-                                    class="text-blue-600"
-                                >
-                                    #{{ $order->increment_id }}
+                                <a href="{{ route('admin.sales.orders.view', $o->id) }}" class="text-blue-600">
+                                    #{{ $o->increment_id }}
                                 </a>
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ core()->formatDate($order->created_at, 'Y-m-d H:i:s') }}
+                                {{ core()->formatDate($o->created_at, 'Y-m-d H:i:s') }}
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->status_label }}
+                                {{ $o->status_label }}
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->channel_name }}
+                                {{ $o->channel_name }}
                             </p>
                         </div>
                     </div>
                 </x-slot>
             </x-admin::accordion>
 
-             <!-- Payment Information -->
-             <x-admin::accordion>
+            <!-- Payment Information -->
+            <x-admin::accordion>
                 <x-slot:header>
                     <p class="p-2.5 text-base font-semibold text-gray-600 dark:text-gray-300">
                         @lang('admin::app.sales.refunds.view.payment-information')
@@ -419,21 +409,21 @@
                         <!-- Payment Information Right Section  -->
                         <div class="flex flex-col gap-y-1.5">
                             <p class="text-gray-600 dark:text-gray-300">
-                                <a href="{{ route('admin.sales.orders.view', $order->id) }}">
-                                    {{ core()->getConfigData('sales.payment_methods.' . $order->payment->method . '.title') }}
+                                <a href="{{ route('admin.sales.orders.view', $o->id) }}">
+                                    {{ core()->getConfigData('sales.payment_methods.' . $o->payment->method . '.title') }}
                                 </a>
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->shipping_title ?? 'N/A' }}
+                                {{ $o->shipping_title ?? 'N/A' }}
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ $order->order_currency_code }}
+                                {{ $o->order_currency_code }}
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                {{ core()->formatBasePrice($order->base_shipping_amount) }}
+                                {{ core()->formatBasePrice($o->base_shipping_amount) }}
                             </p>
                         </div>
                     </div>

@@ -82,12 +82,7 @@
             },
 
             methods: {
-                /**
-                 * Perform a search operation based on the input value.
-                 *
-                 * @param {Event} $event
-                 * @returns {void}
-                 */
+                
                 search($event) {
                     let requestedValue = $event.target.value;
 
@@ -113,12 +108,7 @@
                     this.$emit('search', this.filters);
                 },
 
-                /**
-                 * Get the searched values for a specific column.
-                 *
-                 * @param {string} columnIndex
-                 * @returns {Array}
-                 */
+                
                 getSearchedValues(columnIndex) {
                     let appliedColumn = this.filters.columns.find(column => column.index === 'all');
 

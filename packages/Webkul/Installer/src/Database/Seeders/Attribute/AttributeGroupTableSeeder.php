@@ -7,12 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class AttributeGroupTableSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
@@ -86,9 +81,7 @@ class AttributeGroupTableSeeder extends Seeder
         ]);
 
         DB::table('attribute_group_mappings')->insert([
-            /**
-             * General Group Attributes
-             */
+            
             [
                 'attribute_id'        => 1,
                 'attribute_group_id'  => 1,
@@ -123,9 +116,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'position'            => 8,
             ],
 
-            /**
-             * Description Group Attributes
-             */
+            
             [
                 'attribute_id'        => 9,
                 'attribute_group_id'  => 2,
@@ -136,9 +127,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'position'            => 2,
             ],
 
-            /**
-             * Meta Description Group Attributes
-             */
+            
             [
                 'attribute_id'        => 11,
                 'attribute_group_id'  => 4,
@@ -161,9 +150,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'position'            => 5,
             ],
 
-            /**
-             * Price Group Attributes
-             */
+            
             [
                 'attribute_id'        => 16,
                 'attribute_group_id'  => 3,
@@ -178,9 +165,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'position'            => 3,
             ],
 
-            /**
-             * Shipping Group Attributes
-             */
+            
             [
                 'attribute_id'        => 19,
                 'attribute_group_id'  => 5,
@@ -199,9 +184,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'position'            => 4,
             ],
 
-            /**
-             * Settings Group Attributes
-             */
+            
             [
                 'attribute_id'        => 5,
                 'attribute_group_id'  => 6,
@@ -224,9 +207,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'position'            => 5,
             ],
 
-            /**
-             * Inventories Group Attributes
-             */
+            
             [
                 'attribute_id'        => 28,
                 'attribute_group_id'  => 7,

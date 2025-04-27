@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class InvoiceDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return void
-     */
+    
     public function prepareQueryBuilder()
     {
         $dbPrefix = DB::getTablePrefix();
@@ -36,11 +32,7 @@ class InvoiceDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -81,11 +73,7 @@ class InvoiceDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         $this->addAction([

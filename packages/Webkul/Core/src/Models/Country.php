@@ -13,9 +13,7 @@ class Country extends TranslatableModel implements CountryContract
 
     protected $with = ['translations'];
 
-    /**
-     * Get the States.
-     */
+    
     public function states()
     {
         return $this->hasMany(CountryStateProxy::modelClass());

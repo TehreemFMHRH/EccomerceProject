@@ -10,9 +10,7 @@ use Webkul\Product\Observers\ProductObserver;
 
 class ProductServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
+    
     public function register(): void
     {
         include __DIR__.'/../Http/helpers.php';
@@ -22,9 +20,7 @@ class ProductServiceProvider extends ServiceProvider
         $this->registerCommands();
     }
 
-    /**
-     * Bootstrap services.
-     */
+    
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
@@ -40,17 +36,13 @@ class ProductServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
     }
 
-    /**
-     * Register configuration.
-     */
+    
     public function registerConfig(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_types.php', 'product_types');
     }
 
-    /**
-     * Register the console commands of this package.
-     */
+    
     protected function registerCommands(): void
     {
         if ($this->app->runningInConsole()) {

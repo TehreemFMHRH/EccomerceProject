@@ -6,15 +6,9 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * The event handler mappings for the application.
-     *
-     * @var array
-     */
+    
     protected $listen = [
-        /**
-         * Product Events
-         */
+        
         'catalog.product.update.before'  => [
             'Webkul\Marketing\Listeners\ProductListener@beforeUpdate',
         ],
@@ -23,9 +17,7 @@ class EventServiceProvider extends ServiceProvider
             'Webkul\Marketing\Listeners\ProductListener@beforeDelete',
         ],
 
-        /**
-         * Category Events
-         */
+        
         'catalog.category.create.after' => [
             'Webkul\Marketing\Listeners\Category@afterCreate',
         ],
@@ -38,9 +30,7 @@ class EventServiceProvider extends ServiceProvider
             'Webkul\Marketing\Listeners\Category@beforeDelete',
         ],
 
-        /**
-         * CMS Page Events
-         */
+        
         'cms.page.create.after' => [
             'Webkul\Marketing\Listeners\Page@afterCreate',
         ],

@@ -1,20 +1,14 @@
 @props([
-    'name'           => 'images',
-    'allowMultiple'  => false,
+    'name' => 'images',
+    'allowMultiple' => false,
     'uploadedVideos' => [],
-    'width'          => '210px',
-    'height'         => '120px'
+    'width' => '210px',
+    'height' => '120px',
 ])
 
-<v-media-videos
-    name="{{ $name }}"
-    v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
-    :uploaded-videos='{{ json_encode($uploadedVideos) }}'
-    width="{{ $width }}"
-    height="{{ $height }}"
-    :errors="errors"
-    {{ $attributes->get('class') }}
->
+<v-media-videos name="{{ $na }}" v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
+    :uploaded-videos='{{ json_encode($uploadedVideos) }}' width="{{ $width }}" height="{{ $height }}"
+    :errors="errors" {{ $attributes->get('class') }}>
 </v-media-videos>
 
 @pushOnce('scripts')
@@ -145,7 +139,7 @@
 
             props: {
                 name: {
-                    type: String, 
+                    type: String,
                     default: 'videos',
                 },
 
@@ -195,7 +189,7 @@
 
                     const validFiles = Array.from(videoInput.files).every(file => file.type.includes('video/'));
 
-                    if (! validFiles) {
+                    if (!validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
                             message: "@lang('admin::app.components.media.videos.not-allowed-error')"
@@ -250,7 +244,7 @@
 
                     const validFiles = Array.from(videoInput.files).every(file => file.type.includes('video/'));
 
-                    if (! validFiles) {
+                    if (!validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
                             message: "@lang('admin::app.components.media.videos.not-allowed-error')"

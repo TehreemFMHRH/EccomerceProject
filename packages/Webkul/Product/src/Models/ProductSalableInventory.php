@@ -17,17 +17,13 @@ class ProductSalableInventory extends Model implements ProductSalableInventoryCo
         'channel_id',
     ];
 
-    /**
-     * Get the channel owns the inventory.
-     */
+    
     public function channel()
     {
         return $this->belongsTo(ChannelProxy::modelClass());
     }
 
-    /**
-     * Get the product that owns the product inventory.
-     */
+    
     public function product()
     {
         return $this->belongsTo(ProductProxy::modelClass());

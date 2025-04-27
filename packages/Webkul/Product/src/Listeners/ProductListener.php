@@ -14,11 +14,7 @@ use Webkul\Product\Models\Product;
 
 class ProductListener
 {
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+
     public function __construct(
 
 
@@ -26,124 +22,95 @@ class ProductListener
         protected FlatIndexer $flatIndexer
     ) {}
 
-    /**
-     * Update or create product indices
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
-    public function afterCreate($product)
+
+    public function afterCreate($p)
     {
-        $this->flatIndexer->refresh($product);
+        $this->flatIndexer->refresh($p);
 
-        $productIds = $this->getAllRelatedProductIds($product);
+        $pIds = $this->getAllRelatedProductIds($p);
 
-        UpdateCreateElasticSearchIndexJob::dispatch($productIds);
+        UpdateCreateElasticSearchIndexJob::dispatch($pIds);
     }
 
-    /**
-     * Update or create product indices
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
-    public function afterUpdate($product)
-    {
-        $this->flatIndexer->refresh($product);
 
-        $productIds = $this->getAllRelatedProductIds($product);
+    public function afterUpdate($p)
+    {
+        $this->flatIndexer->refresh($p);
+
+        $pIds = $this->getAllRelatedProductIds($p);
 
         Bus::chain([
-            new UpdateCreateInventoryIndexJob($productIds),
-            new UpdateCreatePriceIndexJob($productIds),
-            new UpdateCreateElasticSearchIndexJob($productIds),
+            new UpdateCreateInventoryIndexJob($pIds),
+            new UpdateCreatePriceIndexJob($pIds),
+            new UpdateCreateElasticSearchIndexJob($pIds),
         ])->dispatch();
     }
 
-    /**
-     * Delete product indices
-     *
-     * @param  int  $productId
-     * @return void
-     */
-    public function beforeDelete($productId)
+
+    public function beforeDelete($pId)
     {
         if (core()->getConfigData('catalog.products.search.engine') != 'elastic') {
             return;
         }
 
-        $product = Product::find($productId);
+        $res = DB::select("SELECT * FROM products WHERE id = $pId LIMIT 1");
+$p = !empty($res) ? $res[0] : null;
 
-        if (! $product) {
+        if (! $p) {
             return;
         }
 
-        $productIds = $this->getAllRelatedProductIds($product);
+        $pIds = $this->getAllRelatedProductIds($p);
 
-        DeleteElasticSearchIndexJob::dispatch($productIds);
+        DeleteElasticSearchIndexJob::dispatch($pIds);
     }
 
-    /**
-     * Returns parents bundle product ids associated with simple product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
-    public function getAllRelatedProductIds($product)
-    {
-        $productIds = [$product->id];
 
-        if ($product->type == 'simple') {
-            if ($product->parent_id) {
-                $productIds[] = $product->parent_id;
+    public function getAllRelatedProductIds($p)
+    {
+        $pIds = [$p->id];
+
+        if ($p->type == 'simple') {
+            if ($p->parent_id) {
+                $pIds[] = $p->parent_id;
             }
 
-            $productIds = array_merge(
-                $productIds,
-                $this->getParentBundleProductIds($product),
-                $this->getParentGroupProductIds($product)
+            $pIds = array_merge(
+                $pIds,
+                $this->getParentBundleProductIds($p),
+                $this->getParentGroupProductIds($p)
             );
-        } elseif ($product->type == 'configurable') {
-            $productIds = [
-                ...$product->variants->pluck('id')->toArray(),
-                ...$productIds,
+        } elseif ($p->type == 'configurable') {
+            $pIds = [
+                ...$p->variants->pluck('id')->toArray(),
+                ...$pIds,
             ];
         }
 
-        return $productIds;
+        return $pIds;
     }
 
-    /**
-     * Returns parents bundle product ids associated with simple product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
-    public function getParentBundleProductIds($product)
+
+    public function getParentBundleProductIds($p)
     {
         $bundleOptionProducts = ProductBundleOptionProduct::where([
-            'product_id' => $product->id,
+            'product_id' => $p->id,
         ])->get();
 
-        $productIds = [];
+        $pIds = [];
 
         foreach ($bundleOptionProducts as $bundleOptionProduct) {
-            $productIds[] = $bundleOptionProduct->bundle_option->product_id;
+            $pIds[] = $bundleOptionProduct->bundle_option->product_id;
         }
 
-        return $productIds;
+        return $pIds;
     }
 
-    /**
-     * Returns parents group product ids associated with simple product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
-    public function getParentGroupProductIds($product)
+
+    public function getParentGroupProductIds($p)
     {
         $groupedOptionProducts = ProductGroupedProduct::where([
-            'associated_product_id' => $product->id,
+            'associated_product_id' => $p->id,
         ])->get();
 
         return $groupedOptionProducts->pluck('product_id')->toArray();

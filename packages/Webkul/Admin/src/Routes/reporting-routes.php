@@ -5,13 +5,9 @@ use Webkul\Admin\Http\Controllers\Reporting\CustomerController;
 use Webkul\Admin\Http\Controllers\Reporting\ProductController;
 use Webkul\Admin\Http\Controllers\Reporting\SaleController;
 
-/**
- * Reporting routes.
- */
+
 Route::prefix('reporting')->group(function () {
-    /**
-     * Customer routes.
-     */
+    
     Route::controller(CustomerController::class)->prefix('customers')->group(function () {
         Route::get('', 'index')->name('admin.reporting.customers.index');
 
@@ -24,9 +20,7 @@ Route::prefix('reporting')->group(function () {
         Route::get('view/stats', 'viewStats')->name('admin.reporting.customers.view.stats');
     });
 
-    /**
-     * Product routes.
-     */
+    
     Route::controller(ProductController::class)->prefix('products')->group(function () {
         Route::get('', 'index')->name('admin.reporting.products.index');
 
@@ -39,9 +33,7 @@ Route::prefix('reporting')->group(function () {
         Route::get('view/stats', 'viewStats')->name('admin.reporting.products.view.stats');
     });
 
-    /**
-     * Sale routes.
-     */
+    
     Route::controller(SaleController::class)->prefix('sales')->group(function () {
         Route::get('', 'index')->name('admin.reporting.sales.index');
 

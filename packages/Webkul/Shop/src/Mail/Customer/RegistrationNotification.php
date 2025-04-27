@@ -10,16 +10,10 @@ use Webkul\Shop\Mail\Mailable;
 
 class RegistrationNotification extends Mailable
 {
-    /**
-     * Create a new mailable instance.
-     *
-     * @return void
-     */
-    public function __construct(public Customer $customer) {}
+    
+    public function __construct(public Customer $k) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -30,9 +24,7 @@ class RegistrationNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

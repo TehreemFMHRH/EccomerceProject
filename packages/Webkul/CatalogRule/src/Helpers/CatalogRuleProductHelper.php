@@ -10,23 +10,13 @@ use Webkul\Rule\Helpers\Validator;
 
 class CatalogRuleProductHelper
 {
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected AttributeRepository $attributeRepository,
         protected Validator $validator
     ) {}
 
-    /**
-     * Collect discount on cart
-     *
-     * @param  \Webkul\CatalogRule\Contracts\CatalogRule  $rule
-     * @param  int  $batchCount
-     * @return void
-     */
+    
     public function insertRuleProduct($rule, $batchCount = 1000, $product = null)
     {
         if (! (float) $rule->discount_amount) {
@@ -75,23 +65,13 @@ class CatalogRuleProductHelper
         }
     }
 
-    /**
-     * Clean catalog rule product indices
-     *
-     * @param  \Webkul\CatalogRule\Contracts\CatalogRule  $rule
-     * @return void
-     */
+    
     public function cleanRuleIndices($rule)
     {
         CatalogRuleProduct::where('catalog_rule_id', $rule->id)->delete();
     }
 
-    /**
-     * Clean products indices
-     *
-     * @param  array  $productIds
-     * @return void
-     */
+    
     public function cleanProductIndices($productIds = [])
     {
         if (count($productIds)) {
@@ -103,13 +83,7 @@ class CatalogRuleProductHelper
         }
     }
 
-    /**
-     * Get array of product ids which are matched by rule
-     *
-     * @param  \Webkul\CatalogRule\Contracts\CatalogRule  $rule
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getMatchingProductIds($rule, $product = null)
     {
         $products = Product::scopeQuery(function ($query) use ($rule, $product) {
@@ -163,12 +137,7 @@ class CatalogRuleProductHelper
         return array_unique($validatedProductIds);
     }
 
-    /**
-     * Returns catalog rule products
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Illuminate\Support\Collection
-     */
+    
     public function getCatalogRuleProducts($product = null)
     {
         $ruleProducts = CatalogRuleProduct::scopeQuery(function ($query) use ($product) {
@@ -203,13 +172,7 @@ class CatalogRuleProductHelper
         return $ruleProducts;
     }
 
-    /**
-     * Add product attribute condition to query
-     *
-     * @param  string  $attributeCode
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+    
     public function addAttributeToSelect($attributeCode, $query)
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);

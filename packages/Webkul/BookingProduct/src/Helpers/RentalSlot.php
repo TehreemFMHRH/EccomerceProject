@@ -5,14 +5,10 @@ namespace Webkul\BookingProduct\Helpers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\Product\DataTypes\CartItemValidationResult;
-
+use Webkul\BookingProduct\Models\BookingProduct;
 class RentalSlot extends Booking
 {
-    /**
-     * Returns slots for a particular day.
-     *
-     * @param  \Webkul\BookingProduct\Contracts\BookingProduct  $bookingProduct
-     */
+    
     public function getSlotsByDate($bookingProduct, string $date): array
     {
         $bookingProductSlot = $this->typeRepositories[$bookingProduct->type]->findOneByField('booking_product_id', $bookingProduct->id);
@@ -26,11 +22,7 @@ class RentalSlot extends Booking
         return $this->slotsCalculation($bookingProduct, $requestedDate, $bookingProductSlot);
     }
 
-    /**
-     * Returns get booked quantity.
-     *
-     * @param  array  $data
-     */
+    
     public function getBookedQuantity($data): int
     {
         $bookingProduct = BookingProduct::findOneByField('product_id', $data['product_id']);
@@ -60,11 +52,7 @@ class RentalSlot extends Booking
         return $result->total_qty_booked ?? 0;
     }
 
-    /**
-     * Returns slots that are going to expire.
-     *
-     * @param  \Webkul\Checkout\Contracts\CartItem  $cartItem
-     */
+    
     public function isSlotExpired($cartItem): bool
     {
         $bookingProduct = BookingProduct::findOneByField('product_id', $cartItem['product_id']);
@@ -105,9 +93,7 @@ class RentalSlot extends Booking
         }
     }
 
-    /**
-     * Add booking additional prices to cart item.
-     */
+    
     public function addAdditionalPrices(array $products): array
     {
         $bookingProduct = BookingProduct::findOneByField('product_id', $products[0]['product_id']);
@@ -138,11 +124,7 @@ class RentalSlot extends Booking
         return $products;
     }
 
-    /**
-     * Validate cart item product price.
-     *
-     * @param  \Webkul\Checkout\Models\CartItem  $item
-     */
+    
     public function validateCartItem($item): CartItemValidationResult
     {
         $result = new CartItemValidationResult;

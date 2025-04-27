@@ -9,54 +9,31 @@ use Webkul\Product\Models\Product;
 
 class ProductCategoryUniqueSlug implements Rule
 {
-    /**
-     * Reserved slugs.
-     *
-     * @var array
-     */
+    
     protected $reservedSlugs = [
         'categories',
     ];
 
-    /**
-     * Is slug reserved.
-     *
-     * @var bool
-     */
+    
     protected $isSlugReserved = false;
 
-    /**
-     * Constructor.
-     *
-     * @param  string  $tableName
-     * @param  string  $id
-     */
+    
     public function __construct(
         protected $tableName = null,
-        protected $id = null
+        protected $i = null
     ) {}
 
-    /**
-     * Determine if the validation rule passes.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
-     */
-    public function passes($attribute, $value)
+    
+    public function passes($attribute, $va)
     {
-        if (in_array($value, $this->reservedSlugs)) {
+        if (in_array($va, $this->reservedSlugs)) {
             return ! ($this->isSlugReserved = true);
         }
 
-        return $this->isSlugUnique($value);
+        return $this->isSlugUnique($va);
     }
 
-    /**
-     * Get the validation error message.
-     *
-     * @return string
-     */
+    
     public function message()
     {
         if ($this->isSlugReserved) {
@@ -66,23 +43,13 @@ class ProductCategoryUniqueSlug implements Rule
         return trans('admin::app.validations.slug-being-used');
     }
 
-    /**
-     * Checks slug is unique or not.
-     *
-     * @param  string  $slug
-     * @return bool
-     */
+    
     protected function isSlugUnique($slug)
     {
         return ! $this->isSlugExistsInCategories($slug) && ! $this->isSlugExistsInProducts($slug);
     }
 
-    /**
-     * Is slug is exists in categories.
-     *
-     * @param  string  $slug
-     * @return bool
-     */
+    
     protected function isSlugExistsInCategories($slug)
     {
         if (
@@ -103,12 +70,7 @@ class ProductCategoryUniqueSlug implements Rule
             ->exists();
     }
 
-    /**
-     * Is slug is exists in products.
-     *
-     * @param  string  $slug
-     * @return bool
-     */
+    
     protected function isSlugExistsInProducts($slug)
     {
         if (core()->getConfigData('catalog.products.search.engine') == 'elastic') {

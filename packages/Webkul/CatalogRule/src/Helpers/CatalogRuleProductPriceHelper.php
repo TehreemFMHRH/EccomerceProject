@@ -7,22 +7,12 @@ use Webkul\CatalogRule\Models\CatalogRuleProductPrice;
 
 class CatalogRuleProductPriceHelper
 {
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CatalogRuleProductHelper $catalogRuleProductHelper
     ) {}
 
-    /**
-     * Collect discount on cart
-     *
-     * @param  int  $batchCount
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function indexRuleProductPrice($batchCount, $product = null)
     {
         $dates = [
@@ -101,48 +91,37 @@ class CatalogRuleProductPriceHelper
         CatalogRuleProductPrice::insert($prices);
     }
 
-    /**
-     * Calculates product price based on rule
-     *
-     * @param  array  $rule
-     * @param  \Webkul\Product\Contracts\Product|null  $productData
-     * @return float
-     */
+    
     public function calculate($rule, $productData = null)
     {
-        $price = $productData['price'] ?? $rule->price;
+        $r = $productData['price'] ?? $rule->price;
 
         switch ($rule->action_type) {
             case 'to_fixed':
-                $price = min($rule->discount_amount, $price);
+                $r = min($rule->discount_amount, $r);
 
                 break;
 
             case 'to_percent':
-                $price = $price * $rule->discount_amount / 100;
+                $r = $r * $rule->discount_amount / 100;
 
                 break;
 
             case 'by_fixed':
-                $price = max(0, $price - $rule->discount_amount);
+                $r = max(0, $r - $rule->discount_amount);
 
                 break;
 
             case 'by_percent':
-                $price = $price * (1 - $rule->discount_amount / 100);
+                $r = $r * (1 - $rule->discount_amount / 100);
 
                 break;
         }
 
-        return $price;
+        return $r;
     }
 
-    /**
-     * Clean products price indices
-     *
-     * @param  array  $productIds
-     * @return void
-     */
+    
     public function cleanProductPriceIndices($productIds = [])
     {
         if (count($productIds)) {

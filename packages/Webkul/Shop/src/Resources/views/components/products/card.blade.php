@@ -1,7 +1,4 @@
-<v-product-card
-    {{ $attributes }}
-    :product="product"
->
+<v-product-card {{ $attributes }} :product="product">
 </v-product-card>
 
 @pushOnce('scripts')
@@ -142,7 +139,7 @@
                         <button
                             class="secondary-button w-full max-w-full p-2.5 text-sm font-medium max-sm:rounded-xl max-sm:p-2"
                             :disabled="! product.is_saleable || isAddingToCart"
-                            @click="addToCart()"
+                            @click="f3()"
                         >
                             @lang('shop::app.components.products.card.add-to-cart')
                         </button>
@@ -324,7 +321,7 @@
                         :title="trans('shop::app.components.products.card.add-to-cart')"
                         ::loading="isAddingToCart"
                         ::disabled="! product.is_saleable || isAddingToCart"
-                        @click="addToCart()"
+                        @click="f3()"
                     />
 
                     {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.after') !!}
@@ -355,59 +352,76 @@
                                 product_id: this.product.id
                             })
                             .then(response => {
-                                this.product.is_wishlist = ! this.product.is_wishlist;
+                                this.product.is_wishlist = !this.product.is_wishlist;
 
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.data.message
+                                });
                             })
                             .catch(error => {});
-                        } else {
-                            window.location.href = "{{ route('shop.customer.session.index')}}";
-                        }
+                    } else {
+                        window.location.href = "{{ route('shop.customer.session.index') }}";
+                    }
                 },
 
                 addToCompare(productId) {
-                    /**
-                     * This will handle for customers.
-                     */
+
                     if (this.isCustomer) {
-                        this.$axios.post('{{ route("shop.api.compare.store") }}', {
+                        this.$axios.post('{{ route('shop.api.compare.store') }}', {
                                 'product_id': productId
                             })
                             .then(response => {
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.data.message
+                                });
                             })
                             .catch(error => {
                                 if ([400, 422].includes(error.response.status)) {
-                                    this.$emitter.emit('add-flash', { type: 'warning', message: error.response.data.data.message });
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'warning',
+                                        message: error.response.data.data.message
+                                    });
 
                                     return;
                                 }
 
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message});
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data.message
+                                });
                             });
 
                         return;
                     }
 
-                    /**
-                     * This will handle for guests.
-                     */
+
                     let items = this.getStorageValue() ?? [];
 
                     if (items.length) {
-                        if (! items.includes(productId)) {
+                        if (!items.includes(productId)) {
                             items.push(productId);
 
                             localStorage.setItem('compare_items', JSON.stringify(items));
 
-                            this.$emitter.emit('add-flash', { type: 'success', message: "@lang('shop::app.components.products.card.add-to-compare-success')" });
+                            this.$emitter.emit('add-flash', {
+                                type: 'success',
+                                message: "@lang('shop::app.components.products.card.add-to-compare-success')"
+                            });
                         } else {
-                            this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('shop::app.components.products.card.already-in-compare')" });
+                            this.$emitter.emit('add-flash', {
+                                type: 'warning',
+                                message: "@lang('shop::app.components.products.card.already-in-compare')"
+                            });
                         }
                     } else {
                         localStorage.setItem('compare_items', JSON.stringify([productId]));
 
-                        this.$emitter.emit('add-flash', { type: 'success', message: "@lang('shop::app.components.products.card.add-to-compare-success')" });
+                        this.$emitter.emit('add-flash', {
+                            type: 'success',
+                            message: "@lang('shop::app.components.products.card.add-to-compare-success')"
+                        });
 
                     }
                 },
@@ -415,38 +429,47 @@
                 getStorageValue(key) {
                     let value = localStorage.getItem('compare_items');
 
-                    if (! value) {
+                    if (!value) {
                         return [];
                     }
 
                     return JSON.parse(value);
                 },
 
-                addToCart() {
+                f3() {
                     this.isAddingToCart = true;
 
-                    this.$axios.post('{{ route("shop.api.checkout.cart.store") }}', {
+                    this.$axios.post('{{ route('shop.api.checkout.cart.store') }}', {
                             'quantity': 1,
                             'product_id': this.product.id,
                         })
                         .then(response => {
                             if (response.data.message) {
-                                this.$emitter.emit('update-mini-cart', response.data.data );
+                                this.$emitter.emit('update-mini-cart', response.data.data);
 
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.message
+                                });
                             } else {
-                                this.$emitter.emit('add-flash', { type: 'warning', message: response.data.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'warning',
+                                    message: response.data.data.message
+                                });
                             }
 
                             this.isAddingToCart = false;
                         })
                         .catch(error => {
-                            this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response.data.message
+                            });
 
                             if (error.response.data.redirect_uri) {
                                 window.location.href = error.response.data.redirect_uri;
                             }
-                            
+
                             this.isAddingToCart = false;
                         });
                 },

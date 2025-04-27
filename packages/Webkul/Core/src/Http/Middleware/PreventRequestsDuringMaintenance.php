@@ -11,28 +11,16 @@ use Webkul\Installer\Helpers\DatabaseManager;
 
 class PreventRequestsDuringMaintenance extends BasePreventRequestsDuringMaintenance
 {
-    /**
-     * Database manager instance.
-     */
+    
     protected DatabaseManager $databaseManager;
 
-    /**
-     * Exclude route names.
-     *
-     * @var array
-     */
+    
     protected $excludedNames = [];
 
-    /**
-     * Exclude Channel Ip's.
-     *
-     * @var array
-     */
+    
     protected $excludedIPs = [];
 
-    /**
-     * Constructor.
-     */
+    
     public function __construct(Application $app)
     {
         parent::__construct($app);
@@ -46,19 +34,12 @@ class PreventRequestsDuringMaintenance extends BasePreventRequestsDuringMaintena
         }
     }
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
-     */
+    
     public function handle($request, Closure $next)
     {
         if ($this->databaseManager->isInstalled() && $this->app->maintenanceMode()->active()) {
             try {
-                $data = $this->app->maintenanceMode()->data();
+                $dat = $this->app->maintenanceMode()->data();
             } catch (\ErrorException $exception) {
                 if (! $this->app->maintenanceMode()->active()) {
                     return $next($request);
@@ -67,11 +48,11 @@ class PreventRequestsDuringMaintenance extends BasePreventRequestsDuringMaintena
                 throw $exception;
             }
 
-            if (isset($data['secret']) && $request->path() === $data['secret']) {
-                return $this->bypassResponse($data['secret']);
+            if (isset($dat['secret']) && $request->path() === $dat['secret']) {
+                return $this->bypassResponse($dat['secret']);
             }
 
-            if ($this->hasValidBypassCookie($request, $data)) {
+            if ($this->hasValidBypassCookie($request, $dat)) {
                 return $next($request);
             }
 
@@ -90,38 +71,36 @@ class PreventRequestsDuringMaintenance extends BasePreventRequestsDuringMaintena
                 return $next($request);
             }
 
-            if (isset($data['redirect'])) {
-                $path = $data['redirect'] === '/'
-                    ? $data['redirect']
-                    : trim($data['redirect'], '/');
+            if (isset($dat['redirect'])) {
+                $path = $dat['redirect'] === '/'
+                    ? $dat['redirect']
+                    : trim($dat['redirect'], '/');
 
                 if ($request->path() !== $path) {
                     return redirect($path);
                 }
             }
 
-            if (isset($data['template'])) {
+            if (isset($dat['template'])) {
                 return response(
-                    $data['template'],
-                    $data['status'] ?? 503,
-                    $this->getHeaders($data)
+                    $dat['template'],
+                    $dat['status'] ?? 503,
+                    $this->getHeaders($dat)
                 );
             }
 
             throw new HttpException(
-                $data['status'] ?? 503,
+                $dat['status'] ?? 503,
                 'Service Unavailable',
                 null,
-                $this->getHeaders($data)
+                $this->getHeaders($dat)
             );
         }
 
         return $next($request);
     }
 
-    /**
-     * Set allowed IPs.
-     */
+    
     protected function setAllowedIps(): void
     {
         if ($channel = core()->getCurrentChannel()) {

@@ -14,11 +14,7 @@ class CartRule extends Model implements CartRuleContract
 {
     use HasFactory;
 
-    /**
-     * Add fillable property to the model.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'name',
         'description',
@@ -44,76 +40,54 @@ class CartRule extends Model implements CartRuleContract
         'sort_order',
     ];
 
-    /**
-     * Cast the conditions to the array.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'conditions' => 'array',
     ];
 
-    /**
-     * Get the channels that owns the cart rule.
-     */
+    
     public function cart_rule_channels(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(ChannelProxy::modelClass(), 'cart_rule_channels');
     }
 
-    /**
-     * @deprecated laravel standard should be used
-     */
+    
     public function channels(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->cart_rule_channels();
     }
 
-    /**
-     * Get the customer groups that owns the cart rule.
-     */
+    
     public function cart_rule_customer_groups(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(CustomerGroupProxy::modelClass(), 'cart_rule_customer_groups');
     }
 
-    /**
-     * @deprecated laravel standard should be used
-     */
+    
     public function customer_groups(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->cart_rule_customer_groups();
     }
 
-    /**
-     * Get the coupons that owns the cart rule.
-     */
+    
     public function cart_rule_coupon(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(CartRuleCouponProxy::modelClass());
     }
 
-    /**
-     * @deprecated laravel standard should be used
-     */
+    
     public function coupons(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->cart_rule_coupon();
     }
 
-    /**
-     * Get primary coupon code for cart rule.
-     */
+    
     public function coupon_code(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->cart_rule_coupon()->where('is_primary', 1);
     }
 
-    /**
-     * Get primary coupon code for cart rule.
-     *
-     * @return string|void
-     */
+    
     public function getCouponCodeAttribute()
     {
         $coupon = $this->coupon_code()->first();
@@ -125,9 +99,7 @@ class CartRule extends Model implements CartRuleContract
         return $coupon->code;
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return CartRuleFactory::new();

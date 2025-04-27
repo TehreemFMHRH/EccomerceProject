@@ -48,13 +48,13 @@ it('should show the dashboard over all stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -71,10 +71,10 @@ it('should show the dashboard over all stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -84,19 +84,19 @@ it('should show the dashboard over all stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -115,12 +115,12 @@ it('should show the dashboard over all stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -128,7 +128,7 @@ it('should show the dashboard over all stats', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -139,31 +139,31 @@ it('should show the dashboard over all stats', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -212,7 +212,7 @@ it('should show the dashboard over all stats', function () {
         ->assertOk()
         ->assertJsonPath('statistics.total_customers.current', 1)
         ->assertJsonPath('statistics.total_orders.current', 1)
-        ->assertJsonPath('statistics.total_sales.current', $order->grand_total);
+        ->assertJsonPath('statistics.total_sales.current', $o->grand_total);
 
     $cart->refresh();
 
@@ -226,7 +226,7 @@ it('should show the dashboard over all stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -264,7 +264,7 @@ it('should show the dashboard over all stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -282,7 +282,7 @@ it('should show the dashboard over all stats', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -311,13 +311,13 @@ it('should show the dashboard today stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -334,10 +334,10 @@ it('should show the dashboard today stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -347,19 +347,19 @@ it('should show the dashboard today stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -378,12 +378,12 @@ it('should show the dashboard today stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -391,7 +391,7 @@ it('should show the dashboard today stats', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -402,31 +402,31 @@ it('should show the dashboard today stats', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -475,10 +475,10 @@ it('should show the dashboard today stats', function () {
         ->assertOk()
         ->assertJsonPath('statistics.total_customers.current', 1)
         ->assertJsonPath('statistics.total_orders.current', 1)
-        ->assertJsonPath('statistics.total_sales.current', $order->grand_total)
-        ->assertJsonPath('statistics.orders.0.id', $order->id)
-        ->assertJsonPath('statistics.orders.0.status', $order->status)
-        ->assertJsonPath('statistics.orders.0.customer_email', $order->customer->email);
+        ->assertJsonPath('statistics.total_sales.current', $o->grand_total)
+        ->assertJsonPath('statistics.orders.0.id', $o->id)
+        ->assertJsonPath('statistics.orders.0.status', $o->status)
+        ->assertJsonPath('statistics.orders.0.customer_email', $o->customer->email);
 
     $cart->refresh();
 
@@ -492,7 +492,7 @@ it('should show the dashboard today stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -530,7 +530,7 @@ it('should show the dashboard today stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -548,7 +548,7 @@ it('should show the dashboard today stats', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -577,13 +577,13 @@ it('should show the dashboard stock threshold products stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -600,10 +600,10 @@ it('should show the dashboard stock threshold products stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -613,19 +613,19 @@ it('should show the dashboard stock threshold products stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -644,12 +644,12 @@ it('should show the dashboard stock threshold products stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -657,7 +657,7 @@ it('should show the dashboard stock threshold products stats', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -668,31 +668,31 @@ it('should show the dashboard stock threshold products stats', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -755,7 +755,7 @@ it('should show the dashboard stock threshold products stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -793,7 +793,7 @@ it('should show the dashboard stock threshold products stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -811,7 +811,7 @@ it('should show the dashboard stock threshold products stats', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -840,13 +840,13 @@ it('should show the dashboard total sales stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -863,10 +863,10 @@ it('should show the dashboard total sales stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -876,19 +876,19 @@ it('should show the dashboard total sales stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -907,12 +907,12 @@ it('should show the dashboard total sales stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -920,7 +920,7 @@ it('should show the dashboard total sales stats', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -931,31 +931,31 @@ it('should show the dashboard total sales stats', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -1003,7 +1003,7 @@ it('should show the dashboard total sales stats', function () {
     ]))
         ->assertOk()
         ->assertJsonPath('statistics.total_orders.current', 1)
-        ->assertJsonPath('statistics.total_sales.current', $order->grand_total);
+        ->assertJsonPath('statistics.total_sales.current', $o->grand_total);
 
     $cart->refresh();
 
@@ -1017,7 +1017,7 @@ it('should show the dashboard total sales stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -1055,7 +1055,7 @@ it('should show the dashboard total sales stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -1073,7 +1073,7 @@ it('should show the dashboard total sales stats', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -1146,13 +1146,13 @@ it('should show the dashboard top selling products stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -1169,10 +1169,10 @@ it('should show the dashboard top selling products stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -1182,19 +1182,19 @@ it('should show the dashboard top selling products stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -1213,12 +1213,12 @@ it('should show the dashboard top selling products stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -1226,7 +1226,7 @@ it('should show the dashboard top selling products stats', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -1237,31 +1237,31 @@ it('should show the dashboard top selling products stats', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -1321,7 +1321,7 @@ it('should show the dashboard top selling products stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -1359,7 +1359,7 @@ it('should show the dashboard top selling products stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -1377,7 +1377,7 @@ it('should show the dashboard top selling products stats', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [
@@ -1406,13 +1406,13 @@ it('should show the dashboard top customers stats', function () {
         ->getSimpleProductFactory()
         ->create();
 
-    $customer = Customer::factory()->create();
+    $k = Customer::factory()->create();
 
     $cart = Cart::factory()->create([
-        'customer_id'         => $customer->id,
-        'customer_first_name' => $customer->first_name,
-        'customer_last_name'  => $customer->last_name,
-        'customer_email'      => $customer->email,
+        'customer_id'         => $k->id,
+        'customer_first_name' => $k->first_name,
+        'customer_last_name'  => $k->last_name,
+        'customer_email'      => $k->email,
         'is_guest'            => 0,
     ]);
 
@@ -1429,10 +1429,10 @@ it('should show the dashboard top customers stats', function () {
         'sku'               => $product->sku,
         'quantity'          => $additional['quantity'],
         'name'              => $product->name,
-        'price'             => $convertedPrice = core()->convertPrice($price = $product->price),
-        'base_price'        => $price,
+        'price'             => $convertedPrice = core()->convertPrice($r = $product->price),
+        'base_price'        => $r,
         'total'             => $convertedPrice * $additional['quantity'],
-        'base_total'        => $price * $additional['quantity'],
+        'base_total'        => $r * $additional['quantity'],
         'weight'            => $product->weight ?? 0,
         'total_weight'      => ($product->weight ?? 0) * $additional['quantity'],
         'base_total_weight' => ($product->weight ?? 0) * $additional['quantity'],
@@ -1442,19 +1442,19 @@ it('should show the dashboard top customers stats', function () {
 
     $customerAddress = CustomerAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CustomerAddress::ADDRESS_TYPE,
     ]);
 
     $cartBillingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_BILLING,
     ]);
 
     $cartShippingAddress = CartAddress::factory()->create([
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => CartAddress::ADDRESS_TYPE_SHIPPING,
     ]);
 
@@ -1473,12 +1473,12 @@ it('should show the dashboard top customers stats', function () {
         'cart_address_id'    => $cartShippingAddress->id,
     ]);
 
-    $order = Order::factory()->create([
+    $o = Order::factory()->create([
         'cart_id'                  => $cart->id,
-        'customer_id'              => $customer->id,
-        'customer_email'           => $customer->email,
-        'customer_first_name'      => $customer->first_name,
-        'customer_last_name'       => $customer->last_name,
+        'customer_id'              => $k->id,
+        'customer_email'           => $k->email,
+        'customer_first_name'      => $k->first_name,
+        'customer_last_name'       => $k->last_name,
         'status'                   => 'processing',
         'sub_total_invoiced'       => $product->price,
         'base_sub_total_invoiced'  => $product->price,
@@ -1486,7 +1486,7 @@ it('should show the dashboard top customers stats', function () {
 
     $orderItem = OrderItem::factory()->create([
         'product_id'           => $product->id,
-        'order_id'             => $order->id,
+        'order_id'             => $o->id,
         'sku'                  => $product->sku,
         'type'                 => $product->type,
         'name'                 => $product->name,
@@ -1497,31 +1497,31 @@ it('should show the dashboard top customers stats', function () {
     $orderBillingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartBillingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_BILLING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderShippingAddress = OrderAddress::factory()->create([
         ...Arr::except($cartShippingAddress->toArray(), ['id', 'created_at', 'updated_at']),
         'cart_id'      => $cart->id,
-        'customer_id'  => $customer->id,
+        'customer_id'  => $k->id,
         'address_type' => OrderAddress::ADDRESS_TYPE_SHIPPING,
-        'order_id'     => $order->id,
+        'order_id'     => $o->id,
     ]);
 
     $orderPayment = OrderPayment::factory()->create([
-        'order_id' => $order->id,
+        'order_id' => $o->id,
         'method'   => 'cashondelivery',
     ]);
 
     $invoice = Invoice::factory()->create([
-        'order_id'              => $order->id,
+        'order_id'              => $o->id,
         'state'                 => 'paid',
         'total_qty'             => 1,
-        'base_currency_code'    => $order->base_currency_code,
-        'channel_currency_code' => $order->channel_currency_code,
-        'order_currency_code'   => $order->order_currency_code,
+        'base_currency_code'    => $o->base_currency_code,
+        'channel_currency_code' => $o->channel_currency_code,
+        'order_currency_code'   => $o->order_currency_code,
         'email_sent'            => 1,
         'discount_amount'       => 0,
         'base_discount_amount'  => 0,
@@ -1568,10 +1568,10 @@ it('should show the dashboard top customers stats', function () {
         'type' => 'top-customers',
     ]))
         ->assertOk()
-        ->assertJsonPath('statistics.0.id', $order->customer->id)
-        ->assertJsonPath('statistics.0.email', $order->customer->email)
-        ->assertJsonPath('statistics.0.full_name', $order->customer->name)
-        ->assertJsonPath('statistics.0.orders', $order->count());
+        ->assertJsonPath('statistics.0.id', $o->customer->id)
+        ->assertJsonPath('statistics.0.email', $o->customer->email)
+        ->assertJsonPath('statistics.0.full_name', $o->customer->name)
+        ->assertJsonPath('statistics.0.orders', $o->count());
 
     $cart->refresh();
 
@@ -1585,7 +1585,7 @@ it('should show the dashboard top customers stats', function () {
 
     $orderShippingAddress->refresh();
 
-    $order->refresh();
+    $o->refresh();
 
     $orderItem->refresh();
 
@@ -1623,7 +1623,7 @@ it('should show the dashboard top customers stats', function () {
         ],
 
         Order::class => [
-            $this->prepareOrder($order),
+            $this->prepareOrder($o),
         ],
 
         OrderItem::class => [
@@ -1641,7 +1641,7 @@ it('should show the dashboard top customers stats', function () {
         ],
 
         Invoice::class => [
-            $this->prepareInvoice($order, $orderItem),
+            $this->prepareInvoice($o, $orderItem),
         ],
 
         InvoiceItem::class => [

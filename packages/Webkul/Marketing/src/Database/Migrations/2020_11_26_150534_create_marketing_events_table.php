@@ -7,11 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+    
     public function up()
     {
         Schema::create('marketing_events', function (Blueprint $table) {
@@ -22,22 +18,14 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        /**
-         * To Do (@devansh-webkul)
-         *
-         * - Should be in the seeder.
-         */
+        
         DB::table('marketing_events')->insert([
             'name'        => 'Birthday',
             'description' => 'Birthday',
         ]);
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+    
     public function down()
     {
         Schema::dropIfExists('marketing_events');

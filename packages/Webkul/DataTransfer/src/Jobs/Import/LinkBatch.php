@@ -14,22 +14,13 @@ class LinkBatch implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  mixed  $importBatch
-     * @return void
-     */
+    
     public function __construct(protected $importBatch)
     {
         $this->importBatch = $importBatch;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         $typeImported = app(ImportHelper::class)

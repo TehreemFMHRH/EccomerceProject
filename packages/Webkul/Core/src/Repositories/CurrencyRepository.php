@@ -8,19 +8,13 @@ use Webkul\Core\Eloquent\Repository;
 
 class CurrencyRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return Currency::class;
     }
 
-    /**
-     * Create.
-     *
-     * @return mixed
-     */
+    
     public function create(array $attributes)
     {
         Event::dispatch('core.currency.create.before');
@@ -32,38 +26,29 @@ class CurrencyRepository extends Repository
         return $currency;
     }
 
-    /**
-     * Update.
-     *
-     * @return mixed
-     */
-    public function update(array $attributes, $id)
+    
+    public function update(array $attributes, $i)
     {
-        Event::dispatch('core.currency.update.before', $id);
+        Event::dispatch('core.currency.update.before', $i);
 
-        $currency = parent::update($attributes, $id);
+        $currency = parent::update($attributes, $i);
 
         Event::dispatch('core.currency.update.after', $currency);
 
         return $currency;
     }
 
-    /**
-     * Delete.
-     *
-     * @param  int  $id
-     * @return bool
-     */
-    public function delete($id)
+    
+    public function delete($i)
     {
-        Event::dispatch('core.currency.delete.before', $id);
+        Event::dispatch('core.currency.delete.before', $i);
 
         if ($this->model->count() == 1) {
             return false;
         }
 
-        if ($this->model->destroy($id)) {
-            Event::dispatch('core.currency.delete.after', $id);
+        if ($this->model->destroy($i)) {
+            Event::dispatch('core.currency.delete.after', $i);
 
             return true;
         }

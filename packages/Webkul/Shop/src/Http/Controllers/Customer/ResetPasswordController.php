@@ -15,21 +15,10 @@ class ResetPasswordController extends Controller
 {
     use ResetsPasswords;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CustomerRepository $customerRepository) {}
 
-    /**
-     * Display the password reset view for the given token.
-     *
-     * If no token is present, display the link request form.
-     *
-     * @param  string|null  $token
-     * @return \Illuminate\View\View
-     */
+    
     public function create($token = null)
     {
         return view('shop::customers.reset-password')->with([
@@ -38,11 +27,7 @@ class ResetPasswordController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         try {
@@ -52,16 +37,16 @@ class ResetPasswordController extends Controller
                 'password' => 'required|confirmed|min:6',
             ]);
 
-            $response = $this->broker()->reset(
-                request(['email', 'password', 'password_confirmation', 'token']), function ($customer, $password) {
-                    $this->resetPassword($customer, $password);
+            $resp = $this->broker()->reset(
+                request(['email', 'password', 'password_confirmation', 'token']), function ($k, $password) {
+                    $this->resetPassword($k, $password);
                 }
             );
 
-            if ($response == Password::PASSWORD_RESET) {
-                $customer = $this->customerRepository->findOneByField('email', request('email'));
+            if ($resp == Password::PASSWORD_RESET) {
+                $k = $this->customerRepository->findOneByField('email', request('email'));
 
-                Event::dispatch('customer.password.update.after', $customer);
+                Event::dispatch('customer.password.update.after', $k);
 
                 return redirect()->route('shop.customers.account.profile.index');
             }
@@ -69,7 +54,7 @@ class ResetPasswordController extends Controller
             return back()
                 ->withInput(request(['email']))
                 ->withErrors([
-                    'email' => trans($response),
+                    'email' => trans($resp),
                 ]);
         } catch (\Exception $e) {
             session()->flash('error', trans($e->getMessage()));
@@ -78,29 +63,19 @@ class ResetPasswordController extends Controller
         }
     }
 
-    /**
-     * Reset the given customer password.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $customer
-     * @param  string  $password
-     * @return void
-     */
-    protected function resetPassword($customer, $password)
+    
+    protected function resetPassword($k, $password)
     {
-        $customer->password = Hash::make($password);
+        $k->password = Hash::make($password);
 
-        $customer->setRememberToken(Str::random(60));
+        $k->setRememberToken(Str::random(60));
 
-        $customer->save();
+        $k->save();
 
-        event(new PasswordReset($customer));
+        event(new PasswordReset($k));
     }
 
-    /**
-     * Get the broker to be used during password reset.
-     *
-     * @return \Illuminate\Contracts\Auth\PasswordBroker
-     */
+    
     public function broker()
     {
         return Password::broker('customers');

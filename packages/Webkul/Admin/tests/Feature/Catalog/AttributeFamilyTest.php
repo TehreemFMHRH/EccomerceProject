@@ -50,11 +50,11 @@ it('should store newly created attribute family', function () {
 
     postJson(route('admin.catalog.families.store'), [
         'code'             => $code = fake()->numerify('code########'),
-        'name'             => $name = fake()->name(),
+        'name'             => $na = fake()->name(),
         'attribute_groups' => [
             [
                 'code'   => $code,
-                'name'   => $name,
+                'name'   => $na,
                 'column' => 1,
             ],
         ],
@@ -66,7 +66,7 @@ it('should store newly created attribute family', function () {
         AttributeFamilyModel::class => [
             [
                 'code' => $code,
-                'name' => $name,
+                'name' => $na,
             ],
         ],
     ]);
@@ -115,7 +115,7 @@ it('should update the existing attribute families', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.families.update', $attributeFamily->id), $data = [
+    putJson(route('admin.catalog.families.update', $attributeFamily->id), $dat = [
         'code' => fake()->numerify('code#######'),
         'name' => $attributeFamily->name,
     ])
@@ -124,7 +124,7 @@ it('should update the existing attribute families', function () {
 
     $this->assertModelWise([
         AttributeFamilyModel::class => [
-            $data,
+            $dat,
         ],
     ]);
 });

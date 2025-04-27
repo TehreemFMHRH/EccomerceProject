@@ -8,12 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class WishlistResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request
-     * @return array
-     */
+    
     public function toArray($request)
     {
         return [
@@ -23,9 +18,7 @@ class WishlistResource extends JsonResource
         ];
     }
 
-    /**
-     * Format the additional attributes.
-     */
+    
     public function formatAdditionalAttributes(): array
     {
         $additional = $this->resource->additional ?? [];

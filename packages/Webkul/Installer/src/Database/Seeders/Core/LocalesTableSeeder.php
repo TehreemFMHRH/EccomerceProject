@@ -9,17 +9,10 @@ use Illuminate\Support\Facades\Storage;
 
 class LocalesTableSeeder extends Seeder
 {
-    /**
-     * Base path for the images.
-     */
+    
     const BASE_PATH = 'packages/Webkul/Installer/src/Resources/assets/images/seeders/locales/';
 
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         DB::table('channels')->delete();

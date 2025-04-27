@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class CartRuleCouponDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('cart_rule_coupons')
@@ -27,11 +23,7 @@ class CartRuleCouponDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -79,11 +71,7 @@ class CartRuleCouponDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         $this->addAction([
@@ -96,11 +84,7 @@ class CartRuleCouponDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         $this->addMassAction([

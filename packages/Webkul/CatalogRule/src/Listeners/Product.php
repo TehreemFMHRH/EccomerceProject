@@ -6,10 +6,7 @@ use Webkul\CatalogRule\Jobs\UpdateCreateProductIndex as UpdateCreateProductIndex
 
 class Product
 {
-    /**
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function afterUpdate($product)
     {
         UpdateCreateProductIndexJob::dispatch($product);

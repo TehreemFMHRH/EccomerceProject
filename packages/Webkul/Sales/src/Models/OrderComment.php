@@ -13,9 +13,7 @@ class OrderComment extends Model implements OrderCommentContract
         'order_id',
     ];
 
-    /**
-     * Get the order record associated with the order comment.
-     */
+    
     public function order()
     {
         return $this->belongsTo(OrderProxy::modelClass());

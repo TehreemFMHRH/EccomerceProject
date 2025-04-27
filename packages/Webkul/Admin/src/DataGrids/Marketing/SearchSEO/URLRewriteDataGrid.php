@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class URLRewriteDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('url_rewrites')
@@ -29,11 +25,7 @@ class URLRewriteDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -119,11 +111,7 @@ class URLRewriteDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.url_rewrites.edit')) {
@@ -152,11 +140,7 @@ class URLRewriteDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('marketing.url_rewrites.delete')) {

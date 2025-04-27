@@ -8,11 +8,7 @@ use Webkul\DataTransfer\Contracts\Import as ImportContract;
 
 class Import extends Model implements ImportContract
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'state',
         'process_in_queue',
@@ -34,11 +30,7 @@ class Import extends Model implements ImportContract
         'completed_at',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'summary'      => 'array',
         'errors'       => 'array',
@@ -46,9 +38,7 @@ class Import extends Model implements ImportContract
         'completed_at' => 'datetime',
     ];
 
-    /**
-     * Get the options.
-     */
+    
     public function batches(): HasMany
     {
         return $this->hasMany(ImportBatchProxy::modelClass());

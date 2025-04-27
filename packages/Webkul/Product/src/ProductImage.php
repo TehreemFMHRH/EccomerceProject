@@ -9,19 +9,10 @@ use Webkul\Product\Models\Product;
 
 class ProductImage
 {
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct( ) {}
 
-    /**
-     * Retrieve collection of gallery images.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getGalleryImages($product)
     {
         if (! $product) {
@@ -58,12 +49,7 @@ class ProductImage
         return $images;
     }
 
-    /**
-     * Get product variant image if available otherwise product base image.
-     *
-     * @param  \Webkul\Customer\Contracts\Wishlist  $item
-     * @return array
-     */
+    
     public function getProductImage($item)
     {
         if ($item instanceof Wishlist) {
@@ -79,14 +65,7 @@ class ProductImage
         return $this->getProductBaseImage($product);
     }
 
-    /**
-     * This method will first check whether the gallery images are already
-     * present or not. If not then it will load from the product.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @param  array
-     * @return array
-     */
+    
     public function getProductBaseImage($product, ?array $galleryImages = null)
     {
         if (! $product) {
@@ -98,12 +77,7 @@ class ProductImage
             : $this->otherwiseLoadFromProduct($product);
     }
 
-    /**
-     * Load product's base image.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     protected function otherwiseLoadFromProduct($product)
     {
         $images = $product?->images;
@@ -113,11 +87,7 @@ class ProductImage
             : $this->getFallbackImageUrls();
     }
 
-    /**
-     * Get cached urls configured for intervention package.
-     *
-     * @param  string  $path
-     */
+    
     private function getCachedImageUrls($path): array
     {
         if (! $this->isDriverLocal()) {
@@ -137,9 +107,7 @@ class ProductImage
         ];
     }
 
-    /**
-     * Get fallback urls.
-     */
+    
     private function getFallbackImageUrls(): array
     {
         $smallImageUrl = core()->getConfigData('catalog.products.cache_small_image.url')
@@ -162,9 +130,7 @@ class ProductImage
         ];
     }
 
-    /**
-     * Is driver local.
-     */
+    
     private function isDriverLocal(): bool
     {
         return Storage::getAdapter() instanceof LocalFilesystemAdapter;

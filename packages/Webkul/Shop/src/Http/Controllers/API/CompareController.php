@@ -10,29 +10,21 @@ use Webkul\Shop\Http\Resources\CompareItemResource;
 
 class CompareController extends APIController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CompareItemRepository $compareItemRepository,
 
     ) {}
 
-    /**
-     * Address route index page.
-     */
+    
     public function index(): JsonResource
     {
         $productIds = request()->input('product_ids') ?? [];
 
-        /**
-         * This will handle for customers.
-         */
-        if ($customer = auth()->guard('customer')->user()) {
+        
+        if ($k = auth()->guard('customer')->user()) {
             $productIds = $this->compareItemRepository
-                ->findByField('customer_id', $customer->id)
+                ->findByField('customer_id', $k->id)
                 ->pluck('product_id')
                 ->toArray();
         }
@@ -44,11 +36,7 @@ class CompareController extends APIController
         return CompareItemResource::collection($products);
     }
 
-    /**
-     * Method for customers to get products in comparison.
-     *
-     * @return \Illuminate\Http\Resources\Json\JsonResource
-     */
+    
     public function store()
     {
         $this->validate(request(), [
@@ -76,9 +64,7 @@ class CompareController extends APIController
         ]);
     }
 
-    /**
-     * Method to remove the item from compare list.
-     */
+    
     public function destroy(): JsonResource
     {
         $success = $this->compareItemRepository->deleteWhere([
@@ -92,9 +78,9 @@ class CompareController extends APIController
             ]);
         }
 
-        if ($customer = auth()->guard('customer')->user()) {
+        if ($k = auth()->guard('customer')->user()) {
             $productIds = $this->compareItemRepository
-                ->findByField('customer_id', $customer->id)
+                ->findByField('customer_id', $k->id)
                 ->pluck('product_id')
                 ->toArray();
         }
@@ -109,9 +95,7 @@ class CompareController extends APIController
         ]);
     }
 
-    /**
-     * Method for remove all items from compare list
-     */
+    
     public function destroyAll(): JsonResource
     {
         $success = $this->compareItemRepository->deleteWhere([

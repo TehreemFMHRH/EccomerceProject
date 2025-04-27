@@ -16,17 +16,13 @@ use Webkul\Shop\Http\Middleware\Theme;
 
 class ShopServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
+    
     public function register(): void
     {
         $this->registerConfig();
     }
 
-    /**
-     * Bootstrap services.
-     */
+    
     public function boot(Router $router): void
     {
         $router->middlewareGroup('shop', [
@@ -58,9 +54,7 @@ class ShopServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
     }
 
-    /**
-     * Register package config.
-     */
+    
     protected function registerConfig(): void
     {
         $this->mergeConfigFrom(

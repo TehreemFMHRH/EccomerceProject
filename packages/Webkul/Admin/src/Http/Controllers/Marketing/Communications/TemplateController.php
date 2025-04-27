@@ -10,18 +10,10 @@ use Webkul\Marketing\Repositories\TemplateRepository;
 
 class TemplateController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected TemplateRepository $templateRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -31,21 +23,13 @@ class TemplateController extends Controller
         return view('admin::marketing.communications.templates.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function create()
     {
         return view('admin::marketing.communications.templates.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         $this->validate(request(), [
@@ -69,24 +53,16 @@ class TemplateController extends Controller
         return redirect()->route('admin.marketing.communications.email_templates.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit(int $id)
+    
+    public function edit(int $i)
     {
-        $template = $this->templateRepository->findOrFail($id);
+        $template = $this->templateRepository->findOrFail($i);
 
         return view('admin::marketing.communications.templates.edit', compact('template'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(int $id)
+    
+    public function update(int $i)
     {
         $this->validate(request(), [
             'name'    => 'required',
@@ -94,13 +70,13 @@ class TemplateController extends Controller
             'content' => 'required',
         ]);
 
-        Event::dispatch('marketing.templates.update.before', $id);
+        Event::dispatch('marketing.templates.update.before', $i);
 
         $template = $this->templateRepository->update(request()->only([
             'name',
             'status',
             'content',
-        ]), $id);
+        ]), $i);
 
         Event::dispatch('marketing.templates.update.after', $template);
 
@@ -109,17 +85,15 @@ class TemplateController extends Controller
         return redirect()->route('admin.marketing.communications.email_templates.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            Event::dispatch('marketing.templates.delete.before', $id);
+            Event::dispatch('marketing.templates.delete.before', $i);
 
-            $this->templateRepository->delete($id);
+            $this->templateRepository->delete($i);
 
-            Event::dispatch('marketing.templates.delete.after', $id);
+            Event::dispatch('marketing.templates.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.marketing.communications.templates.delete-success'),

@@ -10,27 +10,17 @@ use Webkul\Sales\Models\Order;
 
 class OrderFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Order::class;
 
-    /**
-     * States.
-     *
-     * @var string[]
-     */
+    
     protected $states = [
         'pending',
         'completed',
         'closed',
     ];
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         $lastOrder = DB::table('orders')
@@ -70,9 +60,7 @@ class OrderFactory extends Factory
         ];
     }
 
-    /**
-     * Pending state.
-     */
+    
     public function pending(): OrderFactory
     {
         return $this->state(function () {
@@ -82,9 +70,7 @@ class OrderFactory extends Factory
         });
     }
 
-    /**
-     * Completed state.
-     */
+    
     public function completed(): OrderFactory
     {
         return $this->state(function () {
@@ -94,9 +80,7 @@ class OrderFactory extends Factory
         });
     }
 
-    /**
-     * Closed state.
-     */
+    
     public function closed(): OrderFactory
     {
         return $this->state(function () {

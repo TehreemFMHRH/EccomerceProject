@@ -16,37 +16,25 @@ use Webkul\Shop\Mail\Customer\RegistrationNotification;
 
 class RegistrationController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CustomerRepository $customerRepository,
         protected CustomerGroupRepository $customerGroupRepository,
         protected SubscribersListRepository $subscriptionRepository
     ) {}
 
-    /**
-     * Opens up the user's sign up form.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         return view('shop::customers.sign-up');
     }
 
-    /**
-     * Method to store user's sign up form data to DB.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(RegistrationRequest $registrationRequest)
     {
         $customerGroup = core()->getConfigData('customer.settings.create_new_account_options.default_group');
 
-        $data = array_merge($registrationRequest->only([
+        $dat = array_merge($registrationRequest->only([
             'first_name',
             'last_name',
             'email',
@@ -64,21 +52,21 @@ class RegistrationController extends Controller
 
         Event::dispatch('customer.registration.before');
 
-        $customer = $this->customerRepository->create($data);
+        $k = $this->customerRepository->create($dat);
 
-        if (isset($data['is_subscribed'])) {
-            $subscription = $this->subscriptionRepository->findOneWhere(['email' => $data['email']]);
+        if (isset($dat['is_subscribed'])) {
+            $subscription = $this->subscriptionRepository->findOneWhere(['email' => $dat['email']]);
 
             if ($subscription) {
                 $this->subscriptionRepository->update([
-                    'customer_id' => $customer->id,
+                    'customer_id' => $k->id,
                 ], $subscription->id);
             } else {
                 Event::dispatch('customer.subscription.before');
 
                 $subscription = $this->subscriptionRepository->create([
-                    'email'         => $data['email'],
-                    'customer_id'   => $customer->id,
+                    'email'         => $dat['email'],
+                    'customer_id'   => $k->id,
                     'channel_id'    => core()->getCurrentChannel()->id,
                     'is_subscribed' => 1,
                     'token'         => uniqid(),
@@ -88,9 +76,9 @@ class RegistrationController extends Controller
             }
         }
 
-        Event::dispatch('customer.create.after', $customer);
+        Event::dispatch('customer.create.after', $k);
 
-        Event::dispatch('customer.registration.after', $customer);
+        Event::dispatch('customer.registration.after', $k);
 
         if (core()->getConfigData('emails.general.notifications.emails.general.notifications.verification')) {
             session()->flash('success', trans('shop::app.customers.signup-form.success-verify'));
@@ -101,27 +89,22 @@ class RegistrationController extends Controller
         return redirect()->route('shop.customer.session.index');
     }
 
-    /**
-     * Method to verify account.
-     *
-     * @param  string  $token
-     * @return \Illuminate\Http\Response
-     */
+    
     public function verifyAccount($token)
     {
-        $customer = $this->customerRepository->findOneByField('token', $token);
+        $k = $this->customerRepository->findOneByField('token', $token);
 
-        if ($customer) {
+        if ($k) {
             $this->customerRepository->update([
                 'is_verified' => 1,
                 'token'       => null,
-            ], $customer->id);
+            ], $k->id);
 
             if ((bool) core()->getConfigData('emails.general.notifications.emails.general.notifications.registration')) {
-                Mail::queue(new RegistrationNotification($customer));
+                Mail::queue(new RegistrationNotification($k));
             }
 
-            $this->customerRepository->syncNewRegisteredCustomerInformation($customer);
+            $this->customerRepository->syncNewRegisteredCustomerInformation($k);
 
             session()->flash('success', trans('shop::app.customers.signup-form.verified'));
         } else {
@@ -131,22 +114,17 @@ class RegistrationController extends Controller
         return redirect()->route('shop.customer.session.index');
     }
 
-    /**
-     * Resend verification email.
-     *
-     * @param  string  $email
-     * @return \Illuminate\Http\Response
-     */
-    public function resendVerificationEmail($email)
+    
+    public function resendVerificationEmail($e)
     {
         $verificationData = [
-            'email' => $email,
+            'email' => $e,
             'token' => md5(uniqid(rand(), true)),
         ];
 
-        $customer = $this->customerRepository->findOneByField('email', $email);
+        $k = $this->customerRepository->findOneByField('email', $e);
 
-        $this->customerRepository->update(['token' => $verificationData['token']], $customer->id);
+        $this->customerRepository->update(['token' => $verificationData['token']], $k->id);
 
         try {
             Mail::queue(new EmailVerificationNotification($verificationData));

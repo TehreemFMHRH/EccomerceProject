@@ -13,14 +13,7 @@ class ResetPasswordController extends Controller
 {
     use ResetsPasswords;
 
-    /**
-     * Display the password reset view for the given token.
-     *
-     * If no token is present, display the link request form.
-     *
-     * @param  string|null  $token
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
+    
     public function create($token = null)
     {
         return view('admin::users.reset-password.create')->with([
@@ -29,11 +22,7 @@ class ResetPasswordController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store()
     {
         try {
@@ -43,20 +32,20 @@ class ResetPasswordController extends Controller
                 'password' => 'required|confirmed|min:6',
             ]);
 
-            $response = $this->broker()->reset(
+            $resp = $this->broker()->reset(
                 request(['email', 'password', 'password_confirmation', 'token']), function ($admin, $password) {
                     $this->resetPassword($admin, $password);
                 }
             );
 
-            if ($response == Password::PASSWORD_RESET) {
+            if ($resp == Password::PASSWORD_RESET) {
                 return redirect()->route('admin.dashboard.index');
             }
 
             return back()
                 ->withInput(request(['email']))
                 ->withErrors([
-                    'email' => trans($response),
+                    'email' => trans($resp),
                 ]);
         } catch (\Exception $e) {
             session()->flash('error', trans($e->getMessage()));
@@ -65,13 +54,7 @@ class ResetPasswordController extends Controller
         }
     }
 
-    /**
-     * Reset the given admin's password.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $admin
-     * @param  string  $password
-     * @return void
-     */
+    
     protected function resetPassword($admin, $password)
     {
         $admin->password = Hash::make($password);
@@ -85,11 +68,7 @@ class ResetPasswordController extends Controller
         auth()->guard('admin')->login($admin);
     }
 
-    /**
-     * Get the broker to be used during password reset.
-     *
-     * @return \Illuminate\Contracts\Auth\PasswordBroker
-     */
+    
     public function broker()
     {
         return Password::broker('admins');

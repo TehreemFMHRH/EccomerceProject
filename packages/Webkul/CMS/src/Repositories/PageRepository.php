@@ -8,67 +8,54 @@ use Webkul\Core\Eloquent\Repository;
 
 class PageRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+
     public function model(): string
     {
         return 'Webkul\CMS\Contracts\Page';
     }
 
-    /**
-     * @return \Webkul\CMS\Contracts\Page
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
         $model = $this->getModel();
 
         foreach (core()->getAllLocales() as $locale) {
             foreach ($model->translatedAttributes as $attribute) {
-                if (isset($data[$attribute])) {
-                    $data[$locale->code][$attribute] = $data[$attribute];
+                if (isset($dat[$attribute])) {
+                    $dat[$locale->code][$attribute] = $dat[$attribute];
                 }
             }
 
-            $data[$locale->code]['html_content'] = str_replace('=&gt;', '=>', $data[$locale->code]['html_content']);
+            $dat[$locale->code]['html_content'] = str_replace('=&gt;', '=>', $dat[$locale->code]['html_content']);
         }
 
-        $page = parent::create($data);
+        $page = parent::create($dat);
 
-        $page->channels()->sync($data['channels']);
-
-        return $page;
-    }
-
-    /**
-     * @param  int  $id
-     * @return \Webkul\CMS\Contracts\Page
-     */
-    public function update(array $data, $id)
-    {
-        $page = $this->find($id);
-
-        $locale = $data['locale'] ?? app()->getLocale();
-
-        $data[$locale]['html_content'] = str_replace('=&gt;', '=>', $data[$locale]['html_content']);
-
-        $page = parent::update($data, $id);
-
-        $page->channels()->sync($data['channels']);
+        $page->channels()->sync($dat['channels']);
 
         return $page;
     }
 
-    /**
-     * Checks slug is unique or not based on locale
-     *
-     * @param  int  $id
-     * @param  string  $urlKey
-     * @return bool
-     */
-    public function isUrlKeyUnique($id, $urlKey)
+
+    public function update(array $dat, $i)
     {
-        $exists = PageTranslationProxy::modelClass()::where('cms_page_id', '<>', $id)
+        $page = $this->find($i);
+
+        $locale = $dat['locale'] ?? app()->getLocale();
+
+        $dat[$locale]['html_content'] = str_replace('=&gt;', '=>', $dat[$locale]['html_content']);
+
+        $page = parent::update($dat, $i);
+
+        $page->channels()->sync($dat['channels']);
+
+        return $page;
+    }
+
+
+    public function isUrlKeyUnique($i, $urlKey)
+    {
+        $exists = PageTranslationProxy::modelClass()::where('cms_page_id', '<>', $i)
             ->where('url_key', $urlKey)
             ->limit(1)
             ->select(\DB::raw(1))
@@ -77,23 +64,13 @@ class PageRepository extends Repository
         return ! $exists;
     }
 
-    /**
-     * Retrieve category from slug
-     *
-     * @param  string  $urlKey
-     * @return \Webkul\CMS\Contracts\Page
-     */
+
     public function findByUrlKey($urlKey)
     {
         return $this->model->whereTranslation('url_key', $urlKey)->first();
     }
 
-    /**
-     * Retrieve category from slug
-     *
-     * @param  string  $urlKey
-     * @return \Webkul\CMS\Contracts\Page|\Exception
-     */
+
     public function findByUrlKeyOrFail($urlKey)
     {
         $page = $this->model->whereTranslation('url_key', $urlKey)->first();

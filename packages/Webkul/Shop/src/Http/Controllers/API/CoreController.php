@@ -4,11 +4,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 
 class CoreController extends APIController
 {
-    /**
-     * Get countries.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function getCountries()
     {
         return response()->json([
@@ -20,11 +16,7 @@ class CoreController extends APIController
         ]);
     }
 
-    /**
-     * Get states.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function getStates()
     {
         return response()->json([

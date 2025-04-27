@@ -83,13 +83,7 @@
             },
 
             methods: {
-                /**
-                 * This method will dynamically load the scripts. Because image search library
-                 * only used when someone clicks or interact with the image button. This will
-                 * reduce some data usage for mobile user.
-                 * 
-                 * @return {void}
-                 */
+                
                 loadLibrary() {
                     this.$shop.loadDynamicScript(
                         'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js', () => {
@@ -102,11 +96,7 @@
                     );
                 },
 
-                /**
-                 * This method will analyze the image and load the sets on the bases of trained model.
-                 * 
-                 * @return {void}
-                 */
+                
                 analyzeImage() {
                     this.isSearching = true;
 

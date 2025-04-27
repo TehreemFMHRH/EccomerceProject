@@ -8,12 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CartItemResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request
-     * @return array
-     */
+    
     public function toArray($request)
     {
         return [
@@ -37,9 +32,7 @@ class CartItemResource extends JsonResource
         ];
     }
 
-    /**
-     * Format the additional attributes.
-     */
+    
     public function formatAdditionalAttributes(): array
     {
         $attributes = $this->resource->additional['attributes'] ?? [];

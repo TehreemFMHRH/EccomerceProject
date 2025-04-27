@@ -11,20 +11,13 @@ use Webkul\Marketing\Repositories\EventRepository;
 
 class Campaign
 {
-    /**
-     * Create a new helper instance.
-     *
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected EventRepository $eventRepository,
         protected CampaignRepository $campaignRepository
     ) {}
 
-    /**
-     * Process the email.
-     */
+    
     public function process(): void
     {
         $campaigns = $this->campaignRepository->getModel()
@@ -46,18 +39,13 @@ class Campaign
                 $emails = $this->getEmailAddresses($campaign);
             }
 
-            foreach ($emails as $email) {
-                Mail::queue(new NewsletterMail($email, $campaign));
+            foreach ($emails as $e) {
+                Mail::queue(new NewsletterMail($e, $campaign));
             }
         }
     }
 
-    /**
-     * Get the email address.
-     *
-     * @param  \Webkul\Marketing\Contracts\Campaign  $campaign
-     * @return array
-     */
+    
     public function getEmailAddresses($campaign)
     {
         if ($campaign->customer_group->code === 'guest') {
@@ -69,12 +57,7 @@ class Campaign
         return array_unique($customerGroupEmails->pluck('email')->toArray());
     }
 
-    /**
-     * Return customer's emails who has a birthday today.
-     *
-     * @param  \Webkul\Marketing\Contracts\Campaign  $campaign
-     * @return array
-     */
+    
     public function getBirthdayEmails($campaign)
     {
         return $campaign->customer_group

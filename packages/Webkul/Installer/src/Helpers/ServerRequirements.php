@@ -4,16 +4,10 @@ namespace Webkul\Installer\Helpers;
 
 class ServerRequirements
 {
-    /**
-     * Minimum PHP Version Supported (Override is in installer.php config file).
-     *
-     * @var string
-     */
+    
     private $minPhpVersion = '8.1.0';
 
-    /**
-     * Check for the server requirements.
-     */
+    
     public function validate(): array
     {
         // Server Requirements
@@ -56,11 +50,7 @@ class ServerRequirements
         return $results;
     }
 
-    /**
-     * Check PHP version requirement.
-     *
-     * @return array
-     */
+    
     public function checkPHPversion(?string $minPhpVersion = null)
     {
         $minVersionPhp = $minPhpVersion ?? $this->minPhpVersion;
@@ -77,11 +67,7 @@ class ServerRequirements
         ];
     }
 
-    /**
-     * Get current Php version information.
-     *
-     * @return array
-     */
+    
     private static function getPhpVersionInfo()
     {
         $currentVersionFull = PHP_VERSION;

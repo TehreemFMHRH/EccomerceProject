@@ -189,31 +189,17 @@
             },
 
             methods: {
-                /**
-                 * Select all records in the datagrid.
-                 *
-                 * @returns {void}
-                 */
+                
                 selectAll() {
                     this.$emit('selectAll');
                 },
 
-                /**
-                 * Perform a sorting operation on the specified column.
-                 *
-                 * @param {object} column
-                 * @returns {void}
-                 */
+                
                 sort(column) {
                     this.$emit('sort', column);
                 },
 
-                /**
-                 * Perform the specified action.
-                 *
-                 * @param {object} action
-                 * @returns {void}
-                 */
+                
                 performAction(action) {
                     const method = action.method.toLowerCase();
 

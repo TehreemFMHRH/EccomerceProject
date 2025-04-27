@@ -6,9 +6,7 @@ use Astrotomic\Translatable\Locales as BaseLocales;
 
 class Locales extends BaseLocales
 {
-    /**
-     * Load.
-     */
+    
     public function load(): void
     {
         $this->locales = [];

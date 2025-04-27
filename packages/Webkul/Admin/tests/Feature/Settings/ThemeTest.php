@@ -60,7 +60,7 @@ it('should store the newly created theme', function () {
             'footer_links',
             'services_content',
         ]),
-        'name'       => $name = fake()->name(),
+        'name'       => $na = fake()->name(),
         'sort_order' => $lastThemeId,
         'channel_id' => $channelId = core()->getCurrentChannel()->id,
         'theme_code' => $themeCode = core()->getCurrentChannel()->theme,
@@ -73,7 +73,7 @@ it('should store the newly created theme', function () {
             [
                 'id'         => $lastThemeId,
                 'type'       => $type,
-                'name'       => $name,
+                'name'       => $na,
                 'channel_id' => $channelId,
                 'theme_code' => $themeCode,
             ],
@@ -100,11 +100,11 @@ it('should fail the validation with errors when correct type not provided when u
 it('should update the theme customizations', function () {
     $theme = ThemeCustomization::factory()->create();
 
-    $data = [];
+    $dat = [];
 
     switch ($theme->type) {
         case ThemeCustomization::PRODUCT_CAROUSEL:
-            $data[app()->getLocale()] = [
+            $dat[app()->getLocale()] = [
                 'options' => [
                     'title'   => fake()->title(),
                     'filters' => [
@@ -118,7 +118,7 @@ it('should update the theme customizations', function () {
             break;
 
         case ThemeCustomization::CATEGORY_CAROUSEL:
-            $data[app()->getLocale()] = [
+            $dat[app()->getLocale()] = [
                 'options' => [
                     'title'   => fake()->title(),
                     'filters' => [
@@ -132,7 +132,7 @@ it('should update the theme customizations', function () {
             break;
 
         case ThemeCustomization::IMAGE_CAROUSEL:
-            $data[app()->getLocale()] = [
+            $dat[app()->getLocale()] = [
                 'options' => [
                     [
                         'title' => fake()->title(),
@@ -145,7 +145,7 @@ it('should update the theme customizations', function () {
             break;
 
         case ThemeCustomization::FOOTER_LINKS:
-            $data[app()->getLocale()] = [
+            $dat[app()->getLocale()] = [
                 'options' => [
                     'column_1' => [
                         [
@@ -160,7 +160,7 @@ it('should update the theme customizations', function () {
             break;
 
         case ThemeCustomization::SERVICES_CONTENT:
-            $data[app()->getLocale()] = [
+            $dat[app()->getLocale()] = [
                 'options' => [
                     [
                         'title'        => fake()->title(),
@@ -173,18 +173,18 @@ it('should update the theme customizations', function () {
             break;
     }
 
-    $data['locale'] = app()->getLocale();
-    $data['type'] = $theme->type;
-    $data['name'] = $name = fake()->name();
-    $data['sort_order'] = '1';
-    $data['channel_id'] = core()->getCurrentChannel()->id;
-    $data['theme_code'] = core()->getCurrentChannel()->theme;
-    $data['status'] = 'on';
+    $dat['locale'] = app()->getLocale();
+    $dat['type'] = $theme->type;
+    $dat['name'] = $na = fake()->name();
+    $dat['sort_order'] = '1';
+    $dat['channel_id'] = core()->getCurrentChannel()->id;
+    $dat['theme_code'] = core()->getCurrentChannel()->theme;
+    $dat['status'] = 'on';
 
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.settings.themes.update', $theme->id), $data)
+    postJson(route('admin.settings.themes.update', $theme->id), $dat)
         ->assertRedirect(route('admin.settings.themes.index'))
         ->isRedirection();
 
@@ -193,7 +193,7 @@ it('should update the theme customizations', function () {
             [
                 'id'   => $theme->id,
                 'type' => $theme->type,
-                'name' => $name,
+                'name' => $na,
             ],
         ],
     ]);

@@ -4,11 +4,7 @@ namespace Webkul\Core\Providers;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
-    /**
-     * Models.
-     *
-     * @var array
-     */
+    
     protected $models = [
         \Webkul\Core\Models\Channel::class,
         \Webkul\Core\Models\CoreConfig::class,

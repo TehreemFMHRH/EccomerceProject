@@ -29,9 +29,7 @@ class Product extends Model implements ProductContract
 {
     use HasFactory, Visitable;
 
-    /**
-     * The attributes that are mass assignable.
-     */
+
     protected $fillable = [
         'type',
         'attribute_family_id',
@@ -39,149 +37,108 @@ class Product extends Model implements ProductContract
         'parent_id',
     ];
 
-    /**
-     * The attributes that should be cast.
-     */
+
     protected $casts = [
         'additional' => 'array',
     ];
 
-    /**
-     * The type of product.
-     *
-     * @var \Webkul\Product\Type\AbstractType
-     */
+
     protected $typeInstance;
 
-    /**
-     * Get the product flat entries that are associated with product.
-     * May be one for each locale and each channel.
-     */
+
     public function product_flats(): HasMany
     {
         return $this->hasMany(ProductFlatProxy::modelClass(), 'product_id');
     }
 
-    /**
-     * Get the product that owns the product.
-     */
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(static::class, 'parent_id');
     }
 
-    /**
-     * Get the product attribute family that owns the product.
-     */
+
     public function attribute_family(): BelongsTo
     {
         return $this->belongsTo(AttributeFamilyProxy::modelClass());
     }
 
-    /**
-     * The super attributes that belong to the product.
-     */
+
     public function super_attributes(): BelongsToMany
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes');
     }
 
-    /**
-     * Get the product attribute values that owns the product.
-     */
+
     public function attribute_values(): HasMany
     {
         return $this->hasMany(ProductAttributeValueProxy::modelClass());
     }
 
-    /**
-     * Get the product customer group prices that owns the product.
-     */
+
     public function customer_group_prices(): HasMany
     {
         return $this->hasMany(ProductCustomerGroupPriceProxy::modelClass());
     }
 
-    /**
-     * Get the product customer group prices that owns the product.
-     */
+
     public function catalog_rule_prices(): HasMany
     {
         return $this->hasMany(CatalogRuleProductPriceProxy::modelClass());
     }
 
-    /**
-     * Get the price indices that owns the product.
-     */
+
     public function price_indices(): HasMany
     {
         return $this->hasMany(ProductPriceIndexProxy::modelClass());
     }
 
-    /**
-     * Get the inventory indices that owns the product.
-     */
+
     public function inventory_indices(): HasMany
     {
         return $this->hasMany(ProductInventoryIndexProxy::modelClass());
     }
 
-    /**
-     * The categories that belong to the product.
-     */
+
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(CategoryProxy::modelClass(), 'product_categories');
     }
 
-    /**
-     * The images that belong to the product.
-     */
+
     public function images(): HasMany
     {
         return $this->hasMany(ProductImageProxy::modelClass(), 'product_id')
             ->orderBy('position');
     }
 
-    /**
-     * The videos that belong to the product.
-     */
+
     public function videos(): HasMany
     {
         return $this->hasMany(ProductVideoProxy::modelClass(), 'product_id')
             ->orderBy('position');
     }
 
-    /**
-     * Get the product reviews that owns the product.
-     */
+
     public function reviews(): HasMany
     {
         return $this->hasMany(ProductReviewProxy::modelClass());
     }
 
-    /**
-     * Get the approved product reviews.
-     */
+
     public function approvedReviews(): HasMany
     {
         return $this->reviews()->where('status', 'approved');
     }
 
-    /**
-     * The inventory sources that belong to the product.
-     */
+
     public function inventory_sources(): BelongsToMany
     {
         return $this->belongsToMany(InventorySourceProxy::modelClass(), 'product_inventories')
             ->withPivot('id', 'qty');
     }
 
-    /**
-     * Get inventory source quantity.
-     *
-     * @return bool
-     */
+
     public function inventory_source_qty($inventorySourceId)
     {
         return $this->inventories()
@@ -189,166 +146,114 @@ class Product extends Model implements ProductContract
             ->sum('qty');
     }
 
-    /**
-     * The inventories that belong to the product.
-     */
+
     public function inventories(): HasMany
     {
         return $this->hasMany(ProductInventoryProxy::modelClass(), 'product_id');
     }
 
-    /**
-     * The ordered inventories that belong to the product.
-     */
+
     public function ordered_inventories(): HasMany
     {
         return $this->hasMany(ProductOrderedInventoryProxy::modelClass(), 'product_id');
     }
 
-    /**
-     * Get the customizable options.
-     */
+
     public function customizable_options(): HasMany
     {
         return $this->hasMany(ProductCustomizableOptionProxy::modelClass())
             ->orderBy('sort_order');
     }
 
-    /**
-     * Get the product variants that owns the product.
-     */
+
     public function variants(): HasMany
     {
         return $this->hasMany(static::class, 'parent_id');
     }
 
-    /**
-     * Get the grouped products that owns the product.
-     */
+
     public function grouped_products(): HasMany
     {
         return $this->hasMany(ProductGroupedProductProxy::modelClass());
     }
 
-    /**
-     * Get the grouped products that owns the product.
-     */
+
     public function booking_products(): HasMany
     {
         return $this->hasMany(BookingProductProxy::modelClass());
     }
 
-    /**
-     * The images that belong to the product.
-     */
+
     public function downloadable_samples(): HasMany
     {
         return $this->hasMany(ProductDownloadableSampleProxy::modelClass());
     }
 
-    /**
-     * The images that belong to the product.
-     */
+
     public function downloadable_links(): HasMany
     {
         return $this->hasMany(ProductDownloadableLinkProxy::modelClass());
     }
 
-    /**
-     * Get the bundle options that owns the product.
-     */
+
     public function bundle_options(): HasMany
     {
         return $this->hasMany(ProductBundleOptionProxy::modelClass());
     }
 
-    /**
-     * The related products that belong to the product.
-     */
+
     public function related_products(): BelongsToMany
     {
         return $this->belongsToMany(static::class, 'product_relations', 'parent_id', 'child_id');
     }
 
-    /**
-     * The up sells that belong to the product.
-     */
+
     public function up_sells(): BelongsToMany
     {
         return $this->belongsToMany(static::class, 'product_up_sells', 'parent_id', 'child_id');
     }
 
-    /**
-     * The cross sells that belong to the product.
-     */
+
     public function cross_sells(): BelongsToMany
     {
         return $this->belongsToMany(static::class, 'product_cross_sells', 'parent_id', 'child_id');
     }
 
-    /**
-     * The cross sells that belong to the product.
-     */
+
     public function channels(): BelongsToMany
     {
         return $this->belongsToMany(ChannelProxy::modelClass(), 'product_channels', 'product_id', 'channel_id');
     }
 
-    /**
-     * Is saleable.
-     *
-     * @param  string  $key
-     *
-     * @throws \Exception
-     */
+
     public function isSaleable(): bool
     {
         return $this->getTypeInstance()
             ->isSaleable();
     }
 
-    /**
-     * Is stockable.
-     *
-     *
-     * @throws \Exception
-     */
+
     public function isStockable(): bool
     {
         return $this->getTypeInstance()
             ->isStockable();
     }
 
-    /**
-     * Total quantity.
-     *
-     *
-     * @throws \Exception
-     */
+
     public function totalQuantity(): int
     {
         return $this->getTypeInstance()
             ->totalQuantity();
     }
 
-    /**
-     * Have sufficient quantity.
-     *
-     *
-     * @throws \Exception
-     */
+
     public function haveSufficientQuantity(int $qty): bool
     {
         return $this->getTypeInstance()
             ->haveSufficientQuantity($qty);
     }
 
-    /**
-     * Get type instance.
-     *
-     *
-     * @throws \Exception
-     */
+
     public function getTypeInstance(): AbstractType
     {
         if ($this->typeInstance) {
@@ -366,11 +271,7 @@ class Product extends Model implements ProductContract
         return $this->typeInstance;
     }
 
-    /**
-     * The images that belong to the product.
-     *
-     * @return string
-     */
+
     public function getBaseImageUrlAttribute()
     {
         $image = $this->images->first();
@@ -378,12 +279,7 @@ class Product extends Model implements ProductContract
         return $image->url ?? null;
     }
 
-    /**
-     * Get an attribute from the model.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
+
     public function getAttribute($key)
     {
         if (! method_exists(static::class, $key)
@@ -406,25 +302,14 @@ class Product extends Model implements ProductContract
         return parent::getAttribute($key);
     }
 
-    /**
-     * Retrieve product attributes.
-     *
-     * @param  Group  $group
-     * @param  bool  $skipSuperAttribute
-     *
-     * @throws \Exception
-     */
+
     public function getEditableAttributes($group = null, $skipSuperAttribute = true): Collection
     {
         return $this->getTypeInstance()
             ->getEditableAttributes($group, $skipSuperAttribute);
     }
 
-    /**
-     * Get an product attribute value.
-     *
-     * @return mixed
-     */
+
     public function getCustomAttributeValue($attribute)
     {
         if (! $attribute) {
@@ -483,9 +368,7 @@ class Product extends Model implements ProductContract
         return $attributeValue[$attribute->column_name] ?? $attribute->default_value;
     }
 
-    /**
-     * Attributes to array.
-     */
+
     public function attributesToArray(): array
     {
         $attributes = parent::attributesToArray();
@@ -507,26 +390,20 @@ class Product extends Model implements ProductContract
         return $attributes;
     }
 
-    /**
-     * Check in loaded family attributes.
-     */
+
     public function checkInLoadedFamilyAttributes(): object
     {
         return core()->getSingletonInstance(AttributeRepository::class)
             ->getFamilyAttributes($this->attribute_family);
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+
     protected static function newFactory(): Factory
     {
         return ProductFactory::new();
     }
 
-    /**
-     * Copy product.
-     */
+
     public function setSearchEngine(string $searchEngine): self
     {
         $this->searchEngine = $searchEngine;
@@ -534,9 +411,7 @@ class Product extends Model implements ProductContract
         return $this;
     }
 
-    /**
-     * Retrieve product from slug without throwing an exception.
-     */
+
     public function findBySlug(string $slug): ?Product
     {
         if ($this->searchEngine == 'elastic') {
@@ -556,7 +431,7 @@ class Product extends Model implements ProductContract
     }
 
     protected ?AttributeRepository $attributeRepository = null;
-    protected ?CustomerRepository $customerRepository = null;
+    protected ?CustomerRepository $kRepository = null;
     protected ?ElasticSearchRepository $elasticSearchRepository = null;
 
     protected function getAttributeRepository(): AttributeRepository
@@ -587,20 +462,14 @@ class Product extends Model implements ProductContract
     }
 
 
-    /**
-     * Return product by filtering through attribute values.
-     *
-     * @param  string  $code
-     * @param  mixed  $value
-     * @return \Webkul\Product\Contracts\Product
-     */
-    public static function findByAttributeCode($code, $value)
+
+    public static function findByAttributeCode($code, $va)
     {
         $attribute = \Webkul\Attribute\Models\Attribute::where('code', $code)->firstOrFail();
 
         $query = \Webkul\Product\Models\ProductAttributeValue::query()
             ->where('attribute_id', $attribute->id)
-            ->where($attribute->column_name, $value);
+            ->where($attribute->column_name, $va);
 
         if ($attribute->value_per_channel) {
             $query->where('channel', core()->getRequestedChannelCode());
@@ -612,11 +481,11 @@ class Product extends Model implements ProductContract
 
         $attributeValue = $query->first();
 
-        // Fallback for locale
+
         if (!$attributeValue && $attribute->value_per_locale) {
             $query = \Webkul\Product\Models\ProductAttributeValue::query()
                 ->where('attribute_id', $attribute->id)
-                ->where($attribute->column_name, $value)
+                ->where($attribute->column_name, $va)
                 ->where('channel', core()->getRequestedChannelCode())
                 ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel());
 
@@ -626,11 +495,7 @@ class Product extends Model implements ProductContract
         return $attributeValue?->product;
     }
 
-    /**
-     * Get all products.
-     *
-     * @return \Illuminate\Support\Collection
-     */
+
     public function getAll(array $params = [])
     {
         if ($this->searchEngine == 'elastic') {
@@ -640,11 +505,7 @@ class Product extends Model implements ProductContract
         return $this->searchFromDatabase($params);
     }
 
-    /**
-     * Search product from database.
-     *
-     * @return \Illuminate\Support\Collection
-     */
+
     public function searchFromDatabase(array $params = [])
     {
         $params['url_key'] ??= null;
@@ -653,19 +514,14 @@ class Product extends Model implements ProductContract
             $params['name'] = $params['query'];
         }
 
-        // Build query with eager loading
+
         $query = $this->buildQuery($params);
 
-        // Apply filters and get the results as a collection
+
         return $query->get();
     }
 
-    /**
-     * Build query based on filters and conditions.
-     *
-     * @param array $params
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+
     protected function buildQuery(array $params)
     {
         $query = $this->with([
@@ -689,9 +545,9 @@ class Product extends Model implements ProductContract
             ->select('products.*')
             ->leftJoin('products as variants', DB::raw('COALESCE('.$prefix.'variants.parent_id, '.$prefix.'variants.id)'), '=', 'products.id')
             ->leftJoin('product_price_indices', function ($join) {
-                $customerGroup = $this->getCustomerRepository()->getCurrentGroup();
+                $kGroup = $this->getCustomerRepository()->getCurrentGroup();
                 $join->on('products.id', '=', 'product_price_indices.product_id')
-                    ->where('product_price_indices.customer_group_id', $customerGroup->id);
+                    ->where('product_price_indices.customer_group_id', $kGroup->id);
             });
 
         $this->applyCategoryFilter($qb, $params);
@@ -700,19 +556,13 @@ class Product extends Model implements ProductContract
         $this->applyPriceFilter($qb, $params);
         $this->applyAttributeFilters($qb, $params);
 
-        // Sorting logic
+
         $this->applySorting($qb, $params);
 
         return $qb->groupBy('products.id');
     }
 
-    /**
-     * Apply category filter to the query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @return void
-     */
+
     protected function applyCategoryFilter($qb, $params)
     {
         if (!empty($params['category_id'])) {
@@ -721,13 +571,7 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Apply channel filter to the query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @return void
-     */
+
     protected function applyChannelFilter($qb, $params)
     {
         if (!empty($params['channel_id'])) {
@@ -736,13 +580,7 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Apply product type filter to the query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @return void
-     */
+
     protected function applyProductTypeFilter($qb, $params)
     {
         if (!empty($params['type'])) {
@@ -755,13 +593,7 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Apply price filter to the query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @return void
-     */
+
     protected function applyPriceFilter($qb, $params)
     {
         if (!empty($params['price'])) {
@@ -773,18 +605,12 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Apply attribute filters to the query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @return void
-     */
+
     protected function applyAttributeFilters($qb, $params)
     {
         $filterableAttributes = $this->getAttributeRepository()->getProductDefaultAttributes(array_keys($params));
 
-        // Filter by required attributes
+
         $attributes = $filterableAttributes->whereIn('code', [
             'name',
             'status',
@@ -815,18 +641,11 @@ class Product extends Model implements ProductContract
             }
         }
 
-        // Filter by other attributes
+
         $this->applyOtherAttributeFilters($qb, $params, $filterableAttributes);
     }
 
-    /**
-     * Apply URL key filter.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param string $alias
-     * @param array $params
-     * @return void
-     */
+
     protected function applyUrlKeyFilter($qb, $alias, $params)
     {
         if (empty($params['url_key'])) {
@@ -836,14 +655,7 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Apply filters for other attributes.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @param \Illuminate\Support\Collection $filterableAttributes
-     * @return void
-     */
+
     protected function applyOtherAttributeFilters($qb, $params, $filterableAttributes)
     {
         $attributes = $filterableAttributes->whereNotIn('code', [
@@ -881,13 +693,7 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Apply sorting to the query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $qb
-     * @param array $params
-     * @return void
-     */
+
     protected function applySorting($qb, $params)
     {
         $sortOptions = $this->getSortOptions($params);
@@ -914,9 +720,7 @@ class Product extends Model implements ProductContract
         }
     }
 
-    /**
-     * Fetch sort option from toolbar helper. Adapter for this repository.
-     */
+
     public function getSortOptions(array $params): array
     {
         return product_toolbar()->getOrder($params);

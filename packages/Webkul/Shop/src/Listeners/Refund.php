@@ -6,12 +6,7 @@ use Webkul\Shop\Mail\Order\RefundedNotification;
 
 class Refund extends Base
 {
-    /**
-     * After order is created
-     *
-     * @param  \Webkul\Sale\Contracts\Refund  $refund
-     * @return void
-     */
+    
     public function afterCreated($refund)
     {
         try {

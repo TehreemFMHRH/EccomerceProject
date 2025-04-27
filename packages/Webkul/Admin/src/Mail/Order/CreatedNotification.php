@@ -10,16 +10,10 @@ use Webkul\Sales\Contracts\Order;
 
 class CreatedNotification extends Mailable
 {
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct(public Order $order) {}
+    
+    public function __construct(public Order $o) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -33,9 +27,7 @@ class CreatedNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

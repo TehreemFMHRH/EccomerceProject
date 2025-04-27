@@ -7,25 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class ExchangeRates extends ExchangeRate
 {
-    /**
-     * API key.
-     *
-     * @var string
-     */
+    
     protected $apiKey;
 
-    /**
-     * API endpoint.
-     *
-     * @var string
-     */
+    
     protected $apiEndPoint;
 
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
 
     ) {
@@ -34,11 +22,7 @@ class ExchangeRates extends ExchangeRate
         $this->apiKey = config('services.exchange_api.exchange_rates.key');
     }
 
-    /**
-     * Fetch rates and updates in `currency_exchange_rates` table.
-     *
-     * @return \Exception|void
-     */
+    
     public function updateRates()
     {
         $client = new \GuzzleHttp\Client;
@@ -48,7 +32,7 @@ class ExchangeRates extends ExchangeRate
                 continue;
             }
 
-            $result = $client->request(
+            res = $client->request(
                 'GET',
                 $this->apiEndPoint, [
                     'headers' => [
@@ -63,22 +47,22 @@ class ExchangeRates extends ExchangeRate
                 ]
             );
 
-            $result = json_decode($result->getBody()->getContents(), true);
+            res = json_decode(res->getBody()->getContents(), true);
 
             if (
-                isset($result['success'])
-                && ! $result['success']
+                isset(res['success'])
+                && ! res['success']
             ) {
-                throw new \Exception($result['error']['info'] ?? $result['error']['type'], 1);
+                throw new \Exception(res['error']['info'] ?? res['error']['type'], 1);
             }
 
             if ($exchangeRate = $currency->exchange_rate) {
                 ExchangeRate::update([
-                    'rate' => $result['result'],
+                    'rate' => res['result'],
                 ], $exchangeRate->id);
             } else {
                 ExchangeRate::create([
-                    'rate'            => $result['result'],
+                    'rate'            => res['result'],
                     'target_currency' => $currency->id,
                 ]);
             }

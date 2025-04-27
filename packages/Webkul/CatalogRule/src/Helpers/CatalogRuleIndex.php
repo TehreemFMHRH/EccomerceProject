@@ -9,22 +9,14 @@ use Webkul\CatalogRule\Models\CatalogRuleProductPrice;
 
 class CatalogRuleIndex
 {
-    /**
-     * Create a new helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CatalogRuleRepository $catalogRuleRepository,
         protected CatalogRuleProduct $catalogRuleProductHelper,
         protected CatalogRuleProductPrice $catalogRuleProductPriceHelper
     ) {}
 
-    /**
-     * Full re-index
-     *
-     * @return void
-     */
+    
     public function reIndexComplete()
     {
         try {
@@ -40,12 +32,7 @@ class CatalogRuleIndex
         }
     }
 
-    /**
-     * Re-index rule indices
-     *
-     * @param  \Webkul\CatalogRule\Contracts\CatalogRule  $rule
-     * @return void
-     */
+    
     public function reIndexRule($rule)
     {
         $this->cleanRuleIndices($rule);
@@ -70,12 +57,7 @@ class CatalogRuleIndex
         $this->catalogRuleProductPriceHelper->indexRuleProductPrice(1000);
     }
 
-    /**
-     * Re-index single product
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function reIndexProduct($product)
     {
         try {
@@ -99,12 +81,7 @@ class CatalogRuleIndex
         }
     }
 
-    /**
-     * Clean rule indices
-     *
-     * @param  \Webkul\CatalogRule\Contracts\CatalogRule  $rule
-     * @return void
-     */
+    
     public function cleanRuleIndices($rule)
     {
         $this->catalogRuleProductHelper->cleanRuleIndices($rule);
@@ -112,12 +89,7 @@ class CatalogRuleIndex
         $this->catalogRuleProductPriceHelper->cleanProductPriceIndices();
     }
 
-    /**
-     * Clean products indices
-     *
-     * @param  array  $productIds
-     * @return void
-     */
+    
     public function cleanProductIndices($productIds = [])
     {
         $this->catalogRuleProductHelper->cleanProductIndices($productIds);
@@ -125,11 +97,7 @@ class CatalogRuleIndex
         $this->catalogRuleProductPriceHelper->cleanProductPriceIndices($productIds);
     }
 
-    /**
-     * Returns catalog rules
-     *
-     * @return \Illuminate\Support\Collection
-     */
+    
     public function getCatalogRules()
     {
         $catalogRules = $this->catalogRuleRepository->scopeQuery(function ($query) {

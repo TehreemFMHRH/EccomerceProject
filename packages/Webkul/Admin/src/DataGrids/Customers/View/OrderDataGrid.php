@@ -9,11 +9,7 @@ use Webkul\Sales\Models\OrderAddress;
 
 class OrderDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return void
-     */
+    
     public function prepareQueryBuilder()
     {
         $getDbPrefix = DB::getTablePrefix();
@@ -45,11 +41,7 @@ class OrderDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -164,9 +156,7 @@ class OrderDataGrid extends DataGrid
             'sortable'   => true,
         ]);
 
-        /**
-         * Searchable dropdown sample. In testing phase.
-         */
+        
         $this->addColumn([
             'index'      => 'customer_email',
             'label'      => trans('admin::app.customers.customers.view.datagrid.orders.email'),
@@ -191,11 +181,7 @@ class OrderDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('sales.orders.view')) {

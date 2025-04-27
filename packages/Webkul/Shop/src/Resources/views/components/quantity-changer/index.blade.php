@@ -1,15 +1,11 @@
 @props([
-    'name'     => '',
-    'value'    => 1,
+    'name' => '',
+    'value' => 1,
     'minValue' => 1,
 ])
 
-<v-quantity-changer
-    {{ $attributes->merge(['class' => 'flex items-center border border-navyBlue']) }}
-    name="{{ $name }}"
-    value="{{ $value }}"
-    min-value="{{ $minValue }}"
->
+<v-quantity-changer {{ $attributes->merge(['class' => 'flex items-center border border-navyBlue']) }}
+    name="{{ $na }}" value="{{ $va }}" min-value="{{ $minValue }}">
 </v-quantity-changer>
 
 @pushOnce('scripts')
@@ -52,10 +48,10 @@
         app.component("v-quantity-changer", {
             template: '#v-quantity-changer-template',
 
-            props:['name', 'value', 'minValue'],
+            props: ['name', 'value', 'minValue'],
 
             data() {
-                return  {
+                return {
                     quantity: this.value,
                 }
             },

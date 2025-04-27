@@ -32,7 +32,7 @@ it('should store the newly create event', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.marketing.communications.events.store', $data = [
+    postJson(route('admin.marketing.communications.events.store', $dat = [
         'name'        => fake()->name(),
         'description' => substr(fake()->paragraph(), 0, 50),
         'date'        => fake()->date(),
@@ -43,9 +43,9 @@ it('should store the newly create event', function () {
     $this->assertModelWise([
         Event::class => [
             [
-                'name'        => $data['name'],
-                'description' => $data['description'],
-                'date'        => $data['date'],
+                'name'        => $dat['name'],
+                'description' => $dat['description'],
+                'date'        => $dat['date'],
             ],
         ],
     ]);
@@ -87,7 +87,7 @@ it('should update the existing the events', function () {
     putJson(route('admin.marketing.communications.events.update'), [
         'id'          => $event->id,
         'name'        => $event->name,
-        'description' => $description = substr(fake()->paragraph(), 0, 50),
+        'description' => $de = substr(fake()->paragraph(), 0, 50),
         'date'        => $date = fake()->date(),
     ])
         ->assertOk()
@@ -98,7 +98,7 @@ it('should update the existing the events', function () {
             [
                 'id'          => $event->id,
                 'name'        => $event->name,
-                'description' => $description,
+                'description' => $de,
                 'date'        => $date,
             ],
         ],

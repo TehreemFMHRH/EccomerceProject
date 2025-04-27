@@ -13,22 +13,13 @@ class UpdateCreateProductIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
+    
     public function __construct(protected $product)
     {
         $this->product = $product;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         app(CatalogRuleIndex::class)->reIndexProduct($this->product);

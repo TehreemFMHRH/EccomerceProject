@@ -7,24 +7,16 @@ use Webkul\Category\Models\Category;
 
 class CategoryFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Category::class;
 
-    /**
-     * @var string[]
-     */
+    
     protected $states = [
         'inactive',
         'rtl',
     ];
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [
@@ -43,9 +35,7 @@ class CategoryFactory extends Factory
         });
     }
 
-    /**
-     * Handle rtl state
-     */
+    
     public function rtl(): CategoryFactory
     {
         return $this->state(function (array $attributes) {

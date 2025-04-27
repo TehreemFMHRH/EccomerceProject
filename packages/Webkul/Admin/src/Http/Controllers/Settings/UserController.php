@@ -16,11 +16,7 @@ use Webkul\User\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -32,12 +28,10 @@ class UserController extends Controller
         return view('admin::settings.users.index', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(UserForm $request): JsonResponse
     {
-        $data = $request->only([
+        $dat = $request->only([
             'name',
             'email',
             'password',
@@ -46,15 +40,15 @@ class UserController extends Controller
             'status',
         ]);
 
-        if ($data['password'] ?? null) {
-            $data['password'] = bcrypt($data['password']);
+        if ($dat['password'] ?? null) {
+            $dat['password'] = bcrypt($dat['password']);
 
-            $data['api_token'] = Str::random(80);
+            $dat['api_token'] = Str::random(80);
         }
 
         Event::dispatch('user.admin.create.before');
 
-        $admin = Admin::create($data);
+        $admin = Admin::create($dat);
 
         if (request()->hasFile('image')) {
             $admin->image = current(request()->file('image'))->store('admins/'.$admin->id);
@@ -69,14 +63,10 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * User Details
-     *
-     * @param  int  $id
-     */
-    public function edit($id): JsonResponse
+    
+    public function edit($i): JsonResponse
     {
-        $user = Admin::findOrFail($id);
+        $user = Admin::findOrFail($i);
 
         $roles = Role::all();
 
@@ -86,25 +76,23 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(UserForm $request): JsonResponse
     {
-        $id = request()->id;
+        $i = request()->id;
 
-        $data = $this->prepareUserData($request, $id);
+        $dat = $this->prepareUserData($request, $i);
 
-        if ($data instanceof \Illuminate\Http\RedirectResponse) {
+        if ($dat instanceof \Illuminate\Http\RedirectResponse) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.update-success'),
             ]);
         }
 
-        Event::dispatch('user.admin.update.before', $id);
+        Event::dispatch('user.admin.update.before', $i);
 
-        Admin::update($data, $id);
-        $admin = Admin::find($id);
+        Admin::update($dat, $i);
+        $admin = Admin::find($i);
 
         if (request()->hasFile('image')) {
             $admin->image = current(request()->file('image'))->store('admins/'.$admin->id);
@@ -120,7 +108,7 @@ class UserController extends Controller
 
         $admin->save();
 
-        if (! empty($data['password'])) {
+        if (! empty($dat['password'])) {
             Event::dispatch('admin.password.update.after', $admin);
         }
 
@@ -131,12 +119,8 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     */
-    public function destroy($id): JsonResponse
+    
+    public function destroy($i): JsonResponse
     {
         if (Admin::count() == 1) {
             return new JsonResponse([
@@ -145,11 +129,11 @@ class UserController extends Controller
         }
 
         try {
-            Event::dispatch('user.admin.delete.before', $id);
+            Event::dispatch('user.admin.delete.before', $i);
 
-            Admin::delete($id);
+            Admin::delete($i);
 
-            Event::dispatch('user.admin.delete.after', $id);
+            Event::dispatch('user.admin.delete.after', $i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.delete-success'),
@@ -162,24 +146,15 @@ class UserController extends Controller
         ], 500);
     }
 
-    /**
-     * Show the form for confirming the user password.
-     *
-     * @param  int  $id
-     * @return \Illuminate\View\View
-     */
-    public function confirm($id)
+    
+    public function confirm($i)
     {
-        $user = Admin::findOrFail($id);
+        $user = Admin::findOrFail($i);
 
         return view('admin::customers.customers.confirm-password', compact('user'));
     }
 
-    /**
-     * Destroy current after confirming.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroySelf(): JsonResponse
     {
         $password = request()->input('password');
@@ -188,13 +163,13 @@ class UserController extends Controller
             if (Admin::count() == 1) {
                 session()->flash('error', trans('admin::app.settings.users.delete-last'));
             } else {
-                $id = auth()->guard('admin')->user()->id;
+                $i = auth()->guard('admin')->user()->id;
 
-                Event::dispatch('user.admin.delete.before', $id);
+                Event::dispatch('user.admin.delete.before', $i);
 
-                Admin::delete($id);
+                Admin::delete($i);
 
-                Event::dispatch('user.admin.delete.after', $id);
+                Event::dispatch('user.admin.delete.after', $i);
 
                 return new JsonResponse([
                     'redirectUrl' => route('admin.session.create'),
@@ -208,49 +183,38 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Prepare user data.
-     *
-     * @param  int  $id
-     * @return array|\Illuminate\Http\RedirectResponse
-     */
-    private function prepareUserData(UserForm $request, $id)
+    
+    private function prepareUserData(UserForm $request, $i)
     {
-        $data = $request->validated();
+        $dat = $request->validated();
 
-        $user = Admin::find($id);
+        $user = Admin::find($i);
 
-        /**
-         * Password check.
-         */
-        if (! $data['password']) {
-            unset($data['password']);
+        
+        if (! $dat['password']) {
+            unset($dat['password']);
         } else {
-            $data['password'] = bcrypt($data['password']);
+            $dat['password'] = bcrypt($dat['password']);
         }
 
-        /**
-         * Is user with `permission_type` all changed status.
-         */
-        $data['status'] = isset($data['status']);
+        
+        $dat['status'] = isset($dat['status']);
 
-        $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
+        $isStatusChangedToInactive = ! $dat['status'] && (bool) $user->status;
 
         if (
             $isStatusChangedToInactive
-            && (auth()->guard('admin')->user()->id === (int) $id
+            && (auth()->guard('admin')->user()->id === (int) $i
                 && Admin::countAdminsWithAllAccessAndActiveStatus() === 1
             )
         ) {
             return $this->cannotChangeRedirectResponse('status');
         }
 
-        /**
-         * Is user with `permission_type` all role changed.
-         */
+        
         $isRoleChanged = $user->role->permission_type === 'all'
-            && isset($data['role_id'])
-            && (int) $data['role_id'] !== $user->role_id;
+            && isset($dat['role_id'])
+            && (int) $dat['role_id'] !== $user->role_id;
 
         if (
             $isRoleChanged
@@ -259,12 +223,10 @@ class UserController extends Controller
             return $this->cannotChangeRedirectResponse('role');
         }
 
-        return $data;
+        return $dat;
     }
 
-    /**
-     * Cannot change redirect response.
-     */
+    
     private function cannotChangeRedirectResponse(string $columnName): \Illuminate\Http\RedirectResponse
     {
         session()->flash('error', trans('admin::app.settings.users.cannot-change', [

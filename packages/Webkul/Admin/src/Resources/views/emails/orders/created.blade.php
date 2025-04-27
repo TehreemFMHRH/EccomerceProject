@@ -10,10 +10,14 @@
 
         <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
             {!! __('admin::app.emails.orders.created.greeting', [
-                'order_id' => '<a href="' . route('admin.sales.orders.view', $order->id) . '" style="color: #2969FF;">#' . $order->increment_id . '</a>',
-                'created_at' => core()->formatDate($order->created_at, 'Y-m-d H:i:s')
-                ])
-            !!}
+                'order_id' =>
+                    '<a href="' .
+                    route('admin.sales.orders.view', $o->id) .
+                    '" style="color: #2969FF;">#' .
+                    $o->increment_id .
+                    '</a>',
+                'created_at' => core()->formatDate($o->created_at, 'Y-m-d H:i:s'),
+            ]) !!}
         </p>
     </div>
 
@@ -22,26 +26,26 @@
     </div>
 
     <div style="display: flex;flex-direction: row;margin-top: 20px;justify-content: space-between;margin-bottom: 40px;">
-        @if ($order->shipping_address)
+        @if ($o->shipping_address)
             <div style="line-height: 25px;">
                 <div style="font-size: 16px;font-weight: 600;color: #121A26;">
                     @lang('admin::app.emails.orders.shipping-address')
                 </div>
 
                 <div style="font-size: 16px;font-weight: 400;color: #384860;margin-bottom: 40px;">
-                    {{ $order->shipping_address->company_name ?? '' }}<br/>
+                    {{ $o->shipping_address->company_name ?? '' }}<br />
 
-                    {{ $order->shipping_address->name }}<br/>
+                    {{ $o->shipping_address->name }}<br />
 
-                    {{ $order->shipping_address->address }}<br/>
+                    {{ $o->shipping_address->address }}<br />
 
-                    {{ $order->shipping_address->postcode . " " . $order->shipping_address->city }}<br/>
+                    {{ $o->shipping_address->postcode . ' ' . $o->shipping_address->city }}<br />
 
-                    {{ $order->shipping_address->state }}<br/>
+                    {{ $o->shipping_address->state }}<br />
 
-                    ---<br/>
+                    ---<br />
 
-                    @lang('admin::app.emails.orders.contact') : {{ $order->billing_address->phone }}
+                    @lang('admin::app.emails.orders.contact') : {{ $o->billing_address->phone }}
                 </div>
 
                 <div style="font-size: 16px;font-weight: 600;color: #121A26;">
@@ -49,31 +53,31 @@
                 </div>
 
                 <div style="font-size: 16px;font-weight: 400;color: #384860;">
-                    {{ $order->shipping_title }}
+                    {{ $o->shipping_title }}
                 </div>
             </div>
         @endif
 
-        @if ($order->billing_address)
+        @if ($o->billing_address)
             <div style="line-height: 25px;">
                 <div style="font-size: 16px;font-weight: 600;color: #121A26;">
                     @lang('admin::app.emails.orders.billing-address')
                 </div>
 
                 <div style="font-size: 16px;font-weight: 400;color: #384860;margin-bottom: 40px;">
-                    {{ $order->billing_address->company_name ?? '' }}<br/>
+                    {{ $o->billing_address->company_name ?? '' }}<br />
 
-                    {{ $order->billing_address->name }}<br/>
+                    {{ $o->billing_address->name }}<br />
 
-                    {{ $order->billing_address->address }}<br/>
+                    {{ $o->billing_address->address }}<br />
 
-                    {{ $order->billing_address->postcode . " " . $order->billing_address->city }}<br/>
+                    {{ $o->billing_address->postcode . ' ' . $o->billing_address->city }}<br />
 
-                    {{ $order->billing_address->state }}<br/>
+                    {{ $o->billing_address->state }}<br />
 
-                    ---<br/>
+                    ---<br />
 
-                    @lang('admin::app.emails.orders.contact') : {{ $order->billing_address->phone }}
+                    @lang('admin::app.emails.orders.contact') : {{ $o->billing_address->phone }}
                 </div>
 
                 <div style="font-size: 16px;font-weight: 600;color: #121A26;">
@@ -81,12 +85,12 @@
                 </div>
 
                 <div style="font-size: 16px;font-weight: 400;color: #384860;">
-                    {{ core()->getConfigData('sales.payment_methods.' . $order->payment->method . '.title') }}
+                    {{ core()->getConfigData('sales.payment_methods.' . $o->payment->method . '.title') }}
                 </div>
 
-                @php $additionalDetails = \Webkul\Payment\Payment::getAdditionalDetails($order->payment->method); @endphp
+                @php $additionalDetails = \Webkul\Payment\Payment::getAdditionalDetails($o->payment->method); @endphp
 
-                @if (! empty($additionalDetails))
+                @if (!empty($additionalDetails))
                     <div style="font-size: 16px; color: #384860;">
                         <div>{{ $additionalDetails['title'] }}</div>
                         <div>{{ $additionalDetails['value'] }}</div>
@@ -110,7 +114,7 @@
             </thead>
 
             <tbody style="font-size: 16px;font-weight: 400;color: #384860;">
-                @foreach ($order->items as $item)
+                @foreach ($o->items as $item)
                     <tr style="vertical-align: text-top;">
                         <td style="text-align: left;padding: 15px">
                             {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
@@ -122,19 +126,15 @@
                             @if (isset($item->additional['attributes']))
                                 <div>
                                     @foreach ($item->additional['attributes'] as $attribute)
-                                        @if (
-                                            ! isset($attribute['attribute_type'])
-                                            || $attribute['attribute_type'] !== 'file'
-                                        )
-                                            <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}<br>
+                                        @if (!isset($attribute['attribute_type']) || $attribute['attribute_type'] !== 'file')
+                                            <b>{{ $attribute['attribute_name'] }} :
+                                            </b>{{ $attribute['option_label'] }}<br>
                                         @else
                                             <b>{{ $attribute['attribute_name'] }} : </b>
 
-                                            <a
-                                                href="{{ Storage::url($attribute['option_label']) }}"
+                                            <a href="{{ Storage::url($attribute['option_label']) }}"
                                                 class="text-blue-600 hover:underline"
-                                                download="{{ File::basename($attribute['option_label']) }}"
-                                            >
+                                                download="{{ File::basename($attribute['option_label']) }}">
                                                 {{ File::basename($attribute['option_label']) }}
                                             </a>
 
@@ -172,7 +172,8 @@
         </table>
     </div>
 
-    <div style="display: grid;justify-content: end;font-size: 16px;color: #384860;line-height: 30px;padding-top: 20px;padding-bottom: 20px;">
+    <div
+        style="display: grid;justify-content: end;font-size: 16px;color: #384860;line-height: 30px;padding-top: 20px;padding-bottom: 20px;">
         @if (core()->getConfigData('sales.taxes.sales.display_subtotal') == 'including_tax')
             <div style="display: grid;gap: 20px;grid-template-columns: repeat(2, minmax(0, 1fr));">
                 <span>
@@ -180,7 +181,7 @@
                 </span>
 
                 <span style="text-align: right;">
-                    {{ core()->formatBasePrice($order->base_sub_total_incl_tax) }}
+                    {{ core()->formatBasePrice($o->base_sub_total_incl_tax) }}
                 </span>
             </div>
         @elseif (core()->getConfigData('sales.taxes.sales.display_subtotal') == 'both')
@@ -190,7 +191,7 @@
                 </span>
 
                 <span style="text-align: right;">
-                    {{ core()->formatBasePrice($order->base_sub_total) }}
+                    {{ core()->formatBasePrice($o->base_sub_total) }}
                 </span>
             </div>
 
@@ -200,7 +201,7 @@
                 </span>
 
                 <span style="text-align: right;">
-                    {{ core()->formatBasePrice($order->base_sub_total_incl_tax) }}
+                    {{ core()->formatBasePrice($o->base_sub_total_incl_tax) }}
                 </span>
             </div>
         @else
@@ -210,12 +211,12 @@
                 </span>
 
                 <span style="text-align: right;">
-                    {{ core()->formatBasePrice($order->base_sub_total) }}
+                    {{ core()->formatBasePrice($o->base_sub_total) }}
                 </span>
             </div>
         @endif
 
-        @if ($order->shipping_address)
+        @if ($o->shipping_address)
             @if (core()->getConfigData('sales.taxes.sales.display_shipping_amount') == 'including_tax')
                 <div style="display: grid;gap: 20px;grid-template-columns: repeat(2, minmax(0, 1fr));">
                     <span>
@@ -223,7 +224,7 @@
                     </span>
 
                     <span style="text-align: right;">
-                        {{ core()->formatBasePrice($order->base_shipping_amount_incl_tax) }}
+                        {{ core()->formatBasePrice($o->base_shipping_amount_incl_tax) }}
                     </span>
                 </div>
             @elseif (core()->getConfigData('sales.taxes.sales.display_shipping_amount') == 'both')
@@ -233,7 +234,7 @@
                     </span>
 
                     <span style="text-align: right;">
-                        {{ core()->formatBasePrice($order->base_shipping_amount) }}
+                        {{ core()->formatBasePrice($o->base_shipping_amount) }}
                     </span>
                 </div>
 
@@ -243,7 +244,7 @@
                     </span>
 
                     <span style="text-align: right;">
-                        {{ core()->formatBasePrice($order->base_shipping_amount_incl_tax) }}
+                        {{ core()->formatBasePrice($o->base_shipping_amount_incl_tax) }}
                     </span>
                 </div>
             @else
@@ -253,7 +254,7 @@
                     </span>
 
                     <span style="text-align: right;">
-                        {{ core()->formatBasePrice($order->base_shipping_amount) }}
+                        {{ core()->formatBasePrice($o->base_shipping_amount) }}
                     </span>
                 </div>
             @endif
@@ -265,18 +266,18 @@
             </span>
 
             <span style="text-align: right;">
-                {{ core()->formatBasePrice($order->base_tax_amount) }}
+                {{ core()->formatBasePrice($o->base_tax_amount) }}
             </span>
         </div>
 
-        @if ($order->discount_amount > 0)
+        @if ($o->discount_amount > 0)
             <div style="display: grid;gap: 100px;grid-template-columns: repeat(2, minmax(0, 1fr));">
                 <span>
                     @lang('admin::app.emails.orders.discount')
                 </span>
 
                 <span style="text-align: right;">
-                    {{ core()->formatBasePrice($order->base_discount_amount) }}
+                    {{ core()->formatBasePrice($o->base_discount_amount) }}
                 </span>
             </div>
         @endif
@@ -287,7 +288,7 @@
             </span>
 
             <span style="text-align: right;">
-                {{ core()->formatBasePrice($order->base_grand_total) }}
+                {{ core()->formatBasePrice($o->base_grand_total) }}
             </span>
         </div>
     </div>

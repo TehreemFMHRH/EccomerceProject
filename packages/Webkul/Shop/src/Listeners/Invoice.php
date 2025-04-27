@@ -6,12 +6,7 @@ use Webkul\Shop\Mail\Order\InvoicedNotification;
 
 class Invoice extends Base
 {
-    /**
-     * After order is created
-     *
-     * @param  \Webkul\Sale\Contracts\Invoice  $invoice
-     * @return void
-     */
+    
     public function afterCreated($invoice)
     {
         try {

@@ -9,9 +9,7 @@ use Webkul\CMS\Models\Page as BasePage;
 
 class Page extends BasePage implements Sitemapable
 {
-    /**
-     * To get the sitemap tag for the CMS page.
-     */
+    
     public function toSitemapTag(): Url|string|array
     {
         if (! $this->url_key) {

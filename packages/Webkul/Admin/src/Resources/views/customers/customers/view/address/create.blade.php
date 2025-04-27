@@ -1,5 +1,6 @@
 <v-create-customer-address @address-created="addressCreated">
-    <div class="mr-1 inline-flex w-full max-w-max cursor-pointer items-center justify-between gap-x-2 px-1 py-1.5 text-center font-semibold text-gray-600 transition-all hover:rounded-md hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800">
+    <div
+        class="mr-1 inline-flex w-full max-w-max cursor-pointer items-center justify-between gap-x-2 px-1 py-1.5 text-center font-semibold text-gray-600 transition-all hover:rounded-md hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800">
         <span class="icon-location text-2xl"></span>
 
         @lang('admin::app.customers.customers.view.address.create.create-address-btn')
@@ -57,7 +58,7 @@
                             <x-admin::form.control-group.control
                                 type="hidden"
                                 name="customer_id"
-                                :value="$customer->id"
+                                :value="$k->id"
                             />
 
                             <x-admin::form.control-group.control
@@ -348,14 +349,20 @@
             },
 
             methods: {
-                create(params, { resetForm, setErrors }) {
+                create(params, {
+                    resetForm,
+                    setErrors
+                }) {
                     this.isLoading = true;
 
                     params.default_address = params.default_address ?? 0;
 
-                    this.$axios.post('{{ route('admin.customers.customers.addresses.store', $customer->id) }}', params)
+                    this.$axios.post('{{ route('admin.customers.customers.addresses.store', $k->id) }}', params)
                         .then((response) => {
-                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                            this.$emitter.emit('add-flash', {
+                                type: 'success',
+                                message: response.data.message
+                            });
 
                             this.$emit('address-created', response.data.data);
 
@@ -376,10 +383,10 @@
 
                 haveStates() {
                     /*
-                    * The double negation operator is used to convert the value to a boolean.
-                    * It ensures that the final result is a boolean value,
-                    * true if the array has a length greater than 0, and otherwise false.
-                    */
+                     * The double negation operator is used to convert the value to a boolean.
+                     * It ensures that the final result is a boolean value,
+                     * true if the array has a length greater than 0, and otherwise false.
+                     */
                     return !!this.countryStates[this.country]?.length;
                 },
             },

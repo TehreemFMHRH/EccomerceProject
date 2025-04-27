@@ -6,22 +6,14 @@ use Webkul\Core\Eloquent\Repository;
 
 class RefundItemRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+
     public function model(): string
     {
         return 'Webkul\Sales\Contracts\RefundItem';
     }
 
-    /**
-     * Returns qty to product inventory after order refund
-     *
-     * @param  \Webkul\Sales\Contracts\Order  $orderItem
-     * @param  int  $quantity
-     * @return void
-     */
-    public function returnQtyToProductInventory($orderItem, $quantity)
+
+    public function returnQtyToProductInventory($orderItem, $q)
     {
         if (! $product = $orderItem->product) {
             return;
@@ -33,11 +25,11 @@ class RefundItemRepository extends Repository
 
         if (
             $orderItem->qty_shipped
-            && $quantity > $orderItem->qty_ordered - $orderItem->qty_shipped
+            && $q > $orderItem->qty_ordered - $orderItem->qty_shipped
         ) {
             $nonShippedQty = $orderItem->qty_ordered - $orderItem->qty_shipped;
 
-            if (($totalShippedQtyToRefund = $quantity - $nonShippedQty) > 0) {
+            if (($totalShippedQtyToRefund = $q - $nonShippedQty) > 0) {
                 $shipmentItems = $orderItem->parent ? $orderItem->parent->shipment_items : $orderItem->shipment_items;
 
                 foreach ($shipmentItems as $shipmentItem) {
@@ -62,31 +54,31 @@ class RefundItemRepository extends Repository
                     $totalShippedQtyToRefund = $totalShippedQtyToRefund > $shippedQty ? $totalShippedQtyToRefund - $shippedQty : 0;
 
                     $inventory = $product->inventories()
-                        //  ->where('vendor_id', $data['vendor_id'])
+                        //  ->where('vendor_id', $dat['vendor_id'])
                         ->where('inventory_source_id', $shipmentItem->shipment->inventory_source_id)
                         ->first();
 
                     $inventory->update(['qty' => $inventory->qty + $shippedQtyToRefund]);
                 }
 
-                $quantity -= $totalShippedQtyToRefund;
+                $q -= $totalShippedQtyToRefund;
             }
         } elseif (
             ! $orderItem->getTypeInstance()->isStockable()
             && $orderItem->getTypeInstance()->showQuantityBox()
         ) {
             $inventory = $orderItem->product->inventories()
-                // ->where('vendor_id', $data['vendor_id'])
+                // ->where('vendor_id', $dat['vendor_id'])
                 ->whereIn('inventory_source_id', $orderItem->order->channel->inventory_sources()->pluck('id'))
                 ->orderBy('qty', 'desc')
                 ->first();
 
             if ($inventory) {
-                $inventory->update(['qty' => $inventory->qty + $quantity]);
+                $inventory->update(['qty' => $inventory->qty + $q]);
             }
         }
 
-        if ($quantity) {
+        if ($q) {
             $orderedInventory = $product->ordered_inventories()
                 ->where('channel_id', $orderItem->order->channel->id)
                 ->first();
@@ -95,7 +87,7 @@ class RefundItemRepository extends Repository
                 return;
             }
 
-            if (($qty = $orderedInventory->qty - $quantity) < 0) {
+            if (($qty = $orderedInventory->qty - $q) < 0) {
                 $qty = 0;
             }
 

@@ -33,7 +33,7 @@ it('should store the newly created customers group', function () {
 
     postJson(route('admin.customers.groups.store'), [
         'code' => $code = fake()->numerify('code########'),
-        'name' => $name = fake()->name(),
+        'name' => $na = fake()->name(),
     ])
         ->assertOk()
         ->assertSeeText(trans('admin::app.customers.groups.index.create.success'));
@@ -42,7 +42,7 @@ it('should store the newly created customers group', function () {
         CustomerGroup::class => [
             [
                 'code' => $code,
-                'name' => $name,
+                'name' => $na,
             ],
         ],
     ]);
@@ -69,7 +69,7 @@ it('should update the existing customers group', function () {
     $this->loginAsAdmin();
 
     putJson(route('admin.customers.groups.update'), [
-        'name' => $name = fake()->name(),
+        'name' => $na = fake()->name(),
         'code' => $customerGroup->code,
         'id'   => $customerGroup->id,
     ])
@@ -79,7 +79,7 @@ it('should update the existing customers group', function () {
     $this->assertModelWise([
         CustomerGroup::class => [
             [
-                'name' => $name,
+                'name' => $na,
                 'code' => $customerGroup->code,
                 'id'   => $customerGroup->id,
             ],

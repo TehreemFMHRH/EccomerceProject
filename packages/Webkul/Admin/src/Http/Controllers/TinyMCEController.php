@@ -6,18 +6,10 @@ use Illuminate\Support\Facades\Storage;
 
 class TinyMCEController extends Controller
 {
-    /**
-     * Storage folder path.
-     *
-     * @var string
-     */
+    
     private $storagePath = 'tinymce';
 
-    /**
-     * Upload file from tinymce.
-     *
-     * @return void
-     */
+    
     public function upload()
     {
         $media = $this->storeMedia();
@@ -31,11 +23,7 @@ class TinyMCEController extends Controller
         return response()->json([]);
     }
 
-    /**
-     * Store media.
-     *
-     * @return array
-     */
+    
     public function storeMedia()
     {
         if (! request()->hasFile('file')) {

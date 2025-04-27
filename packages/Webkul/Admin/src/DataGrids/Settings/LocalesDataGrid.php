@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class LocalesDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('locales')
@@ -23,11 +19,7 @@ class LocalesDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -74,8 +66,8 @@ class LocalesDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->direction == 'ltr') {
+            'closure'    => function ($va) {
+                if ($va->direction == 'ltr') {
                     return trans('admin::app.settings.locales.index.datagrid.ltr');
                 }
 
@@ -84,11 +76,7 @@ class LocalesDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('settings.locales.edit')) {

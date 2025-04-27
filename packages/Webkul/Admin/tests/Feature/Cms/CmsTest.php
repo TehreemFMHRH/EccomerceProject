@@ -71,7 +71,7 @@ it('should store newly created cms pages', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.cms.store'), $data = [
+    postJson(route('admin.cms.store'), $dat = [
         'url_key'          => fake()->slug(),
         'page_title'       => fake()->title(),
         'html_content'     => substr(fake()->paragraph(), 0, 50),
@@ -87,7 +87,7 @@ it('should store newly created cms pages', function () {
 
     $this->assertModelWise([
         PageTranslation::class => [
-            Arr::except($data, ['channels']),
+            Arr::except($dat, ['channels']),
         ],
     ]);
 });
@@ -132,7 +132,7 @@ it('should update the cms page', function () {
     $this->loginAsAdmin();
 
     putJson(route('admin.cms.update', $cms->id), [
-        $localeCode => $data = [
+        $localeCode => $dat = [
             'url_key'      => $cms->url_key,
             'page_title'   => fake()->word(),
             'html_content' => substr(fake()->paragraph(), 0, 50),
@@ -150,9 +150,9 @@ it('should update the cms page', function () {
     $this->assertModelWise([
         PageTranslation::class => [
             [
-                'url_key'      => $data['url_key'],
-                'page_title'   => $data['page_title'],
-                'html_content' => $data['html_content'],
+                'url_key'      => $dat['url_key'],
+                'page_title'   => $dat['page_title'],
+                'html_content' => $dat['html_content'],
             ],
         ],
     ]);

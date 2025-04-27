@@ -7,26 +7,16 @@ use Webkul\DataGrid\DataGrid;
 
 class OrderTransactionDataGrid extends DataGrid
 {
-    /**
-     * Transaction status Paid.
-     */
+    
     const STATUS_PAID = 'paid';
 
-    /**
-     * Transaction status Pending.
-     */
+    
     const STATUS_PENDING = 'pending';
 
-    /**
-     * Transaction status Completed
-     */
+    
     const STATUS_COMPLETED = 'COMPLETED';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('order_transactions')
@@ -51,11 +41,7 @@ class OrderTransactionDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -146,11 +132,7 @@ class OrderTransactionDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('sales.shipments.view')) {

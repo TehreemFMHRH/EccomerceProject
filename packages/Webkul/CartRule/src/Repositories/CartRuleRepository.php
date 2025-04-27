@@ -14,11 +14,7 @@ use Webkul\Tax\Repositories\TaxCategoryRepository;
 
 class CartRuleRepository extends Repository
 {
-    /**
-     * Create a new repository instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected AttributeRepository $attributeRepository,
@@ -32,73 +28,66 @@ class CartRuleRepository extends Repository
         parent::__construct($container);
     }
 
-    /**
-     * Specify Model class name
-     */
+
     public function model(): string
     {
         return 'Webkul\CartRule\Contracts\CartRule';
     }
 
-    /**
-     * @return \Webkul\CartRule\Contracts\CartRule
-     */
-    public function create(array $data)
+
+    public function create(array $dat)
     {
-        $data['starts_from'] = $data['starts_from'] ?: null;
+        $dat['starts_from'] = $dat['starts_from'] ?: null;
 
-        $data['ends_till'] = $data['ends_till'] ?: null;
+        $dat['ends_till'] = $dat['ends_till'] ?: null;
 
-        $data['status'] = isset($data['status']);
+        $dat['status'] = isset($dat['status']);
 
-        $cartRule = parent::create($data);
+        $cartRule = parent::create($dat);
 
-        $cartRule->channels()->sync($data['channels']);
+        $cartRule->channels()->sync($dat['channels']);
 
-        $cartRule->customer_groups()->sync($data['customer_groups']);
+        $cartRule->customer_groups()->sync($dat['customer_groups']);
 
         if (
-            $data['coupon_type']
-            && ! $data['use_auto_generation']
+            $dat['coupon_type']
+            && ! $dat['use_auto_generation']
         ) {
             $this->cartRuleCouponRepository->create([
                 'cart_rule_id'       => $cartRule->id,
-                'code'               => $data['coupon_code'],
-                'usage_limit'        => $data['uses_per_coupon'] ?? 0,
-                'usage_per_customer' => $data['usage_per_customer'] ?? 0,
+                'code'               => $dat['coupon_code'],
+                'usage_limit'        => $dat['uses_per_coupon'] ?? 0,
+                'usage_per_customer' => $dat['usage_per_customer'] ?? 0,
                 'is_primary'         => 1,
-                'expired_at'         => $data['ends_till'] ?? null,
+                'expired_at'         => $dat['ends_till'] ?? null,
             ]);
         }
 
         return $cartRule;
     }
 
-    /**
-     * @param  int  $id
-     * @return \Webkul\CartRule\Contracts\CartRule
-     */
-    public function update(array $data, $id)
+
+    public function update(array $dat, $i)
     {
-        $data = array_merge($data, [
-            'starts_from' => $data['starts_from'] ?: null,
-            'ends_till'   => $data['ends_till'] ?: null,
-            'status'      => isset($data['status']),
-            'conditions'  => $data['conditions'] ?? [],
+        $dat = array_merge($dat, [
+            'starts_from' => $dat['starts_from'] ?: null,
+            'ends_till'   => $dat['ends_till'] ?: null,
+            'status'      => isset($dat['status']),
+            'conditions'  => $dat['conditions'] ?? [],
         ]);
 
-        $cartRule = $this->find($id);
+        $cartRule = $this->find($i);
 
-        parent::update($data, $id);
+        parent::update($dat, $i);
 
-        $cartRule->channels()->sync($data['channels']);
+        $cartRule->channels()->sync($dat['channels']);
 
-        $cartRule->customer_groups()->sync($data['customer_groups']);
+        $cartRule->customer_groups()->sync($dat['customer_groups']);
 
-        if (! $data['coupon_type']) {
+        if (! $dat['coupon_type']) {
             $cartRuleCoupon = $this->cartRuleCouponRepository->deleteWhere(['is_primary' => 1, 'cart_rule_id' => $cartRule->id]);
         } else {
-            if (! $data['use_auto_generation']) {
+            if (! $dat['use_auto_generation']) {
                 $cartRuleCoupon = $this->cartRuleCouponRepository->findOneWhere([
                     'is_primary'   => 1,
                     'cart_rule_id' => $cartRule->id,
@@ -106,19 +95,19 @@ class CartRuleRepository extends Repository
 
                 if ($cartRuleCoupon) {
                     $this->cartRuleCouponRepository->update([
-                        'code'               => $data['coupon_code'],
-                        'usage_limit'        => $data['uses_per_coupon'] ?? 0,
-                        'usage_per_customer' => $data['usage_per_customer'] ?? 0,
-                        'expired_at'         => $data['ends_till'] ?? null,
+                        'code'               => $dat['coupon_code'],
+                        'usage_limit'        => $dat['uses_per_coupon'] ?? 0,
+                        'usage_per_customer' => $dat['usage_per_customer'] ?? 0,
+                        'expired_at'         => $dat['ends_till'] ?? null,
                     ], $cartRuleCoupon->id);
                 } else {
                     $this->cartRuleCouponRepository->create([
                         'cart_rule_id'       => $cartRule->id,
-                        'code'               => $data['coupon_code'],
-                        'usage_limit'        => $data['uses_per_coupon'] ?? 0,
-                        'usage_per_customer' => $data['usage_per_customer'] ?? 0,
+                        'code'               => $dat['coupon_code'],
+                        'usage_limit'        => $dat['uses_per_coupon'] ?? 0,
+                        'usage_per_customer' => $dat['usage_per_customer'] ?? 0,
                         'is_primary'         => 1,
-                        'expired_at'         => $data['ends_till'] ?? null,
+                        'expired_at'         => $dat['ends_till'] ?? null,
                     ]);
                 }
             } else {
@@ -128,9 +117,9 @@ class CartRuleRepository extends Repository
                 ]);
 
                 $this->cartRuleCouponRepository->where('cart_rule_id', $cartRule->id)->update([
-                    'usage_limit'        => $data['uses_per_coupon'] ?? 0,
-                    'usage_per_customer' => $data['usage_per_customer'] ?? 0,
-                    'expired_at'         => $data['ends_till'] ?? null,
+                    'usage_limit'        => $dat['uses_per_coupon'] ?? 0,
+                    'usage_per_customer' => $dat['usage_per_customer'] ?? 0,
+                    'expired_at'         => $dat['ends_till'] ?? null,
                 ]);
             }
         }
@@ -138,11 +127,7 @@ class CartRuleRepository extends Repository
         return $cartRule;
     }
 
-    /**
-     * Returns attributes for cart rule conditions.
-     *
-     * @return array
-     */
+
     public function getConditionAttributes()
     {
         $attributes = [
@@ -289,11 +274,7 @@ class CartRuleRepository extends Repository
         return $attributes;
     }
 
-    /**
-     * Returns all payment methods.
-     *
-     * @return array
-     */
+
     public function getPaymentMethods()
     {
         $methods = [];
@@ -310,11 +291,7 @@ class CartRuleRepository extends Repository
         return $methods;
     }
 
-    /**
-     * Returns all shipping methods.
-     *
-     * @return array
-     */
+
     public function getShippingMethods()
     {
         $methods = [];
@@ -331,11 +308,7 @@ class CartRuleRepository extends Repository
         return $methods;
     }
 
-    /**
-     * Returns all countries.
-     *
-     * @return array
-     */
+
     public function getTaxCategories()
     {
         $taxCategories = [];
@@ -350,11 +323,7 @@ class CartRuleRepository extends Repository
         return $taxCategories;
     }
 
-    /**
-     * Returns all attribute families.
-     *
-     * @return array
-     */
+
     public function getAttributeFamilies()
     {
         $attributeFamilies = [];
@@ -369,11 +338,7 @@ class CartRuleRepository extends Repository
         return $attributeFamilies;
     }
 
-    /**
-     * Returns all countries.
-     *
-     * @return array
-     */
+
     public function getCountries()
     {
         $countries = [];
@@ -388,11 +353,7 @@ class CartRuleRepository extends Repository
         return $countries;
     }
 
-    /**
-     * Retrieve all grouped states by country code.
-     *
-     * @return array
-     */
+
     public function groupedStatesByCountries()
     {
         $collection = [];

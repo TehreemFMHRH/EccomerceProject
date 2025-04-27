@@ -9,17 +9,13 @@ use Webkul\Core\Http\Middleware\PreventRequestsDuringMaintenance;
 
 class AdminServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
+    
     public function register(): void
     {
         $this->registerConfig();
     }
 
-    /**
-     * Bootstrap services.
-     */
+    
     public function boot(): void
     {
         Route::middleware(['web', PreventRequestsDuringMaintenance::class])->group(__DIR__.'/../Routes/web.php');
@@ -33,9 +29,7 @@ class AdminServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
     }
 
-    /**
-     * Register package config.
-     */
+    
     protected function registerConfig(): void
     {
         $this->mergeConfigFrom(

@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class CampaignDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('marketing_campaigns')
@@ -27,11 +23,7 @@ class CampaignDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -77,8 +69,8 @@ class CampaignDataGrid extends DataGrid
                     'value' => 0,
                 ],
             ],
-            'closure'    => function ($value) {
-                if ($value->status) {
+            'closure'    => function ($va) {
+                if ($va->status) {
                     return trans('admin::app.marketing.communications.campaigns.index.datagrid.active');
                 }
 
@@ -87,11 +79,7 @@ class CampaignDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.communications.campaigns.edit')) {

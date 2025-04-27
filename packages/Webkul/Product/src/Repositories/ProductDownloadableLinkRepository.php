@@ -8,24 +8,16 @@ use Webkul\Core\Eloquent\Repository;
 
 class ProductDownloadableLinkRepository extends Repository
 {
-    /**
-     * Specify model class name.
-     */
+    
     public function model(): string
     {
         return 'Webkul\Product\Contracts\ProductDownloadableLink';
     }
 
-    /**
-     * Upload.
-     *
-     * @param  array  $data
-     * @param  int  $productId
-     * @return array
-     */
-    public function upload($data, $productId)
+    
+    public function upload($dat, $productId)
     {
-        foreach ($data as $type => $file) {
+        foreach ($dat as $type => $file) {
             if (! request()->hasFile($type)) {
                 continue;
             }
@@ -40,28 +32,23 @@ class ProductDownloadableLinkRepository extends Repository
         return [];
     }
 
-    /**
-     * Save links.
-     *
-     * @param  \Webkul\Product\Models\Product  $product
-     * @return void
-     */
-    public function saveLinks(array $data, $product)
+    
+    public function saveLinks(array $dat, $product)
     {
         $previousLinkIds = $product->downloadable_links()->pluck('id');
 
-        if (isset($data['downloadable_links'])) {
-            foreach ($data['downloadable_links'] as $linkId => $data) {
+        if (isset($dat['downloadable_links'])) {
+            foreach ($dat['downloadable_links'] as $linkId => $dat) {
                 if (Str::contains($linkId, 'link_')) {
                     $this->create(array_merge([
                         'product_id' => $product->id,
-                    ], $data));
+                    ], $dat));
                 } else {
                     if (is_numeric($index = $previousLinkIds->search($linkId))) {
                         $previousLinkIds->forget($index);
                     }
 
-                    $this->update($data, $linkId);
+                    $this->update($dat, $linkId);
                 }
             }
         }

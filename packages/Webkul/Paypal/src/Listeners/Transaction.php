@@ -7,29 +7,19 @@ use Webkul\Sales\Repositories\OrderTransactionRepository;
 
 class Transaction
 {
-    /**
-     * Create a new listener instance.
-     *
-     * @return void
-     */
+
     public function __construct(
-        protected SmartButton $smartButton,
         protected OrderTransactionRepository $orderTransactionRepository
     ) {}
 
-    /**
-     * Save the transaction data for online payment.
-     *
-     * @param  \Webkul\Sales\Models\Invoice  $invoice
-     * @return void
-     */
+
     public function saveTransaction($invoice)
     {
-        $data = request()->all();
+        $dat = request()->all();
 
         if ($invoice->order->payment->method == 'paypal_smart_button') {
-            if (isset($data['orderData']['orderID'])) {
-                $transactionDetails = $this->smartButton->getOrder($data['orderData']['orderID']);
+            if (isset($dat['orderData']['orderID'])) {
+                //$transactionDetails = $this->smartButton->getOrder($dat['orderData']['orderID']);
 
                 $transactionDetails = json_decode(json_encode($transactionDetails), true);
 
@@ -53,13 +43,13 @@ class Transaction
             }
         } elseif ($invoice->order->payment->method == 'paypal_standard') {
             $this->orderTransactionRepository->create([
-                'transaction_id' => $data['txn_id'],
-                'status'         => $data['payment_status'],
-                'type'           => $data['payment_type'],
+                'transaction_id' => $dat['txn_id'],
+                'status'         => $dat['payment_status'],
+                'type'           => $dat['payment_type'],
                 'payment_method' => $invoice->order->payment->method,
                 'order_id'       => $invoice->order->id,
                 'invoice_id'     => $invoice->id,
-                'data'           => json_encode($data),
+                'data'           => json_encode($dat),
             ]);
         }
     }

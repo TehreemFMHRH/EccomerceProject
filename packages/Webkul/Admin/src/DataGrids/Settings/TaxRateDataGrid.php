@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class TaxRateDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('tax_rates')
@@ -27,11 +23,7 @@ class TaxRateDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -58,12 +50,12 @@ class TaxRateDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if (empty($value->state)) {
+            'closure'    => function ($va) {
+                if (empty($va->state)) {
                     return '*';
                 }
 
-                return $value->state;
+                return $va->state;
             },
         ]);
 
@@ -113,11 +105,7 @@ class TaxRateDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('settings.taxes.tax_rates.edit')) {

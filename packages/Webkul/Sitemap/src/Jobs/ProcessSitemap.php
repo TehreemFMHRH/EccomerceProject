@@ -21,80 +21,52 @@ class ProcessSitemap implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Batch processed.
-     */
+    
     protected int $batchProcessed = 0;
 
-    /**
-     * Items to be processed.
-     */
+    
     protected array $itemsToBeProcessed = [];
 
-    /**
-     * Generated sitemaps.
-     */
+    
     protected array $generatedSitemaps = [];
 
-    /**
-     * Create a new job instance.
-     */
+    
     public function __construct(
         public SitemapContract $sitemap
     ) {}
 
-    /**
-     * Execute the job.
-     */
+    
     public function handle(): void
     {
-        /**
-         * If sitemap is disabled then return.
-         */
+        
         if (! core()->getConfigData('general.sitemap.settings.enabled')) {
             return;
         }
 
-        /**
-         * If the sitemap is already generated then delete the existing sitemap.
-         */
+        
         $this->sitemap->deleteFromStorage();
 
-        /**
-         * Process the store URL.
-         */
+        
         $this->processItems([Url::create('/')]);
 
-        /**
-         * Process the categories.
-         */
+        
         Category::query()->chunk(100, fn ($items) => $this->processItems($items));
 
-        /**
-         * Process the products.
-         */
+        
         Product::query()->chunk(100, fn ($items) => $this->processItems($items));
 
-        /**
-         * Process the CMS pages.
-         */
+        
         Page::query()->chunk(100, fn ($items) => $this->processItems($items));
 
-        /**
-         * If there are any items left to be processed then generate the sitemap.
-         */
+        
         if (! empty($this->itemsToBeProcessed)) {
             $this->generateSitemap();
         }
 
-        /**
-         * After generating all the sitemaps, we will generate the index.
-         */
+        
         $this->generateSitemapIndex();
 
-        /**
-         * Update the sitemap with the generated sitemap index and sitemaps.
-         */
+        
         $this->sitemap->update([
             'generated_at' => now(),
 
@@ -105,11 +77,7 @@ class ProcessSitemap implements ShouldQueue
         ]);
     }
 
-    /**
-     * Process items.
-     *
-     * @param  mixed  $items
-     */
+    
     protected function processItems($items): void
     {
         foreach ($items as $item) {
@@ -121,9 +89,7 @@ class ProcessSitemap implements ShouldQueue
         }
     }
 
-    /**
-     * Generate sitemap.
-     */
+    
     protected function generateSitemap(): void
     {
         $this->batchProcessed++;
@@ -143,9 +109,7 @@ class ProcessSitemap implements ShouldQueue
         $this->itemsToBeProcessed = [];
     }
 
-    /**
-     * Generate sitemap index.
-     */
+    
     protected function generateSitemapIndex(): void
     {
         $sitemap = SitemapIndex::create();

@@ -11,13 +11,9 @@ use Webkul\Admin\Http\Controllers\Customers\CustomerGroupController;
 use Webkul\Admin\Http\Controllers\Customers\GDPRController;
 use Webkul\Admin\Http\Controllers\Customers\ReviewController;
 
-/**
- * Customers routes.
- */
+
 Route::prefix('customers')->group(function () {
-    /**
-     * Customer management routes.
-     */
+    
     Route::controller(CustomerController::class)->group(function () {
         Route::get('', 'index')->name('admin.customers.customers.index');
 
@@ -64,9 +60,7 @@ Route::prefix('customers')->group(function () {
         });
     });
 
-    /**
-     * Customer's addresses routes.
-     */
+    
     Route::controller(AddressController::class)->group(function () {
         Route::prefix('{id}/addresses')->group(function () {
             Route::get('', 'index')->name('admin.customers.customers.addresses.index');
@@ -87,9 +81,7 @@ Route::prefix('customers')->group(function () {
         });
     });
 
-    /**
-     * Customer's reviews routes.
-     */
+    
     Route::controller(ReviewController::class)->prefix('reviews')->group(function () {
         Route::get('', 'index')->name('admin.customers.customers.review.index');
 
@@ -104,9 +96,7 @@ Route::prefix('customers')->group(function () {
         Route::post('mass-update', 'massUpdate')->name('admin.customers.customers.review.mass_update');
     });
 
-    /**
-     * Customer groups routes.
-     */
+    
     Route::controller(CustomerGroupController::class)->prefix('groups')->group(function () {
         Route::get('', 'index')->name('admin.customers.groups.index');
 

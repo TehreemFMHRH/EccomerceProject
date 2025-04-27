@@ -13,11 +13,7 @@ class Sitemap extends Model implements SitemapContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'additional',
         'file_name',
@@ -25,18 +21,12 @@ class Sitemap extends Model implements SitemapContract
         'path',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'additional' => 'json',
     ];
 
-    /**
-     * Delete the sitemap from storage.
-     */
+    
     public function deleteFromStorage(): void
     {
         if ($this->additional) {
@@ -56,17 +46,13 @@ class Sitemap extends Model implements SitemapContract
         }
     }
 
-    /**
-     * Get the sitemap index file name.
-     */
+    
     public function getIndexFileNameAttribute()
     {
         return clean_path($this->path.'/'.$this->file_name);
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return SitemapFactory::new();

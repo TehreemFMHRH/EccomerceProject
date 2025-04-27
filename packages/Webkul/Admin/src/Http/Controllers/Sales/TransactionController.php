@@ -17,11 +17,7 @@ use Webkul\Sales\Repositories\ShipmentRepository;
 
 class TransactionController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderRepository $orderRepository,
         protected InvoiceRepository $invoiceRepository,
@@ -29,11 +25,7 @@ class TransactionController extends Controller
         protected OrderTransactionRepository $orderTransactionRepository
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         if (request()->ajax()) {
@@ -45,9 +37,7 @@ class TransactionController extends Controller
         return view('admin::sales.transactions.index', compact('paymentMethods'));
     }
 
-    /**
-     * Save the transaction.
-     */
+    
     public function store(Request $request): JsonResponse
     {
         $this->validate(request(), [
@@ -86,7 +76,7 @@ class TransactionController extends Controller
             ], 400);
         }
 
-        $order = $this->orderRepository->find($invoice->order_id);
+        $o = $this->orderRepository->find($invoice->order_id);
 
         $this->orderTransactionRepository->create([
             'transaction_id' => bin2hex(random_bytes(20)),
@@ -106,11 +96,11 @@ class TransactionController extends Controller
         if ($transactionTotal >= $invoice->base_grand_total) {
             $shipments = $this->shipmentRepository->where('order_id', $invoice->order_id)->first();
 
-            $status = isset($shipments)
+            $st = isset($shipments)
                 ? Order::STATUS_COMPLETED
                 : Order::STATUS_PROCESSING;
 
-            $this->orderRepository->updateOrderStatus($order, $status);
+            $this->orderRepository->updateOrderStatus($o, $st);
 
             $this->invoiceRepository->updateState($invoice, Invoice::STATUS_PAID);
         }
@@ -120,12 +110,10 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Show the view for the specified resource.
-     */
-    public function view(int $id): TransactionResource
+    
+    public function view(int $i): TransactionResource
     {
-        $transaction = $this->orderTransactionRepository->findOrFail($id);
+        $transaction = $this->orderTransactionRepository->findOrFail($i);
 
         return new TransactionResource($transaction);
     }

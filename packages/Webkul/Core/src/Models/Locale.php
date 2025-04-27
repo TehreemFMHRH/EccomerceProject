@@ -13,47 +13,29 @@ class Locale extends Model implements LocaleContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'code',
         'name',
         'direction',
     ];
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
+    
     protected $appends = ['logo_url'];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return LocaleFactory::new();
     }
 
-    /**
-     * Get the logo full path of the locale.
-     *
-     * @return string|null
-     */
+    
     public function getLogoUrlAttribute()
     {
         return $this->logo_url();
     }
 
-    /**
-     * Get the logo full path of the locale.
-     *
-     * @return string|void
-     */
+    
     public function logo_url()
     {
         if (empty($this->logo_path)) {

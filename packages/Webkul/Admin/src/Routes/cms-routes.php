@@ -3,9 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\CMS\PageController;
 
-/**
- * CMS routes.
- */
+
 Route::controller(PageController::class)->prefix('cms')->group(function () {
     Route::get('/', 'index')->name('admin.cms.index');
 

@@ -9,9 +9,7 @@ use Webkul\Product\Models\Product as BaseProduct;
 
 class Product extends BaseProduct implements Sitemapable
 {
-    /**
-     * To get the sitemap tag for the product.
-     */
+    
     public function toSitemapTag(): Url|string|array
     {
         if (

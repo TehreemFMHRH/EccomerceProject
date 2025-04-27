@@ -13,32 +13,16 @@ class Page extends TranslatableModel implements PageContract
 {
     use HasFactory;
 
-    /**
-     * Table associated with the model.
-     *
-     * @var string
-     */
+    
     protected $table = 'cms_pages';
 
-    /**
-     * Translation model foreign key column
-     *
-     * @var string
-     */
+    
     protected $translationForeignKey = 'cms_page_id';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = ['layout'];
 
-    /**
-     * The attributes that are translatable.
-     *
-     * @var array
-     */
+    
     public $translatedAttributes = [
         'content',
         'meta_description',
@@ -49,26 +33,16 @@ class Page extends TranslatableModel implements PageContract
         'url_key',
     ];
 
-    /**
-     * With the translations given attributes
-     *
-     * @var array
-     */
+    
     protected $with = ['translations'];
 
-    /**
-     * Get the channels.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany;
-     */
+    
     public function channels()
     {
         return $this->belongsToMany(ChannelProxy::modelClass(), 'cms_page_channels', 'cms_page_id');
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return PageFactory::new();

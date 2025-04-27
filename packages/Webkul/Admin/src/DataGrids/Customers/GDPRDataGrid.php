@@ -7,36 +7,22 @@ use Webkul\DataGrid\DataGrid;
 
 class GDPRDataGrid extends DataGrid
 {
-    /**
-     * GDPR status "approved".
-     */
+    
     const STATUS_COMPLETED = 'completed';
 
-    /**
-     * GDPR status "pending", indicating awaiting approval.
-     */
+    
     const STATUS_PENDING = 'pending';
 
-    /**
-     * GDPR status "declined", indicating rejection or denial.
-     */
+    
     const STATUS_DECLINED = 'declined';
 
-    /**
-     * GDPR status "processing".
-     */
+    
     const STATUS_PROCESSING = 'processing';
 
-    /**
-     * Request status "revoked".
-     */
+    
     const STATUS_REVOKED = 'revoked';
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('gdpr_data_request as gdpr')
@@ -60,11 +46,7 @@ class GDPRDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -183,11 +165,7 @@ class GDPRDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Add actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('customers.gdpr_requests.edit')) {

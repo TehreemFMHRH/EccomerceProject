@@ -9,23 +9,13 @@ use Webkul\Theme\Repositories\ThemeCustomizationRepository;
 
 class HomeController extends Controller
 {
-    /**
-     * Using const variable for status
-     */
+    
     const STATUS = 1;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected ThemeCustomizationRepository $themeCustomizationRepository) {}
 
-    /**
-     * Loads the home page for the storefront.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         visitor()->visit();
@@ -39,31 +29,19 @@ class HomeController extends Controller
         return view('shop::home.index', compact('customizations'));
     }
 
-    /**
-     * Loads the home page for the storefront if something wrong.
-     *
-     * @return \Exception
-     */
+    
     public function notFound()
     {
         abort(404);
     }
 
-    /**
-     * Summary of contact.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function contactUs()
     {
         return view('shop::home.contact-us');
     }
 
-    /**
-     * Summary of store.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
+    
     public function sendContactUsMail(ContactRequest $contactRequest)
     {
         try {

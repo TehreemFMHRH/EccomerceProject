@@ -7,21 +7,12 @@ use Webkul\Sales\Repositories\OrderTransactionRepository;
 
 class Invoice extends Base
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected OrderTransactionRepository $orderTransactionRepository,
     ) {}
 
-    /**
-     * After order is created
-     *
-     * @param  \Webkul\Sale\Contracts\Invoice  $invoice
-     * @return void
-     */
+    
     public function afterCreated($invoice)
     {
         $this->sendMail($invoice);
@@ -31,12 +22,7 @@ class Invoice extends Base
         }
     }
 
-    /**
-     * Send Transaction mail.
-     *
-     * @param  \Webkul\Sale\Contracts\Invoice  $invoice
-     * @return void
-     */
+    
     public function sendMail($invoice)
     {
         try {
@@ -50,12 +36,7 @@ class Invoice extends Base
         }
     }
 
-    /**
-     * Create the transaction data for Money-transfer and Cash-on-delivery.
-     *
-     * @param  \Webkul\Sale\Contracts\Invoice  $invoice
-     * @return void
-     */
+    
     public function createTransaction($invoice)
     {
         $transactionId = md5(uniqid());

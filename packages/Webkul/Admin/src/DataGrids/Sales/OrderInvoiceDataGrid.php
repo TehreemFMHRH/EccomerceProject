@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class OrderInvoiceDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $dbPrefix = DB::getTablePrefix();
@@ -35,11 +31,7 @@ class OrderInvoiceDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -78,19 +70,19 @@ class OrderInvoiceDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->state == 'paid') {
+            'closure'    => function ($va) {
+                if ($va->state == 'paid') {
                     return '<p class="label-active">'.trans('admin::app.sales.invoices.index.datagrid.paid').'</p>';
                 } elseif (
-                    $value->state == 'pending'
-                    || $value->state == 'pending_payment'
+                    $va->state == 'pending'
+                    || $va->state == 'pending_payment'
                 ) {
                     return '<p class="label-pending">'.trans('admin::app.sales.invoices.index.datagrid.pending').'</p>';
-                } elseif ($value->state == 'overdue') {
+                } elseif ($va->state == 'overdue') {
                     return '<p class="label-cancel">'.trans('admin::app.sales.invoices.index.datagrid.overdue').'</p>';
                 }
 
-                return $value->state;
+                return $va->state;
             },
         ]);
 
@@ -105,11 +97,7 @@ class OrderInvoiceDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('sales.invoices.view')) {

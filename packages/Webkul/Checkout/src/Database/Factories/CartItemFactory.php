@@ -7,16 +7,10 @@ use Webkul\Checkout\Models\CartItem;
 
 class CartItemFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = CartItem::class;
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         return [
@@ -26,9 +20,7 @@ class CartItemFactory extends Factory
         ];
     }
 
-    /**
-     * Adjust product.
-     */
+    
     public function adjustProduct(): CartItemFactory
     {
         return $this->state(function () {

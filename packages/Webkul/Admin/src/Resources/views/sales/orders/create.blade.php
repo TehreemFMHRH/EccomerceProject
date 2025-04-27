@@ -13,10 +13,8 @@
         </div>
 
         <!-- Back Button -->
-        <a
-            href="{{ route('admin.sales.orders.index') }}"
-            class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
-        >
+        <a href="{{ route('admin.sales.orders.index') }}"
+            class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800">
             @lang('admin::app.sales.orders.create.back-btn')
         </a>
     </div>
@@ -191,18 +189,18 @@
                         this.selectedProductOptions = params;
 
                         if (
-                            params.product.is_options_required
-                            && ! params.additional?.attributes
+                            params.product.is_options_required &&
+                            !params.additional?.attributes
                         ) {
                             this.$refs.productConfigurationDrawer.open();
 
                             return;
                         }
 
-                        this.addToCart(params);
+                        this.f3(params);
                     },
 
-                    addToCart(params) {
+                    f3(params) {
                         let formData = {};
 
                         if (params.additional?.attributes) {
@@ -231,7 +229,10 @@
 
                                 this.cart = response.data.data;
 
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.message
+                                });
                             })
                             .catch(error => {});
                     },
@@ -275,7 +276,7 @@
                     scrollToCurrentStep() {
                         let container = document.getElementById(this.currentStep + '-step-container');
 
-                        if (! container) {
+                        if (!container) {
                             return;
                         }
 

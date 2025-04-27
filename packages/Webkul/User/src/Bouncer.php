@@ -4,12 +4,7 @@ namespace Webkul\User;
 
 class Bouncer
 {
-    /**
-     * Checks if user allowed or not for certain action
-     *
-     * @param  string  $permission
-     * @return void
-     */
+    
     public function hasPermission($permission)
     {
         if (
@@ -29,12 +24,7 @@ class Bouncer
         return true;
     }
 
-    /**
-     * Checks if user allowed or not for certain action
-     *
-     * @param  string  $permission
-     * @return void
-     */
+    
     public static function allow($permission)
     {
         if (

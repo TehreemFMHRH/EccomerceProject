@@ -27,65 +27,49 @@ class InvoiceItem extends Model implements InvoiceItemContract
         'additional' => 'array',
     ];
 
-    /**
-     * Retrieve type instance
-     */
+    
     public function getTypeInstance(): AbstractType
     {
         return $this->order_item->getTypeInstance();
     }
 
-    /**
-     * Get the invoice record associated with the invoice item.
-     */
+    
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(InvoiceProxy::modelClass());
     }
 
-    /**
-     * Get the order item record associated with the invoice item.
-     */
+    
     public function order_item(): BelongsTo
     {
         return $this->belongsTo(OrderItemProxy::modelClass());
     }
 
-    /**
-     * Get the invoice record associated with the invoice item.
-     */
+    
     public function product(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Get the child item record associated with the invoice item.
-     */
+    
     public function child(): HasOne
     {
         return $this->hasOne(InvoiceItemProxy::modelClass(), 'parent_id');
     }
 
-    /**
-     * Get the children items.
-     */
+    
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    /**
-     * Get order item type
-     */
+    
     public function getTypeAttribute()
     {
         return $this->order_item->type;
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return InvoiceItemFactory::new();

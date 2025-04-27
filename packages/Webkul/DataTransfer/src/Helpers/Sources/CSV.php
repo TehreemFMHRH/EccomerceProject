@@ -9,9 +9,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Csv as CSVWriter;
 
 class CSV extends AbstractSource
 {
-    /**
-     * Initialize.
-     */
+    
     public function initialize(): void
     {
         $this->reader = fopen(Storage::disk('private')->path($this->filePath), 'r');
@@ -21,9 +19,7 @@ class CSV extends AbstractSource
         $this->totalColumns = count($this->columnNames);
     }
 
-    /**
-     * Read next line from csv.
-     */
+    
     protected function getNextRow(): array
     {
         $parsed = fgetcsv($this->reader, 4096, $this->delimiter);
@@ -43,9 +39,7 @@ class CSV extends AbstractSource
         return is_array($parsed) ? $parsed : [];
     }
 
-    /**
-     * Rewind the iterator to the first row.
-     */
+    
     public function rewind(): void
     {
         rewind($this->reader);
@@ -53,9 +47,7 @@ class CSV extends AbstractSource
         parent::rewind();
     }
 
-    /**
-     * Generate error report.
-     */
+    
     public function generateErrorReport(array $errors): string
     {
         $this->rewind();
@@ -64,9 +56,7 @@ class CSV extends AbstractSource
 
         $sheet = $spreadsheet->getActiveSheet();
 
-        /**
-         * Add headers with extra error column.
-         */
+        
         $sheet->fromArray(
             [array_merge($this->getColumnNames(), [
                 'errors',
@@ -108,11 +98,7 @@ class CSV extends AbstractSource
         return $this->errorFilePath();
     }
 
-    /**
-     * Close file handle.
-     *
-     * @return void
-     */
+    
     public function __destruct()
     {
         if (! is_object($this->reader)) {

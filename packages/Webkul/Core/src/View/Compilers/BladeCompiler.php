@@ -6,12 +6,7 @@ use Illuminate\View\Compilers\BladeCompiler as BaseBladeCompiler;
 
 class BladeCompiler extends BaseBladeCompiler
 {
-    /**
-     * Append the file path to the compiled string.
-     *
-     * @param  string  $contents
-     * @return string
-     */
+    
     protected function appendFilePath($contents)
     {
         $tokens = $this->getOpenAndClosingPhpTokens($contents);
@@ -33,6 +28,6 @@ class BladeCompiler extends BaseBladeCompiler
             $contents .= ' ?>';
         }
 
-        return $contents."<?php /**PATH {$this->getPath()} ENDPATH**/ ?>";
+        return $contents."<?php  ?>";
     }
 }

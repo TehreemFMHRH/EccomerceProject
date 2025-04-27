@@ -6,15 +6,10 @@ use Webkul\Product\Jobs\UpdateCreateInventoryIndex as UpdateCreateInventoryIndex
 
 class Order
 {
-    /**
-     * After order is created
-     *
-     * @param  \Webkul\Sale\Contracts\Order  $order
-     * @return void
-     */
-    public function afterCancelOrCreate($order)
+    
+    public function afterCancelOrCreate($o)
     {
-        $productIds = $order->all_items
+        $productIds = $o->all_items
             ->pluck('product_id')
             ->toArray();
 

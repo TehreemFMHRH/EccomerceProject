@@ -10,9 +10,7 @@ use Webkul\DataGrid\Exceptions\InvalidColumnExpressionException;
 
 class Date extends Column
 {
-    /**
-     * Set filterable type.
-     */
+    
     public function setFilterableType(?string $filterableType): void
     {
         if (
@@ -25,9 +23,7 @@ class Date extends Column
         parent::setFilterableType($filterableType);
     }
 
-    /**
-     * Set filterable options.
-     */
+    
     public function setFilterableOptions(mixed $filterableOptions): void
     {
         if (empty($filterableOptions)) {
@@ -37,9 +33,7 @@ class Date extends Column
         parent::setFilterableOptions($filterableOptions);
     }
 
-    /**
-     * Process filter.
-     */
+    
     public function processFilter($queryBuilder, $requestedDates)
     {
         return $queryBuilder->where(function ($scopeQueryBuilder) use ($requestedDates) {
@@ -50,10 +44,10 @@ class Date extends Column
                     ? [[$requestedDates, $requestedDates]]
                     : [[$rangeOption['from'], $rangeOption['to']]];
             } elseif (is_array($requestedDates)) {
-                foreach ($requestedDates as $value) {
+                foreach ($requestedDates as $va) {
                     $scopeQueryBuilder->whereBetween($this->columnName, [
-                        $value[0] ? (str_contains($value[0], ' ') ? $value[0] : $value[0].' 00:00:01') : '',
-                        $value[1] ? (str_contains($value[1], ' ') ? $value[1] : $value[1].' 23:59:59') : '',
+                        $va[0] ? (str_contains($va[0], ' ') ? $va[0] : $va[0].' 00:00:01') : '',
+                        $va[1] ? (str_contains($va[1], ' ') ? $va[1] : $va[1].' 23:59:59') : '',
                     ]);
                 }
             } else {

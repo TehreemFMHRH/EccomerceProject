@@ -5,15 +5,14 @@ namespace Webkul\Admin\Http\Controllers\Catalog\Product;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Product\Models\Product;
-
+use Illuminate\Support\Facades\DB;
 class GroupedController extends Controller
 {
-    /**
-     * Returns the compare items of the customer.
-     */
+    
     public function options(int $id): JsonResponse
     {
-        $product = Product::find($id);
+        $result = DB::select("SELECT * FROM products WHERE id = $id LIMIT 1");
+$product = count($result) ? $result[0] : null;
 
 if (! $product) {
     // Custom logic

@@ -12,15 +12,9 @@ use Webkul\Shop\Listeners\Shipment;
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * The event handler mappings for the application.
-     *
-     * @var array
-     */
+    
     protected $listen = [
-        /**
-         * Customer related events.
-         */
+        
         'customer.registration.after' => [
             [Customer::class, 'afterCreated'],
         ],
@@ -37,9 +31,7 @@ class EventServiceProvider extends ServiceProvider
             [Customer::class, 'afterNoteCreated'],
         ],
 
-        /**
-         * GDPR related events.
-         */
+        
         'customer.account.gdpr-request.create.after' => [
             [GDPR::class, 'afterGdprRequestCreated'],
         ],
@@ -48,9 +40,7 @@ class EventServiceProvider extends ServiceProvider
             [GDPR::class, 'afterGdprRequestUpdated'],
         ],
 
-        /**
-         * Sales related events.
-         */
+        
         'checkout.order.save.after' => [
             [Order::class, 'afterCreated'],
         ],

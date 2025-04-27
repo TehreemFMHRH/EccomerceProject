@@ -13,22 +13,13 @@ class Linking implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  mixed  $import
-     * @return void
-     */
+    
     public function __construct(protected $import)
     {
         $this->import = $import;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
         app(ImportHelper::class)

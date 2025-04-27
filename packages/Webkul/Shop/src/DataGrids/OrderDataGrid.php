@@ -8,11 +8,7 @@ use Webkul\Sales\Models\Order;
 
 class OrderDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return void
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('orders')
@@ -29,11 +25,7 @@ class OrderDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -132,11 +124,7 @@ class OrderDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         $this->addAction([

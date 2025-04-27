@@ -15,12 +15,7 @@ use Webkul\Installer\Database\Seeders\User\DatabaseSeeder as UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
-     */
+    
     public function run($parameters = [])
     {
         $this->call(AttributeSeeder::class, false, ['parameters' => $parameters]);

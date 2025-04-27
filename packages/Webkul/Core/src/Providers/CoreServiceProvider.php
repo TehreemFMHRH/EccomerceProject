@@ -9,9 +9,7 @@ use Webkul\Theme\ViewRenderEventManager;
 
 class CoreServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
+    
     public function register(): void
     {
         include __DIR__.'/../Http/helpers.php';
@@ -21,9 +19,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->registerOverrides();
     }
 
-    /**
-     * Bootstrap services.
-     */
+    
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
@@ -49,9 +45,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->register(VisitorServiceProvider::class);
     }
 
-    /**
-     * Register the console commands of this package.
-     */
+    
     protected function registerCommands(): void
     {
         if ($this->app->runningInConsole()) {
@@ -63,9 +57,7 @@ class CoreServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register the overrides.
-     */
+    
     protected function registerOverrides(): void
     {
         $this->app->extend(

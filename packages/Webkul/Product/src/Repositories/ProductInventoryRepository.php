@@ -6,29 +6,24 @@ use Webkul\Core\Eloquent\Repository;
 
 class ProductInventoryRepository extends Repository
 {
-    /**
-     * Specify Model class name.
-     */
+    
     public function model(): string
     {
         return 'Webkul\Product\Contracts\ProductInventory';
     }
 
-    /**
-     * @param  Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
-    public function saveInventories(array $data, $product)
+    
+    public function saveInventories(array $dat, $product)
     {
-        if (! isset($data['inventories'])) {
+        if (! isset($dat['inventories'])) {
             return;
         }
 
-        foreach ($data['inventories'] as $inventorySourceId => $qty) {
+        foreach ($dat['inventories'] as $inventorySourceId => $qty) {
             $this->updateOrCreate([
                 'product_id'          => $product->id,
                 'inventory_source_id' => $inventorySourceId,
-                'vendor_id'           => $data['vendor_id'] ?? 0,
+                'vendor_id'           => $dat['vendor_id'] ?? 0,
             ], [
                 'qty' => $qty ?? 0,
             ]);

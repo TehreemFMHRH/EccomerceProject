@@ -11,22 +11,18 @@ use Webkul\Core\Eloquent\Repository;
 
 class BookingRepository extends Repository
 {
-    /**
-     * Specify Model class name
-     */
+
     public function model(): string
     {
         return Booking::class;
     }
 
-    /**
-     * Create Booking Product.
-     */
-    public function create(array $data): void
-    {
-        $order = $data['order'];
 
-        foreach ($order->items()->get() as $item) {
+    public function create(array $dat): void
+    {
+        $o = $dat['order'];
+
+        foreach ($o->items()->get() as $item) {
             if ($item->type != 'booking') {
                 continue;
             }
@@ -59,7 +55,7 @@ class BookingRepository extends Repository
                 'qty'                             => $item->qty_ordered,
                 'from'                            => $from,
                 'to'                              => $to,
-                'order_id'                        => $order->id,
+                'order_id'                        => $o->id,
                 'order_item_id'                   => $item->id,
                 'product_id'                      => $item->product_id,
                 'booking_product_event_ticket_id' => $bookingItem['ticket_id'] ?? null,
@@ -69,9 +65,7 @@ class BookingRepository extends Repository
         }
     }
 
-    /**
-     * Get all bookings for the given date and time range.
-     */
+
     public function getBookings(array $dateRange): Collection
     {
         return $this->select(

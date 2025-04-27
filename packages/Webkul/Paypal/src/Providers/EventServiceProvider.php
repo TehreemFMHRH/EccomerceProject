@@ -8,11 +8,7 @@ use Webkul\Theme\ViewRenderEventManager;
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
+    
     public function boot()
     {
         Event::listen('bagisto.shop.layout.body.after', static function (ViewRenderEventManager $viewRenderEventManager) {

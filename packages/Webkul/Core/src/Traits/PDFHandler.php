@@ -8,11 +8,7 @@ use Mpdf\Mpdf;
 
 trait PDFHandler
 {
-    /**
-     * Download PDF.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     protected function downloadPDF(string $html, ?string $fileName = null)
     {
         if (is_null($fileName)) {
@@ -44,11 +40,7 @@ trait PDFHandler
             ->download($fileName.'.pdf');
     }
 
-    /**
-     * Adjust arabic and persian content.
-     *
-     * @return string
-     */
+    
     protected function adjustArabicAndPersianContent(string $html)
     {
         $arabic = new \ArPHP\I18N\Arabic;

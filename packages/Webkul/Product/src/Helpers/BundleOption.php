@@ -4,19 +4,10 @@ namespace Webkul\Product\Helpers;
 
 class BundleOption
 {
-    /**
-     * Product
-     *
-     * @var \Webkul\Product\Contracts\Product
-     */
+    
     protected $product;
 
-    /**
-     * Returns bundle option config
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
-     */
+    
     public function getBundleConfig($product)
     {
         $this->product = $product;
@@ -26,11 +17,7 @@ class BundleOption
         ];
     }
 
-    /**
-     * Returns bundle options
-     *
-     * @return array
-     */
+    
     public function getOptions()
     {
         $options = [];
@@ -39,16 +26,16 @@ class BundleOption
         $this->product->bundle_options->load('bundle_option_products.product.inventories');
 
         foreach ($this->product->bundle_options as $option) {
-            $data = $this->getOptionItemData($option);
+            $dat = $this->getOptionItemData($option);
 
             if (
                 ! $option->is_required
-                && ! count($data['products'])
+                && ! count($dat['products'])
             ) {
                 continue;
             }
 
-            $options[$option->id] = $data;
+            $options[$option->id] = $dat;
         }
 
         usort($options, function ($a, $b) {
@@ -62,12 +49,7 @@ class BundleOption
         return $options;
     }
 
-    /**
-     * Get formed data from bundle option
-     *
-     * @param  \Product\Product\Contracts\ProductBundleOption  $option
-     * @return array
-     */
+    
     private function getOptionItemData($option)
     {
         return [
@@ -80,12 +62,7 @@ class BundleOption
         ];
     }
 
-    /**
-     * Get formed data from bundle option product
-     *
-     * @param  \Product\Product\Contracts\ProductBundleOption  $option
-     * @return array
-     */
+    
     private function getOptionProducts($option)
     {
         $products = [];

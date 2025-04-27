@@ -22,33 +22,19 @@ use Webkul\Tax\Repositories\TaxCategoryRepository;
 
 class Cart
 {
-    /**
-     * The cart instance.
-     *
-     * @var \Webkul\Checkout\Contracts\Cart
-     */
+
     private $cart;
 
-    /**
-     * Constant for tax calculation based on shipping origin.
-     */
+
     const TAX_CALCULATION_BASED_ON_SHIPPING_ORIGIN = 'shipping_origin';
 
-    /**
-     * Constant for tax calculation based on billing address.
-     */
+
     const TAX_CALCULATION_BASED_ON_BILLING_ADDRESS = 'billing_address';
 
-    /**
-     * Constant for tax calculation based on shipping address.
-     */
+
     const TAX_CALCULATION_BASED_ON_SHIPPING_ADDRESS = 'shipping_address';
 
-    /**
-     * Create a new class instance.
-     *
-     * @return void
-     */
+
     public function __construct(
         protected CartRepository $cartRepository,
         protected CartItemRepository $cartItemRepository,
@@ -61,18 +47,16 @@ class Cart
         $this->initCart();
     }
 
-    /**
-     * Initialize cart
-     */
-    public function initCart(?CustomerContract $customer = null): void
+
+    public function initCart(?CustomerContract $k = null): void
     {
-        if (! $customer) {
-            $customer = auth()->guard()->user();
+        if (! $k) {
+            $k = auth()->guard()->user();
         }
 
-        if ($customer) {
+        if ($k) {
             $this->cart = $this->cartRepository->findOneWhere([
-                'customer_id' => $customer->id,
+                'customer_id' => $k->id,
                 'is_active'   => 1,
             ]);
         } elseif (session()->has('cart')) {
@@ -80,9 +64,7 @@ class Cart
         }
     }
 
-    /**
-     * Returns cart
-     */
+
     public function refreshCart(): void
     {
         if (! $this->cart) {
@@ -92,9 +74,7 @@ class Cart
         $this->cart = $this->cartRepository->find($this->cart->id);
     }
 
-    /**
-     * Set cart
-     */
+
     public function setCart(Contracts\Cart $cart): void
     {
         $this->cart = $cart;
@@ -109,50 +89,44 @@ class Cart
         session()->put('cart', $cartTemp);
     }
 
-    /**
-     * Returns cart.
-     */
+
     public function getCart(): ?Contracts\Cart
     {
         return $this->cart;
     }
 
-    /**
-     * Create new cart instance.
-     */
-    public function createCart(array $data): ?Contracts\Cart
+
+    public function createCart(array $dat): ?Contracts\Cart
     {
-        $data = array_merge([
+        $dat = array_merge([
             'is_guest'              => 1,
             'channel_id'            => core()->getCurrentChannel()->id,
             'global_currency_code'  => $baseCurrencyCode = core()->getBaseCurrencyCode(),
             'base_currency_code'    => $baseCurrencyCode,
             'channel_currency_code' => core()->getChannelBaseCurrencyCode(),
             'cart_currency_code'    => core()->getCurrentCurrencyCode(),
-        ], $data);
+        ], $dat);
 
-        $customer = $data['customer'] ?? auth()->guard()->user();
+        $k = $dat['customer'] ?? auth()->guard()->user();
 
-        if ($customer) {
-            $data = array_merge($data, [
+        if ($k) {
+            $dat = array_merge($dat, [
                 'is_guest'            => 0,
-                'customer_id'         => $customer->id,
-                'customer_first_name' => $customer->first_name,
-                'customer_last_name'  => $customer->last_name,
-                'customer_email'      => $customer->email,
+                'customer_id'         => $k->id,
+                'customer_first_name' => $k->first_name,
+                'customer_last_name'  => $k->last_name,
+                'customer_email'      => $k->email,
             ]);
         }
 
-        $cart = $this->cartRepository->create($data);
+        $cart = $this->cartRepository->create($dat);
 
         $this->setCart($cart);
 
         return $cart;
     }
 
-    /**
-     * Remove cart and destroy the session
-     */
+
     public function removeCart(Contracts\Cart $cart): void
     {
         $this->cartRepository->delete($cart->id);
@@ -164,17 +138,13 @@ class Cart
         $this->resetCart();
     }
 
-    /**
-     * Reset cart
-     */
+
     public function resetCart(): void
     {
         $this->cart = null;
     }
 
-    /**
-     * Activate the cart by id.
-     */
+
     public function activateCart(int $cartId): void
     {
         $cart = $this->cartRepository->update([
@@ -184,9 +154,7 @@ class Cart
         $this->setCart($cart);
     }
 
-    /**
-     * Deactivates current cart.
-     */
+
     public function deActivateCart(): void
     {
         if (! $this->cart) {
@@ -202,32 +170,28 @@ class Cart
         }
     }
 
-    /**
-     * This method handles when guest has some of cart products and then logs in.
-     */
-    public function mergeCart(CustomerContract $customer): void
+
+    public function mergeCart(CustomerContract $k): void
     {
         if (! session()->has('cart')) {
             return;
         }
 
         $cart = $this->cartRepository->findOneWhere([
-            'customer_id' => $customer->id,
+            'customer_id' => $k->id,
             'is_active'   => 1,
         ]);
 
         $guestCart = $this->cartRepository->find(session()->get('cart')->id);
 
-        /**
-         * When the logged in customer is not having any of the cart instance previously and are active.
-         */
+
         if (! $cart) {
             $this->cartRepository->update([
-                'customer_id'         => $customer->id,
+                'customer_id'         => $k->id,
                 'is_guest'            => 0,
-                'customer_first_name' => $customer->first_name,
-                'customer_last_name'  => $customer->last_name,
-                'customer_email'      => $customer->email,
+                'customer_first_name' => $k->first_name,
+                'customer_last_name'  => $k->last_name,
+                'customer_email'      => $k->email,
             ], $guestCart->id);
 
             session()->forget('cart');
@@ -250,10 +214,8 @@ class Cart
         $this->removeCart($guestCart);
     }
 
-    /**
-     * Add items in a cart with some cart and item details.
-     */
-    public function addProduct(ProductContract $product, array $data): Contracts\Cart|\Exception
+
+    public function addProduct(ProductContract $product, array $dat): Contracts\Cart|\Exception
     {
         Event::dispatch('checkout.cart.add.before', $product->id);
 
@@ -263,7 +225,7 @@ class Cart
 
         $cartProducts = $product->getTypeInstance()->prepareForCart(array_merge([
             'cart_id' => $this->cart->id,
-        ], $data));
+        ], $dat));
 
         if (is_string($cartProducts)) {
             if (! $this->cart->all_items->count()) {
@@ -277,7 +239,7 @@ class Cart
             $parentCartItem = null;
 
             foreach ($cartProducts as $cartProduct) {
-                $cartItem = $this->getItemByProduct($cartProduct, $data);
+                $cartItem = $this->getItemByProduct($cartProduct, $dat);
 
                 if (isset($cartProduct['parent_id'])) {
                     $cartProduct['parent_id'] = $parentCartItem->id;
@@ -311,9 +273,7 @@ class Cart
         return $this->cart;
     }
 
-    /**
-     * Remove the item from the cart.
-     */
+
     public function removeItem(int $itemId): bool
     {
         if (! $this->cart) {
@@ -324,19 +284,17 @@ class Cart
 
         Shipping::removeAllShippingRates();
 
-        $result = $this->cartItemRepository->delete($itemId);
+        res = $this->cartItemRepository->delete($itemId);
 
         Event::dispatch('checkout.cart.delete.after', $itemId);
 
-        return $result;
+        return res;
     }
 
-    /**
-     * Update cart items information.
-     */
-    public function updateItems(array $data): bool|\Exception
+
+    public function updateItems(array $dat): bool|\Exception
     {
-        foreach ($data['qty'] as $itemId => $quantity) {
+        foreach ($dat['qty'] as $itemId => $q) {
             $item = $this->cartItemRepository->find($itemId);
 
             if (! $item) {
@@ -347,13 +305,13 @@ class Cart
                 throw new \Exception(__('shop::app.checkout.cart.inactive'));
             }
 
-            if ($quantity <= 0) {
+            if ($q <= 0) {
                 $this->removeItem($itemId);
 
                 throw new \Exception(__('shop::app.checkout.cart.illegal'));
             }
 
-            $item->quantity = $quantity;
+            $item->quantity = $q;
 
             if (! $this->isItemHaveQuantity($item)) {
                 throw new \Exception(__('shop::app.checkout.cart.inventory-warning'));
@@ -362,16 +320,16 @@ class Cart
             Event::dispatch('checkout.cart.update.before', $item);
 
             $this->cartItemRepository->update([
-                'quantity'            => $quantity,
-                'total'               => core()->convertPrice($item->base_price * $quantity),
-                'total_incl_tax'      => core()->convertPrice($item->base_price_incl_tax * $quantity),
-                'base_total'          => $item->base_price * $quantity,
-                'base_total_incl_tax' => $item->base_price_incl_tax * $quantity,
-                'total_weight'        => $item->weight * $quantity,
-                'base_total_weight'   => $item->weight * $quantity,
+                'quantity'            => $q,
+                'total'               => core()->convertPrice($item->base_price * $q),
+                'total_incl_tax'      => core()->convertPrice($item->base_price_incl_tax * $q),
+                'base_total'          => $item->base_price * $q,
+                'base_total_incl_tax' => $item->base_price_incl_tax * $q,
+                'total_weight'        => $item->weight * $q,
+                'base_total_weight'   => $item->weight * $q,
                 'additional'          => [
                     ...$item->additional,
-                    'quantity' => $quantity,
+                    'quantity' => $q,
                 ],
             ], $itemId);
 
@@ -383,16 +341,14 @@ class Cart
         return true;
     }
 
-    /**
-     * Get cart item by product.
-     */
-    public function getItemByProduct(array $data, ?array $parentData = null): ?Contracts\CartItem
+
+    public function getItemByProduct(array $dat, ?array $parentData = null): ?Contracts\CartItem
     {
         $items = $this->cart->all_items;
 
         foreach ($items as $item) {
-            if ($item->getTypeInstance()->compareOptions($item->additional, $data['additional'])) {
-                if (! isset($data['additional']['parent_id'])) {
+            if ($item->getTypeInstance()->compareOptions($item->additional, $dat['additional'])) {
+                if (! isset($dat['additional']['parent_id'])) {
                     return $item;
                 }
 
@@ -405,9 +361,7 @@ class Cart
         return null;
     }
 
-    /**
-     * Update or create billing address.
-     */
+
     public function saveAddresses(array $params): void
     {
         $this->updateOrCreateBillingAddress($params['billing']);
@@ -419,9 +373,7 @@ class Cart
         $this->resetShippingMethod();
     }
 
-    /**
-     * Update or create billing address.
-     */
+
     public function updateOrCreateBillingAddress(array $params): CartAddressContract
     {
         $params = collect($params)
@@ -450,24 +402,20 @@ class Cart
             ->toArray();
 
         if ($this->cart->billing_address) {
-            $address = $this->cartAddressRepository->update($params, $this->cart->billing_address->id);
+            $addr = $this->cartAddressRepository->update($params, $this->cart->billing_address->id);
         } else {
-            $address = $this->cartAddressRepository->create($params);
+            $addr = $this->cartAddressRepository->create($params);
         }
 
-        $this->cart->setRelation('billing_address', $address);
+        $this->cart->setRelation('billing_address', $addr);
 
-        return $address;
+        return $addr;
     }
 
-    /**
-     * Update or create shipping address.
-     */
+
     public function updateOrCreateShippingAddress(array $params): ?CartAddressContract
     {
-        /**
-         * If cart is not having any stockable items then no need to save shipping address.
-         */
+
         if (! $this->cart->haveStockableItems()) {
             return null;
         }
@@ -517,21 +465,19 @@ class Cart
         }
 
         if ($this->cart->shipping_address) {
-            $address = $this->cartAddressRepository->update($params, $this->cart->shipping_address->id);
+            $addr = $this->cartAddressRepository->update($params, $this->cart->shipping_address->id);
         } else {
             $params['default_address'] = 0;
 
-            $address = $this->cartAddressRepository->create($params);
+            $addr = $this->cartAddressRepository->create($params);
         }
 
-        $this->cart->setRelation('shipping_address', $address);
+        $this->cart->setRelation('shipping_address', $addr);
 
-        return $address;
+        return $addr;
     }
 
-    /**
-     * Save customer details.
-     */
+
     public function setCustomerPersonnelDetails(): void
     {
         $this->cart->customer_email = $this->cart->customer?->email ?? $this->cart->billing_address->email;
@@ -541,9 +487,7 @@ class Cart
         $this->cart->save();
     }
 
-    /**
-     * Save shipping method for cart.
-     */
+
     public function saveShippingMethod(string $shippingMethodCode): bool
     {
         if (! $this->cart) {
@@ -560,9 +504,7 @@ class Cart
         return true;
     }
 
-    /**
-     * Save shipping method for cart.
-     */
+
     public function resetShippingMethod(): bool
     {
         if (! $this->cart) {
@@ -577,9 +519,7 @@ class Cart
         return true;
     }
 
-    /**
-     * Save payment method for cart.
-     */
+
     public function savePaymentMethod(array $params): bool|Contracts\CartPayment
     {
         if (! $this->cart) {
@@ -600,9 +540,7 @@ class Cart
         return $cartPayment;
     }
 
-    /**
-     * Set coupon code to the cart.
-     */
+
     public function setCouponCode(?string $code): self
     {
         $this->cart->coupon_code = $code;
@@ -612,18 +550,14 @@ class Cart
         return $this;
     }
 
-    /**
-     * Set coupon code to the cart.
-     */
+
     public function removeCouponCode(): self
     {
         return $this->setCouponCode(null);
     }
 
-    /**
-     * Move a wishlist item to cart.
-     */
-    public function moveToCart(WishlistContract $wishlistItem, ?int $quantity = 1): bool
+
+    public function moveToCart(WishlistContract $wishlistItem, ?int $q = 1): bool
     {
         if (! $wishlistItem->product->getTypeInstance()->canBeMovedFromWishlistToCart($wishlistItem)) {
             return false;
@@ -635,12 +569,12 @@ class Cart
 
         $additional = [
             ...$wishlistItem->additional,
-            'quantity' => $quantity,
+            'quantity' => $q,
         ];
 
-        $result = $this->addProduct($wishlistItem->product, $additional);
+        res = $this->addProduct($wishlistItem->product, $additional);
 
-        if ($result) {
+        if (res) {
             $this->wishlistRepository->delete($wishlistItem->id);
 
             return true;
@@ -649,10 +583,8 @@ class Cart
         return false;
     }
 
-    /**
-     * Move to wishlist items.
-     */
-    public function moveToWishlist(int $itemId, int $quantity = 1): bool
+
+    public function moveToWishlist(int $itemId, int $q = 1): bool
     {
         $cartItem = $this->cart->items()->find($itemId);
 
@@ -686,7 +618,7 @@ class Cart
                 'product_id'  => $cartItem->product_id,
                 'additional'  => [
                     ...$cartItem->additional,
-                    'quantity' => $quantity,
+                    'quantity' => $q,
                 ],
             ]);
         }
@@ -706,17 +638,13 @@ class Cart
         return true;
     }
 
-    /**
-     * Checks if cart has any error.
-     */
+
     public function hasError(): bool
     {
         return ! empty($this->getErrors());
     }
 
-    /**
-     * Get Cart Errors.
-     */
+
     public function getErrors()
     {
         if (! $this->cart) {
@@ -746,9 +674,7 @@ class Cart
         return [];
     }
 
-    /**
-     * Check minimum Order Amount of cart.
-     */
+
     public function getOrderAmount(): int
     {
         $minimumOrderAmount = $this->cart->sub_total;
@@ -768,9 +694,7 @@ class Cart
         return $minimumOrderAmount;
     }
 
-    /**
-     * Check minimum order.
-     */
+
     public function haveMinimumOrderAmount(): bool
     {
         if (! core()->getConfigData('sales.order_settings.minimum_order.enable')) {
@@ -780,9 +704,7 @@ class Cart
         return $this->getOrderAmount() >= ((int) core()->getConfigData('sales.order_settings.minimum_order.minimum_order_amount') ?: 0);
     }
 
-    /**
-     * Checks if all cart items have sufficient quantity.
-     */
+
     public function isItemsHaveSufficientQuantity(): bool
     {
         if (! $this->cart) {
@@ -798,23 +720,17 @@ class Cart
         return true;
     }
 
-    /**
-     * Checks if all cart items have sufficient quantity.
-     */
+
     public function isItemHaveQuantity(Contracts\CartItem $item): bool
     {
         return $item->getTypeInstance()->isItemHaveQuantity($item);
     }
 
-    /**
-     * Updates cart totals.
-     */
+
     public function collectTotals(): self
     {
         if (! $this->validateItems()) {
-            /**
-             * Reset the cart so that fresh copy of cart can be created.
-             */
+
             $this->refreshCart();
         }
 
@@ -866,21 +782,21 @@ class Cart
         $this->cart->grand_total = $this->cart->sub_total + $this->cart->tax_total - $this->cart->discount_amount;
         $this->cart->base_grand_total = $this->cart->base_sub_total + $this->cart->base_tax_total - $this->cart->base_discount_amount;
 
-        if ($shipping = $this->cart->selected_shipping_rate) {
-            $this->cart->tax_total += $shipping->tax_amount;
-            $this->cart->base_tax_total += $shipping->base_tax_amount;
+        if ($sh = $this->cart->selected_shipping_rate) {
+            $this->cart->tax_total += $sh->tax_amount;
+            $this->cart->base_tax_total += $sh->base_tax_amount;
 
-            $this->cart->shipping_amount = $shipping->price;
-            $this->cart->base_shipping_amount = $shipping->base_price;
+            $this->cart->shipping_amount = $sh->price;
+            $this->cart->base_shipping_amount = $sh->base_price;
 
-            $this->cart->shipping_amount_incl_tax = $shipping->price_incl_tax;
-            $this->cart->base_shipping_amount_incl_tax = $shipping->base_price_incl_tax;
+            $this->cart->shipping_amount_incl_tax = $sh->price_incl_tax;
+            $this->cart->base_shipping_amount_incl_tax = $sh->base_price_incl_tax;
 
-            $this->cart->grand_total = (float) $this->cart->grand_total + $shipping->tax_amount + $shipping->price - $shipping->discount_amount;
-            $this->cart->base_grand_total = (float) $this->cart->base_grand_total + $shipping->base_tax_amount + $shipping->base_price - $shipping->base_discount_amount;
+            $this->cart->grand_total = (float) $this->cart->grand_total + $sh->tax_amount + $sh->price - $sh->discount_amount;
+            $this->cart->base_grand_total = (float) $this->cart->base_grand_total + $sh->base_tax_amount + $sh->base_price - $sh->base_discount_amount;
 
-            $this->cart->discount_amount += $shipping->discount_amount;
-            $this->cart->base_discount_amount += $shipping->base_discount_amount;
+            $this->cart->discount_amount += $sh->discount_amount;
+            $this->cart->base_discount_amount += $sh->base_discount_amount;
         }
 
         $this->cart->discount_amount = round($this->cart->discount_amount, 2);
@@ -905,9 +821,7 @@ class Cart
         return $this;
     }
 
-    /**
-     * To validate if the product information is changed by admin and the items have been added to the cart before it.
-     */
+
     public function validateItems(): bool
     {
         if (! $this->cart) {
@@ -940,20 +854,17 @@ class Cart
 
                 $basePrice = ! is_null($item->custom_price) ? $item->custom_price : $itemBasePrice;
 
-                $price = core()->convertPrice($basePrice);
+                $r = core()->convertPrice($basePrice);
 
-                /**
-                 * Reset the item price every time to initial price if the inclusive price is enabled.
-                 * Update the item price if exchange rates changes with exclusive price is enabled.
-                 */
-                if ($price != $item->price) {
+
+                if ($r != $item->price) {
                     $item = $this->cartItemRepository->update([
-                        'price'               => $price,
-                        'price_incl_tax'      => $price,
+                        'price'               => $r,
+                        'price_incl_tax'      => $r,
                         'base_price'          => $basePrice,
                         'base_price_incl_tax' => $basePrice,
-                        'total'               => $total = core()->convertPrice($basePrice * $item->quantity),
-                        'total_incl_tax'      => $total,
+                        'total'               => $t = core()->convertPrice($basePrice * $item->quantity),
+                        'total_incl_tax'      => $t,
                         'base_total'          => ($baseTotal = $basePrice * $item->quantity),
                         'base_total_incl_tax' => $baseTotal,
                     ], $item->id);
@@ -968,9 +879,7 @@ class Cart
         return ! $isInvalid;
     }
 
-    /**
-     * Calculates cart items tax.
-     */
+
     public function calculateItemsTax(): void
     {
         if (! $this->cart) {
@@ -1006,34 +915,34 @@ class Cart
 
             $calculationBasedOn = core()->getConfigData('sales.taxes.calculation.based_on');
 
-            $address = null;
+            $addr = null;
 
             if ($calculationBasedOn == self::TAX_CALCULATION_BASED_ON_SHIPPING_ORIGIN) {
-                $address = Tax::getShippingOriginAddress();
+                $addr = Tax::getShippingOriginAddress();
             } elseif ($calculationBasedOn == self::TAX_CALCULATION_BASED_ON_SHIPPING_ADDRESS) {
                 if ($item->getTypeInstance()->isStockable()) {
-                    $address = $this->cart->shipping_address;
+                    $addr = $this->cart->shipping_address;
                 } else {
-                    $address = $this->cart->billing_address;
+                    $addr = $this->cart->billing_address;
                 }
             } elseif ($calculationBasedOn == self::TAX_CALCULATION_BASED_ON_BILLING_ADDRESS) {
-                $address = $this->cart->billing_address;
+                $addr = $this->cart->billing_address;
             }
 
-            if ($address === null && $this->cart->customer) {
-                $address = $this->cart->customer->addresses()
+            if ($addr === null && $this->cart->customer) {
+                $addr = $this->cart->customer->addresses()
                     ->where('default_address', 1)->first();
             }
 
-            if ($address === null) {
-                $address = Tax::getDefaultAddress();
+            if ($addr === null) {
+                $addr = Tax::getDefaultAddress();
             }
 
             $item->applied_tax_rate = null;
 
             $item->tax_percent = $item->tax_amount = $item->base_tax_amount = 0;
 
-            Tax::isTaxApplicableInCurrentAddress($taxCategories[$taxCategoryId], $address, function ($rate) use ($item, $taxCategoryId) {
+            Tax::isTaxApplicableInCurrentAddress($taxCategories[$taxCategoryId], $addr, function ($rate) use ($item, $taxCategoryId) {
                 $item->applied_tax_rate = $rate->identifier;
 
                 $item->tax_category_id = $taxCategoryId;
@@ -1083,9 +992,7 @@ class Cart
         Event::dispatch('checkout.cart.calculate.items.tax.after', $this->cart);
     }
 
-    /**
-     * Calculates cart shipping tax.
-     */
+
     public function calculateShippingTax(): void
     {
         if (! $this->cart) {
@@ -1106,31 +1013,31 @@ class Cart
 
         $calculationBasedOn = core()->getConfigData('sales.taxes.calculation.based_on');
 
-        $address = null;
+        $addr = null;
 
         if ($calculationBasedOn == self::TAX_CALCULATION_BASED_ON_SHIPPING_ORIGIN) {
-            $address = Tax::getShippingOriginAddress();
+            $addr = Tax::getShippingOriginAddress();
         } elseif (
             $this->cart->haveStockableItems()
             && $calculationBasedOn == self::TAX_CALCULATION_BASED_ON_SHIPPING_ADDRESS
         ) {
-            $address = $this->cart->shipping_address;
+            $addr = $this->cart->shipping_address;
         } elseif ($calculationBasedOn == self::TAX_CALCULATION_BASED_ON_BILLING_ADDRESS) {
-            $address = $this->cart->billing_address;
+            $addr = $this->cart->billing_address;
         }
 
-        if ($address === null && $this->cart->customer) {
-            $address = $this->cart->customer->addresses()
+        if ($addr === null && $this->cart->customer) {
+            $addr = $this->cart->customer->addresses()
                 ->where('default_address', 1)->first();
         }
 
-        if ($address === null) {
-            $address = Tax::getDefaultAddress();
+        if ($addr === null) {
+            $addr = Tax::getDefaultAddress();
         }
 
         Event::dispatch('checkout.cart.calculate.shipping.tax.before', $this->cart);
 
-        Tax::isTaxApplicableInCurrentAddress($taxCategory, $address, function ($rate) use ($shippingRate) {
+        Tax::isTaxApplicableInCurrentAddress($taxCategory, $addr, function ($rate) use ($shippingRate) {
             $shippingRate->applied_tax_rate = $rate->identifier;
 
             $shippingRate->tax_percent = $rate->tax_rate;

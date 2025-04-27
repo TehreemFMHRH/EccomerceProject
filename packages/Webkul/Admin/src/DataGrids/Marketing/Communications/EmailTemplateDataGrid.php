@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class EmailTemplateDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('marketing_templates')
@@ -26,11 +22,7 @@ class EmailTemplateDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    /**
-     * Add columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -72,23 +64,19 @@ class EmailTemplateDataGrid extends DataGrid
                 ],
             ],
             'sortable'   => true,
-            'closure'    => function ($value) {
-                if ($value->status == 'active') {
+            'closure'    => function ($va) {
+                if ($va->status == 'active') {
                     return trans('admin::app.marketing.communications.templates.index.datagrid.active');
-                } elseif ($value->status == 'inactive') {
+                } elseif ($va->status == 'inactive') {
                     return trans('admin::app.marketing.communications.templates.index.datagrid.inactive');
-                } elseif ($value->status == 'draft') {
+                } elseif ($va->status == 'draft') {
                     return trans('admin::app.marketing.communications.templates.index.datagrid.draft');
                 }
             },
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.communications.email_templates.edit')) {

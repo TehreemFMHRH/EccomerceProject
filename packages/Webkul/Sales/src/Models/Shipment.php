@@ -22,50 +22,38 @@ class Shipment extends Model implements ShipmentContract
         'updated_at',
     ];
 
-    /**
-     * Get the order that belongs to the invoice.
-     */
+    
     public function order(): BelongsTo
     {
         return $this->belongsTo(OrderProxy::modelClass());
     }
 
-    /**
-     * Get the shipment items record associated with the shipment.
-     */
+    
     public function items(): HasMany
     {
         return $this->hasMany(ShipmentItemProxy::modelClass());
     }
 
-    /**
-     * Get the inventory source associated with the shipment.
-     */
+    
     public function inventory_source(): BelongsTo
     {
         return $this->belongsTo(InventorySource::class, 'inventory_source_id');
     }
 
-    /**
-     * Get the customer record associated with the shipment.
-     */
+    
     public function customer(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Get the address for the shipment.
-     */
+    
     public function address(): BelongsTo
     {
         return $this->belongsTo(OrderAddressProxy::modelClass(), 'order_address_id')
             ->where('address_type', OrderAddress::ADDRESS_TYPE_SHIPPING);
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return ShipmentFactory::new();

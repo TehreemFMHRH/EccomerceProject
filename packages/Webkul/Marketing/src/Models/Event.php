@@ -12,27 +12,17 @@ class Event extends Model implements EventContract
 {
     use HasFactory;
 
-    /**
-     * Define the models table name
-     *
-     * @var string
-     */
+    
     protected $table = 'marketing_events';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'name',
         'description',
         'date',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return EventFactory::new();

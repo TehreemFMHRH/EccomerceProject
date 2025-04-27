@@ -6,11 +6,7 @@ use Webkul\Core\Providers\CoreModuleServiceProvider;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
-    /**
-     * Models.
-     *
-     * @var array
-     */
+    
     protected $models = [
         \Webkul\Product\Models\Product::class,
         \Webkul\Product\Models\ProductAttributeValue::class,

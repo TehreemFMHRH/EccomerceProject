@@ -7,11 +7,7 @@ use Webkul\DataGrid\DataGrid;
 
 class SearchSynonymDataGrid extends DataGrid
 {
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
+    
     public function prepareQueryBuilder()
     {
         return DB::table('search_synonyms')
@@ -22,11 +18,7 @@ class SearchSynonymDataGrid extends DataGrid
             );
     }
 
-    /**
-     * Add Columns.
-     *
-     * @return void
-     */
+    
     public function prepareColumns()
     {
         $this->addColumn([
@@ -56,11 +48,7 @@ class SearchSynonymDataGrid extends DataGrid
         ]);
     }
 
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
+    
     public function prepareActions()
     {
         if (bouncer()->hasPermission('marketing.search_synonyms.edit')) {
@@ -89,11 +77,7 @@ class SearchSynonymDataGrid extends DataGrid
         }
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
+    
     public function prepareMassActions()
     {
         if (bouncer()->hasPermission('marketing.search_synonyms.delete')) {

@@ -71,7 +71,7 @@ it('should store newly created attribute', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    postJson(route('admin.catalog.attributes.store'), $data = [
+    postJson(route('admin.catalog.attributes.store'), $dat = [
         'admin_name'    => fake()->name(),
         'code'          => fake()->numerify('code########'),
         'type'          => 'text',
@@ -82,7 +82,7 @@ it('should store newly created attribute', function () {
 
     $this->assertModelWise([
         Attribute::class => [
-            $data,
+            $dat,
         ],
     ]);
 });
@@ -118,7 +118,7 @@ it('should update an attribute', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.attributes.update', $attribute->id), $data = [
+    putJson(route('admin.catalog.attributes.update', $attribute->id), $dat = [
         'admin_name'    => fake()->name(),
         'code'          => $attribute->code,
         'type'          => $attribute->type,
@@ -129,7 +129,7 @@ it('should update an attribute', function () {
 
     $this->assertModelWise([
         Attribute::class => [
-            $data,
+            $dat,
         ],
     ]);
 });

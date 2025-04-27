@@ -9,32 +9,16 @@ use Webkul\Theme\Exceptions\ViterNotFound;
 
 class Themes
 {
-    /**
-     * Contains current activated theme code.
-     *
-     * @var string
-     */
+    
     protected $activeTheme = null;
 
-    /**
-     * Contains all themes.
-     *
-     * @var array
-     */
+    
     protected $themes = [];
 
-    /**
-     * Contains laravel default view paths.
-     *
-     * @var array
-     */
+    
     protected $laravelViewsPath;
 
-    /**
-     * Create a new themes instance.
-     *
-     * @return void
-     */
+    
     public function __construct()
     {
         $this->laravelViewsPath = Config::get('view.paths');
@@ -42,49 +26,37 @@ class Themes
         $this->loadThemes();
     }
 
-    /**
-     * Return list of all registered themes.
-     *
-     * @return array
-     */
+    
     public function all()
     {
         return $this->themes;
     }
 
-    /**
-     * Return list of registered themes.
-     *
-     * @return array
-     */
+    
     public function getChannelThemes()
     {
         $themes = config('themes.shop', []);
 
         $channelThemes = [];
 
-        foreach ($themes as $code => $data) {
+        foreach ($themes as $code => $dat) {
             $channelThemes[] = new Theme(
                 $code,
-                $data['name'] ?? '',
-                $data['assets_path'] ?? '',
-                $data['views_path'] ?? '',
-                isset($data['vite']) ? $data['vite'] : [],
+                $dat['name'] ?? '',
+                $dat['assets_path'] ?? '',
+                $dat['views_path'] ?? '',
+                isset($dat['vite']) ? $dat['vite'] : [],
             );
 
-            if (! empty($data['parent'])) {
-                $parentThemes[$code] = $data['parent'];
+            if (! empty($dat['parent'])) {
+                $parentThemes[$code] = $dat['parent'];
             }
         }
 
         return $channelThemes;
     }
 
-    /**
-     * Check if specified exists.
-     *
-     * @return bool
-     */
+    
     public function exists(string $themeName)
     {
         foreach ($this->themes as $theme) {
@@ -96,11 +68,7 @@ class Themes
         return false;
     }
 
-    /**
-     * Prepare all themes.
-     *
-     * @return void
-     */
+    
     public function loadThemes()
     {
         $parentThemes = [];
@@ -111,17 +79,17 @@ class Themes
             $themes = config('themes.shop', []);
         }
 
-        foreach ($themes as $code => $data) {
+        foreach ($themes as $code => $dat) {
             $this->themes[] = new Theme(
                 $code,
-                $data['name'] ?? '',
-                $data['assets_path'] ?? '',
-                $data['views_path'] ?? '',
-                $data['vite'] ?? [],
+                $dat['name'] ?? '',
+                $dat['assets_path'] ?? '',
+                $dat['views_path'] ?? '',
+                $dat['vite'] ?? [],
             );
 
-            if (! empty($data['parent'])) {
-                $parentThemes[$code] = $data['parent'];
+            if (! empty($dat['parent'])) {
+                $parentThemes[$code] = $dat['parent'];
             }
         }
 
@@ -138,11 +106,7 @@ class Themes
         }
     }
 
-    /**
-     * Enable theme.
-     *
-     * @return \Webkul\Theme\Theme
-     */
+    
     public function set(string $themeName)
     {
         if ($this->exists($themeName)) {
@@ -170,31 +134,19 @@ class Themes
         return $theme;
     }
 
-    /**
-     * Get current theme.
-     *
-     * @return \Webkul\Theme\Theme
-     */
+    
     public function current()
     {
         return $this->activeTheme ?? null;
     }
 
-    /**
-     * Get current theme's name.
-     *
-     * @return string
-     */
+    
     public function getName()
     {
         return $this->current()?->name ?? '';
     }
 
-    /**
-     * Find a theme by it's name.
-     *
-     * @return \Webkul\Theme\Theme
-     */
+    
     public function find(string $themeName)
     {
         foreach ($this->themes as $theme) {
@@ -206,37 +158,23 @@ class Themes
         throw new Exceptions\ThemeNotFound($themeName);
     }
 
-    /**
-     * Original view paths defined in `config.view.php`.
-     *
-     * @return array
-     */
+    
     public function getLaravelViewPaths()
     {
         return $this->laravelViewsPath;
     }
 
-    /**
-     * Return the asset URL of the current theme if a theme is found; otherwise, check from the namespace.
-     *
-     * @return string
-     */
+    
     public function url(string $filename, ?string $namespace = null)
     {
         $url = trim($filename, '/');
 
-        /**
-         * If the namespace is null, it means the theming system is activated. We use the request URI to
-         * detect the theme and provide Vite assets based on the current theme.
-         */
+        
         if (empty($namespace)) {
             return $this->current()->url($url);
         }
 
-        /**
-         * If a namespace is provided, it means the developer knows what they are doing and must create the
-         * registry in the provided configuration. We will analyze based on that.
-         */
+        
         $viters = config('bagisto-vite.viters');
 
         if (empty($viters[$namespace])) {
@@ -250,26 +188,15 @@ class Themes
             ->asset($viteUrl);
     }
 
-    /**
-     * Set bagisto vite in current theme.
-     *
-     * @param  mixed  $entryPoints
-     * @return mixed
-     */
+    
     public function setBagistoVite($entryPoints, ?string $namespace = null)
     {
-        /**
-         * If the namespace is null, it means the theming system is activated. We use the request URI to
-         * detect the theme and provide Vite assets based on the current theme.
-         */
+        
         if (empty($namespace)) {
             return $this->current()->setBagistoVite($entryPoints);
         }
 
-        /**
-         * If a namespace is provided, it means the developer knows what they are doing and must create the
-         * registry in the provided configuration. We will analyze based on that.
-         */
+        
         $viters = config('bagisto-vite.viters');
 
         if (empty($viters[$namespace])) {

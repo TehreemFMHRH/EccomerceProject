@@ -10,14 +10,10 @@ use Webkul\Sales\Contracts\Shipment;
 
 class InventorySourceNotification extends Mailable
 {
-    /**
-     * Create a new message instance.
-     */
+    
     public function __construct(public Shipment $shipment) {}
 
-    /**
-     * Get the message envelope.
-     */
+    
     public function envelope(): Envelope
     {
         $inventory = $this->shipment->inventory_source;
@@ -33,9 +29,7 @@ class InventorySourceNotification extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+    
     public function content(): Content
     {
         return new Content(

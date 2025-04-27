@@ -9,9 +9,7 @@ use Webkul\DataGrid\Exceptions\InvalidColumnExpressionException;
 
 class Boolean extends Column
 {
-    /**
-     * Set filterable type.
-     */
+    
     public function setFilterableType(?string $filterableType): void
     {
         if (
@@ -28,9 +26,7 @@ class Boolean extends Column
         parent::setFilterableType($filterableType);
     }
 
-    /**
-     * Set filterable options.
-     */
+    
     public function setFilterableOptions(mixed $filterableOptions): void
     {
         if (empty($filterableOptions)) {
@@ -49,17 +45,15 @@ class Boolean extends Column
         parent::setFilterableOptions($filterableOptions);
     }
 
-    /**
-     * Process filter.
-     */
+    
     public function processFilter($queryBuilder, $requestedValues): mixed
     {
         return $queryBuilder->where(function ($scopeQueryBuilder) use ($requestedValues) {
             if (is_string($requestedValues)) {
                 $scopeQueryBuilder->orWhere($this->columnName, $requestedValues);
             } elseif (is_array($requestedValues)) {
-                foreach ($requestedValues as $value) {
-                    $scopeQueryBuilder->orWhere($this->columnName, $value);
+                foreach ($requestedValues as $va) {
+                    $scopeQueryBuilder->orWhere($this->columnName, $va);
                 }
             } else {
                 throw new InvalidColumnExpressionException('Only string and array are allowed for boolean column type.');

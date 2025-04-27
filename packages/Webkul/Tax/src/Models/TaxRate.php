@@ -13,11 +13,7 @@ class TaxRate extends Model implements TaxRateContract
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    
     protected $table = 'tax_rates';
 
     protected $fillable = [
@@ -36,9 +32,7 @@ class TaxRate extends Model implements TaxRateContract
         return $this->belongsToMany(TaxCategoryProxy::modelClass(), 'tax_categories_tax_rates', 'tax_rate_id', 'id');
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return TaxRateFactory::new();

@@ -12,14 +12,10 @@ use Webkul\Core\Repositories\CoreConfigRepository;
 
 class ConfigurationController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
+    
     public function __construct(protected CoreConfigRepository $coreConfigRepository) {}
 
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index(): View
     {
         if (
@@ -32,9 +28,7 @@ class ConfigurationController extends Controller
         return view('admin::configuration.index');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function search(): JsonResponse
     {
         $results = $this->coreConfigRepository->search(
@@ -47,17 +41,15 @@ class ConfigurationController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(ConfigurationForm $request): RedirectResponse
     {
-        $data = $request->all();
+        $dat = $request->all();
 
-        if (isset($data['sales']['carriers'])) {
+        if (isset($dat['sales']['carriers'])) {
             $atLeastOneCarrierEnabled = false;
 
-            foreach ($data['sales']['carriers'] as $carrier) {
+            foreach ($dat['sales']['carriers'] as $carrier) {
                 if ($carrier['active']) {
                     $atLeastOneCarrierEnabled = true;
 
@@ -70,10 +62,10 @@ class ConfigurationController extends Controller
 
                 return redirect()->back();
             }
-        } elseif (isset($data['sales']['payment_methods'])) {
+        } elseif (isset($dat['sales']['payment_methods'])) {
             $atLeastOnePaymentMethodEnabled = false;
 
-            foreach ($data['sales']['payment_methods'] as $paymentMethod) {
+            foreach ($dat['sales']['payment_methods'] as $paymentMethod) {
                 if ($paymentMethod['active']) {
                     $atLeastOnePaymentMethodEnabled = true;
 
@@ -95,9 +87,7 @@ class ConfigurationController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Download the file for the specified resource.
-     */
+    
     public function download(): StreamedResponse
     {
         $path = request()->route()->parameters()['path'];

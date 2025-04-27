@@ -11,29 +11,17 @@ use Webkul\CartRule\Repositories\CartRuleCouponRepository;
 
 class CartRuleCouponController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct(protected CartRuleCouponRepository $cartRuleCouponRepository) {}
 
-    /**
-     * Index.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(int $id)
+    
+    public function index(int $i)
     {
         return datagrid(CartRuleCouponDataGrid::class)->process();
     }
 
-    /**
-     * Generate coupon code for cart rule.
-     *
-     * @param  int  $id
-     */
-    public function store($id): JsonResponse
+    
+    public function store($i): JsonResponse
     {
         $this->validate(request(), [
             'coupon_qty'  => 'required|integer|min:1',
@@ -41,7 +29,7 @@ class CartRuleCouponController extends Controller
             'code_format' => 'required',
         ]);
 
-        if (! $id) {
+        if (! $i) {
             return new JsonResponse([
                 'message' => trans('admin::app.promotions.cart-rules-coupons.cart-rule-not-defined-error'),
             ], 400);
@@ -53,7 +41,7 @@ class CartRuleCouponController extends Controller
             'code_format',
             'code_prefix',
             'code_suffix'
-        ), $id);
+        ), $i);
 
         return new JsonResponse([
             'message' => trans(
@@ -62,13 +50,11 @@ class CartRuleCouponController extends Controller
         ]);
     }
 
-    /**
-     * Delete Generated coupon code
-     */
-    public function destroy(int $id): JsonResponse
+    
+    public function destroy(int $i): JsonResponse
     {
         try {
-            $this->cartRuleCouponRepository->delete($id);
+            $this->cartRuleCouponRepository->delete($i);
 
             return new JsonResponse([
                 'message' => trans('admin::app.marketing.promotions.cart-rules-coupons.delete-success'),
@@ -80,9 +66,7 @@ class CartRuleCouponController extends Controller
         }
     }
 
-    /**
-     * Mass delete the coupons.
-     */
+    
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $couponIds = $massDestroyRequest->input('indices');

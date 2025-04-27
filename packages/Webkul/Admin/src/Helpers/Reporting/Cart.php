@@ -9,11 +9,7 @@ use Webkul\Checkout\Repositories\CartRepository;
 
 class Cart extends AbstractReporting
 {
-    /**
-     * Create a helper instance.
-     *
-     * @return void
-     */
+    
     public function __construct(
         protected CartRepository $cartRepository,
         protected CartItemRepository $cartItemRepository
@@ -21,11 +17,7 @@ class Cart extends AbstractReporting
         parent::__construct();
     }
 
-    /**
-     * Retrieves total carts and their progress.
-     *
-     * @return array
-     */
+    
     public function getTotalCartsProgress()
     {
         return [
@@ -35,9 +27,7 @@ class Cart extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves today carts and their progress.
-     */
+    
     public function getTodayCartsProgress(): array
     {
         return [
@@ -47,11 +37,7 @@ class Cart extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total abandoned sales and their progress.
-     *
-     * @return array
-     */
+    
     public function getTotalAbandonedSalesProgress()
     {
         return [
@@ -62,11 +48,7 @@ class Cart extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total abandoned carts and their progress.
-     *
-     * @return array
-     */
+    
     public function getTotalAbandonedCartsProgress()
     {
         return [
@@ -76,11 +58,7 @@ class Cart extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total abandoned carts rate and their progress.
-     *
-     * @return array
-     */
+    
     public function getTotalAbandonedCartRateProgress()
     {
         return [
@@ -90,12 +68,7 @@ class Cart extends AbstractReporting
         ];
     }
 
-    /**
-     * Retrieves total carts
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalCarts($startDate, $endDate): int
     {
         return $this->cartRepository
@@ -105,12 +78,7 @@ class Cart extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Retrieves total abandoned carts
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalAbandonedCarts($startDate, $endDate): int
     {
         return $this->cartRepository
@@ -121,12 +89,7 @@ class Cart extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Retrieves total abandoned cart rate
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalAbandonedCartRate($startDate, $endDate): float
     {
         $totalCarts = $this->getTotalCarts($startDate, $endDate);
@@ -138,12 +101,7 @@ class Cart extends AbstractReporting
         return ($this->getTotalAbandonedCarts($startDate, $endDate) * 100) / $totalCarts;
     }
 
-    /**
-     * Retrieves total abandoned sales
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     */
+    
     public function getTotalAbandonedSales($startDate, $endDate): int
     {
         return $this->cartRepository
@@ -154,11 +112,7 @@ class Cart extends AbstractReporting
             ->sum('base_grand_total');
     }
 
-    /**
-     * Retrieves abandoned cart products
-     *
-     * @param  int  $limit
-     */
+    
     public function getAbandonedCartProducts($limit = null): Collection
     {
         return $this->cartItemRepository
@@ -175,9 +129,7 @@ class Cart extends AbstractReporting
             ->get();
     }
 
-    /**
-     * Retrieves total abandoned cart products
-     */
+    
     public function getTotalAbandonedCartProducts(): int
     {
         return $this->cartItemRepository
@@ -190,13 +142,7 @@ class Cart extends AbstractReporting
             ->count();
     }
 
-    /**
-     * Retrieves total unique cart users
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \Carbon\Carbon  $endDate
-     * @return array
-     */
+    
     public function getTotalUniqueCartsUsers($startDate, $endDate): int
     {
         return $this->cartRepository

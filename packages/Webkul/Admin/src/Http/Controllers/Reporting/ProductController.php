@@ -4,11 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Reporting;
 
 class ProductController extends Controller
 {
-    /**
-     * Request param functions.
-     *
-     * @var array
-     */
+    
     protected $typeFunctions = [
         'total-sold-quantities'            => 'getTotalSoldQuantitiesStats',
         'total-products-added-to-wishlist' => 'getTotalProductsAddedToWishlistStats',
@@ -20,11 +16,7 @@ class ProductController extends Controller
         'top-search-terms'                 => 'getTopSearchTerms',
     ];
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function index()
     {
         return view('admin::reporting.products.index')->with([
@@ -33,11 +25,7 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    
     public function view()
     {
         return view('admin::reporting.view')->with([

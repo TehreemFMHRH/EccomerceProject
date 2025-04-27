@@ -11,13 +11,8 @@ use Webkul\Shop\Mail\Customer\UpdatePasswordNotification;
 
 class Customer extends Base
 {
-    /**
-     * After customer is created
-     *
-     * @param  \Webkul\Customer\Contracts\Customer  $customer
-     * @return void
-     */
-    public function afterCreated($customer)
+    
+    public function afterCreated($k)
     {
         if (core()->getConfigData('emails.general.notifications.emails.general.notifications.verification')) {
             try {
@@ -25,7 +20,7 @@ class Customer extends Base
                     return;
                 }
 
-                Mail::queue(new EmailVerificationNotification($customer));
+                Mail::queue(new EmailVerificationNotification($k));
             } catch (\Exception $e) {
                 \Log::info('EmailVerificationNotification Error');
 
@@ -40,48 +35,33 @@ class Customer extends Base
                 return;
             }
 
-            Mail::queue(new RegistrationNotification($customer));
+            Mail::queue(new RegistrationNotification($k));
         } catch (\Exception $e) {
             report($e);
         }
     }
 
-    /**
-     * Send mail on updating password.
-     *
-     * @param  \Webkul\Customer\Models\Customer  $customer
-     * @return void
-     */
-    public function afterPasswordUpdated($customer)
+    
+    public function afterPasswordUpdated($k)
     {
         try {
-            Mail::queue(new UpdatePasswordNotification($customer));
+            Mail::queue(new UpdatePasswordNotification($k));
         } catch (\Exception $e) {
             report($e);
         }
     }
 
-    /**
-     * Send mail on subscribe
-     *
-     * @param  \Webkul\Customer\Models\Customer  $customer
-     * @return void
-     */
-    public function afterSubscribed($customer)
+    
+    public function afterSubscribed($k)
     {
         try {
-            Mail::queue(new SubscriptionNotification($customer));
+            Mail::queue(new SubscriptionNotification($k));
         } catch (\Exception $e) {
             report($e);
         }
     }
 
-    /**
-     * Send mail on creating Note
-     *
-     * @param  \Webkul\Customer\Models\Customer  $customer
-     * @return void
-     */
+    
     public function afterNoteCreated($note)
     {
         if (! $note->customer_notified) {

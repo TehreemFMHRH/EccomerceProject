@@ -14,45 +14,25 @@ class DeleteCatalogRuleIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Default batch size
-     */
+    
     protected const BATCH_SIZE = 100;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  array  $productIds
-     * @return void
-     */
+    
     public function __construct(protected $productIds)
     {
         $this->productIds = $productIds;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+    
     public function handle()
     {
-        /**
-         * Reindex price index for the products associated with the catalog rule.
-         */
+        
         while (true) {
             $paginator = app(Product::class)
                 ->whereIn('id', $this->productIds)
                 ->cursorPaginate(self::BATCH_SIZE);
 
-            /**
-             * TODO:
-             *
-             * If the 'end_other_rules' flag is set for this catalog rule,
-             * it indicates that this rule might have preempted the
-             * application of other rules on the products. In such a scenario,
-             * it's necessary to reindex the remaining rules for these products.
-             */
+            
             app(PriceIndexer::class)->reindexBatch($paginator->items());
 
             if (! $cursor = $paginator->nextCursor()) {

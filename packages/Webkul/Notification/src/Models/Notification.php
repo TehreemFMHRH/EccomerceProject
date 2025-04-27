@@ -14,9 +14,7 @@ class Notification extends Model implements NotificationContract
         'order_id',
     ];
 
-    /**
-     * Get Order Details.
-     */
+    
     public function order()
     {
         return $this->belongsTo(OrderProxy::modelClass());

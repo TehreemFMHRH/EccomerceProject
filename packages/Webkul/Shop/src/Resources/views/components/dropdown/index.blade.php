@@ -144,16 +144,12 @@
 
             methods: {
                 toggle() {
-                    /**
-                     * If still somehow width is zero then this will check for width one more time.
-                     */
+                    
                     if (this.toggleBlockWidth === 0) {
                         this.toggleBlockWidth = this.$refs.toggleBlock.clientWidth;
                     }
 
-                    /**
-                     * If still somehow height is zero then this will check for height one more time.
-                     */
+                    
                     if (this.toggleBlockHeight === 0) {
                         this.toggleBlockHeight = this.$refs.toggleBlock.clientHeight;
                     }

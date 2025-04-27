@@ -7,16 +7,10 @@ use Webkul\Attribute\Models\Attribute;
 
 class AttributeFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    
     protected $model = Attribute::class;
 
-    /**
-     * @var array
-     */
+    
     protected $states = [
         'validation_numeric',
         'validation_email',
@@ -28,9 +22,7 @@ class AttributeFactory extends Factory
         'configurable',
     ];
 
-    /**
-     * Define the model's default state.
-     */
+    
     public function definition(): array
     {
         $types = [

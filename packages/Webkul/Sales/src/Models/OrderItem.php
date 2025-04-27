@@ -17,11 +17,7 @@ class OrderItem extends Model implements OrderItemContract
 {
     use HasFactory;
 
-    /**
-     * Define the guarded property.
-     *
-     * @var array
-     */
+    
     protected $guarded = [
         'id',
         'child',
@@ -30,25 +26,15 @@ class OrderItem extends Model implements OrderItemContract
         'updated_at',
     ];
 
-    /**
-     * Casts the additional column to the model.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'additional' => 'array',
     ];
 
-    /**
-     * Define the type instance
-     *
-     * @var mixed
-     */
+    
     protected $typeInstance;
 
-    /**
-     * Retrieve type instance
-     */
+    
     public function getTypeInstance(): AbstractType
     {
         if ($this->typeInstance) {
@@ -69,9 +55,7 @@ class OrderItem extends Model implements OrderItemContract
         return $this->getTypeInstance()->isStockable();
     }
 
-    /**
-     * Checks if new shipment is allowed or not
-     */
+    
     public function canShip(): bool
     {
         if (! $this->isStockable()) {
@@ -85,9 +69,7 @@ class OrderItem extends Model implements OrderItemContract
         return false;
     }
 
-    /**
-     * Get remaining qty for shipping.
-     */
+    
     public function getQtyToShipAttribute()
     {
         if (! $this->isStockable()) {
@@ -97,9 +79,7 @@ class OrderItem extends Model implements OrderItemContract
         return $this->qty_ordered - $this->qty_shipped - $this->qty_refunded - $this->qty_canceled;
     }
 
-    /**
-     * Checks if new invoice is allow or not
-     */
+    
     public function canInvoice()
     {
         if ($this->qty_to_invoice > 0) {
@@ -109,105 +89,79 @@ class OrderItem extends Model implements OrderItemContract
         return false;
     }
 
-    /**
-     * Get remaining qty for invoice.
-     */
+    
     public function getQtyToInvoiceAttribute()
     {
         return $this->qty_ordered - $this->qty_invoiced - $this->qty_canceled;
     }
 
-    /**
-     * Checks if new cancel is allow or not
-     */
+    
     public function canCancel(): bool
     {
         return $this->qty_to_cancel > 0;
     }
 
-    /**
-     * Get remaining qty for cancel.
-     */
+    
     public function getQtyToCancelAttribute()
     {
         return $this->qty_ordered - $this->qty_canceled - $this->qty_invoiced;
     }
 
-    /**
-     * Get remaining qty for refund.
-     */
+    
     public function getQtyToRefundAttribute()
     {
         return $this->qty_invoiced - $this->qty_refunded;
     }
 
-    /**
-     * Get the order record associated with the order item.
-     */
+    
     public function order(): BelongsTo
     {
         return $this->belongsTo(OrderProxy::modelClass());
     }
 
-    /**
-     * Get the product record associated with the order item.
-     */
+    
     public function product(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Get the child item record associated with the order item.
-     */
+    
     public function child(): HasOne
     {
         return $this->hasOne(OrderItemProxy::modelClass(), 'parent_id');
     }
 
-    /**
-     * Get the parent item record associated with the order item.
-     */
+    
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    /**
-     * Get the children items.
-     */
+    
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    /**
-     * Get the invoice items record associated with the order item.
-     */
+    
     public function invoice_items(): HasMany
     {
         return $this->hasMany(InvoiceItemProxy::modelClass());
     }
 
-    /**
-     * Get the shipment items record associated with the order item.
-     */
+    
     public function shipment_items(): HasMany
     {
         return $this->hasMany(ShipmentItemProxy::modelClass());
     }
 
-    /**
-     * Get the refund items record associated with the order item.
-     */
+    
     public function refund_items(): HasMany
     {
         return $this->hasMany(RefundItemProxy::modelClass());
     }
 
-    /**
-     * Returns configurable option html
-     */
+    
     public function downloadable_link_purchased(): HasMany
     {
         return $this->hasMany(DownloadableLinkPurchasedProxy::modelClass());
@@ -236,9 +190,7 @@ class OrderItem extends Model implements OrderItemContract
         return $array;
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return OrderItemFactory::new();

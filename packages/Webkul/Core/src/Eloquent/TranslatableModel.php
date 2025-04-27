@@ -11,21 +11,13 @@ class TranslatableModel extends Model
 {
     use Translatable;
 
-    /**
-     * Get locales helper.
-     */
+    
     protected function getLocalesHelper(): Locales
     {
         return app(Locales::class);
     }
 
-    /**
-     * Locale. This method is being overridden to address the
-     * performance issues caused by the existing implementation
-     * which increases application time.
-     *
-     * @return string
-     */
+    
     protected function locale()
     {
         if ($this->isChannelBased()) {
@@ -39,20 +31,16 @@ class TranslatableModel extends Model
         }
     }
 
-    /**
-     * Is channel based.
-     *
-     * @return bool
-     */
+    
     protected function isChannelBased()
     {
         return false;
     }
 
-    public function scopeWhereTranslationIn(Builder $query, string $translationField, $value, ?string $locale = null, string $method = 'whereHas')
+    public function scopeWhereTranslationIn(Builder $query, string $translationField, $va, ?string $locale = null, string $method = 'whereHas')
     {
-        return $query->$method('translations', function (Builder $query) use ($translationField, $value, $locale) {
-            $query->whereIn($this->getTranslationsTable().'.'.$translationField, $value);
+        return $query->$method('translations', function (Builder $query) use ($translationField, $va, $locale) {
+            $query->whereIn($this->getTranslationsTable().'.'.$translationField, $va);
 
             if ($locale) {
                 $query->whereIn($this->getTranslationsTable().'.'.$this->getLocaleKey(), $locale);

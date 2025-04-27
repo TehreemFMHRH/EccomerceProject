@@ -12,11 +12,7 @@ class PageTranslation extends Model implements PageTranslationContract
 {
     use HasFactory;
 
-    /**
-     * Table associated with the model.
-     *
-     * @var string
-     */
+    
     protected $table = 'cms_page_translations';
 
     public $timestamps = false;
@@ -32,9 +28,7 @@ class PageTranslation extends Model implements PageTranslationContract
         'cms_page_id',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return PageTranslationFactory::new();

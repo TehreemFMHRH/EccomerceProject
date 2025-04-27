@@ -8,11 +8,7 @@ use Webkul\Core\Jobs\UpdateCreateVisitIndex;
 
 class Visitor extends BaseVisitor
 {
-    /**
-     * Create a visit log.
-     *
-     * @return void
-     */
+    
     public function visit(?Model $model = null)
     {
         foreach ($this->except as $path) {
@@ -24,20 +20,13 @@ class Visitor extends BaseVisitor
         UpdateCreateVisitIndex::dispatch($model, $this->prepareLog());
     }
 
-    /**
-     * Retrieve request's url.
-     */
+    
     public function url(): string
     {
         return $this->request->url();
     }
 
-    /**
-     * Prepare log's data.
-     *
-     *
-     * @throws \Exception
-     */
+    
     protected function prepareLog(): array
     {
         return array_merge(parent::prepareLog(), [
@@ -45,11 +34,7 @@ class Visitor extends BaseVisitor
         ]);
     }
 
-    /**
-     * Returns logs.
-     *
-     * @return array
-     */
+    
     public function getLog()
     {
         return $this->prepareLog();

@@ -7,12 +7,7 @@ use Webkul\Product\Helpers\Review;
 
 class ProductResource extends JsonResource
 {
-    /**
-     * Create a new resource instance.
-     *
-     * @param  mixed  $resource
-     * @return void
-     */
+    
     public function __construct($resource)
     {
         $this->reviewHelper = app(Review::class);
@@ -20,12 +15,7 @@ class ProductResource extends JsonResource
         parent::__construct($resource);
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request
-     * @return array
-     */
+    
     public function toArray($request)
     {
         $productTypeInstance = $this->getTypeInstance();

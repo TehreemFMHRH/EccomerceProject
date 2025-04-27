@@ -4,11 +4,7 @@ namespace Webkul\Product\Helpers\Indexers\Price;
 
 class Configurable extends AbstractType
 {
-    /**
-     * Returns product specific pricing for customer group
-     *
-     * @return array
-     */
+    
     public function getIndices()
     {
         return [
@@ -22,11 +18,7 @@ class Configurable extends AbstractType
         ];
     }
 
-    /**
-     * Get product minimal price.
-     *
-     * @return float
-     */
+    
     public function getMinimalPrice($qty = null)
     {
         $minPrices = [];
@@ -52,11 +44,7 @@ class Configurable extends AbstractType
         return min($minPrices);
     }
 
-    /**
-     * Get product regular minimal price.
-     *
-     * @return float
-     */
+    
     public function getRegularMinimalPrice()
     {
         $minPrices = [];
@@ -76,11 +64,7 @@ class Configurable extends AbstractType
         return min($minPrices);
     }
 
-    /**
-     * Get product maximum price.
-     *
-     * @return float
-     */
+    
     public function getMaximumPrice()
     {
         $maxPrices = [];
@@ -106,11 +90,7 @@ class Configurable extends AbstractType
         return max($maxPrices);
     }
 
-    /**
-     * Get product regular maximum price.
-     *
-     * @return float
-     */
+    
     public function getRegularMaximumPrice()
     {
         $maxPrices = [];

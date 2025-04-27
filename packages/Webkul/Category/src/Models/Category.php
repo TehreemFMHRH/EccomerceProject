@@ -18,11 +18,7 @@ class Category extends TranslatableModel implements CategoryContract
 {
     use HasFactory, NodeTrait, Visitable;
 
-    /**
-     * Translated attributes.
-     *
-     * @var array
-     */
+    
     public $translatedAttributes = [
         'name',
         'description',
@@ -32,11 +28,7 @@ class Category extends TranslatableModel implements CategoryContract
         'meta_keywords',
     ];
 
-    /**
-     * Fillable.
-     *
-     * @var array
-     */
+    
     protected $fillable = [
         'position',
         'status',
@@ -45,31 +37,19 @@ class Category extends TranslatableModel implements CategoryContract
         'additional',
     ];
 
-    /**
-     * Eager loading.
-     *
-     * @var array
-     */
+    
     protected $with = ['translations'];
 
-    /**
-     * Appends.
-     *
-     * @var array
-     */
+    
     protected $appends = ['logo_url', 'banner_url', 'url'];
 
-    /**
-     * The products that belong to the category.
-     */
+    
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(ProductProxy::modelClass(), 'product_categories');
     }
 
-    /**
-     * The filterable attributes that belong to the category.
-     */
+    
     public function filterableAttributes(): BelongsToMany
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'category_filterable_attributes')
@@ -82,11 +62,7 @@ class Category extends TranslatableModel implements CategoryContract
             ]);
     }
 
-    /**
-     * Get url attribute.
-     *
-     * @return string
-     */
+    
     public function getUrlAttribute()
     {
         if ($categoryTranslation = $this->translate(core()->getCurrentLocale()->code)) {
@@ -96,11 +72,7 @@ class Category extends TranslatableModel implements CategoryContract
         return url($this->translate(core()->getDefaultLocaleCodeFromDefaultChannel())?->slug);
     }
 
-    /**
-     * Get image url for the category image.
-     *
-     * @return string
-     */
+    
     public function getLogoUrlAttribute()
     {
         if (! $this->logo_path) {
@@ -110,11 +82,7 @@ class Category extends TranslatableModel implements CategoryContract
         return Storage::url($this->logo_path);
     }
 
-    /**
-     * Get banner url attribute.
-     *
-     * @return string
-     */
+    
     public function getBannerUrlAttribute()
     {
         if (! $this->banner_path) {
@@ -124,17 +92,13 @@ class Category extends TranslatableModel implements CategoryContract
         return Storage::url($this->banner_path);
     }
 
-    /**
-     * Use fallback for category.
-     */
+    
     protected function useFallback(): bool
     {
         return true;
     }
 
-    /**
-     * Get fallback locale for category.
-     */
+    
     protected function getFallbackLocale(?string $locale = null): ?string
     {
         if ($fallback = core()->getDefaultLocaleCodeFromDefaultChannel()) {
@@ -144,9 +108,7 @@ class Category extends TranslatableModel implements CategoryContract
         return parent::getFallbackLocale();
     }
 
-    /**
-     * Create a new factory instance for the model.
-     */
+    
     protected static function newFactory(): Factory
     {
         return CategoryFactory::new();

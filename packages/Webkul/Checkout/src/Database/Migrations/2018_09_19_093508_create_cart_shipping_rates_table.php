@@ -6,18 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+    
     public function up()
     {
-        /**
-         * To Do (@devansh-webkul)
-         *
-         * - On delete cascade for `cart_address_id`.
-         */
+        
         Schema::create('cart_shipping_rates', function (Blueprint $table) {
             $table->increments('id');
             $table->string('carrier');
@@ -35,11 +27,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+    
     public function down()
     {
         Schema::dropIfExists('cart_shipping_rates');

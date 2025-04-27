@@ -28,20 +28,20 @@ it('should return the create page of configurable product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    $response = postJson(route('admin.catalog.products.store'), [
+    $resp = postJson(route('admin.catalog.products.store'), [
         'type'                => 'configurable',
         'attribute_family_id' => $attributeFamily,
         'sku'                 => fake()->slug(),
     ])
         ->assertOk();
 
-    foreach ($attributes as $attributeKey => $value) {
-        $response
-            ->assertJsonPath('data.attributes.'.$attributeKey.'.id', $value->id)
-            ->assertJsonPath('data.attributes.'.$attributeKey.'.code', $value->code);
+    foreach ($attributes as $attributeKey => $va) {
+        $resp
+            ->assertJsonPath('data.attributes.'.$attributeKey.'.id', $va->id)
+            ->assertJsonPath('data.attributes.'.$attributeKey.'.code', $va->code);
 
-        foreach ($value->options as $optionKey => $option) {
-            $response
+        foreach ($va->options as $optionKey => $option) {
+            $resp
                 ->assertJsonPath('data.attributes.'.$attributeKey.'.options.'.$optionKey.'.id', $option->id)
                 ->assertJsonPath('data.attributes.'.$attributeKey.'.options.'.$optionKey.'.name', $option->admin_name);
         }
@@ -115,7 +115,7 @@ it('should update the configurable product', function () {
     // Act and Assert.
     $this->loginAsAdmin();
 
-    putJson(route('admin.catalog.products.update', $product->id), $data = [
+    putJson(route('admin.catalog.products.update', $product->id), $dat = [
         'sku'               => $product->sku,
         'url_key'           => $product->url_key,
         'channel'           => core()->getCurrentChannelCode(),
@@ -146,11 +146,11 @@ it('should update the configurable product', function () {
                 'product_id'        => $product->id,
                 'type'              => 'configurable',
                 'sku'               => $product->sku,
-                'short_description' => $data['short_description'],
-                'description'       => $data['description'],
-                'name'              => $data['name'],
-                'price'             => $data['price'],
-                'weight'            => $data['weight'],
+                'short_description' => $dat['short_description'],
+                'description'       => $dat['description'],
+                'name'              => $dat['name'],
+                'price'             => $dat['price'],
+                'weight'            => $dat['weight'],
             ],
         ],
     ]);
